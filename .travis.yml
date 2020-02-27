@@ -17,10 +17,3 @@ android:
     - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
     
   script: ./gradlew connectedAndroidTest 
-  
-  cache:
-    directories:
-      - $HOME/.gradle/caches/
-      - $HOME/.gradle/wrapper/
-      - $HOME/.android/build-cache
-  
