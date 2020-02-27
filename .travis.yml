@@ -1,0 +1,78 @@
+language: android
+android:
+  components:
+    - tools
+    - android-22
+    - android-28
+    - platform-tools
+    - build-tools-28.0.3
+    - extra-android-m2repository
+    - tools
+
+    # To run emulator during your tests
+    - sys-img-armeabi-v7a-android-22
+  sudo: enabled
+#sudo: false
+#language: android
+#env:
+#  global:
+#    - ANDROID_TARGET=android-28
+#    - ANDROID_ABI=armeabi-v7a
+#android:
+#  components:
+#  # Uncomment the lines below if you want to
+#  # use the latest revision of Android SDK Tools
+#  - tools
+#  - android-28
+#  - platform-tools
+#  - build-tools-28.0.3
+#  - tools
+#  - add-on
+#  - extra
+#  - $ANDROID_TARGET
+#  - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
+licenses:
+- 'android-sdk-preview-license-52d11cd2'
+- 'android-sdk-license-.+'
+- 'google-gdk-license-.+'
+before_script:
+- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+#- echo no | android create avd --force -n test -t $ANDROID_TARGET-22 --abi $ANDROID_ABI
+- emulator -avd test -no-skin -no-audio -no-window &
+- android-wait-for-emulator
+- adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
+script:
+- ./gradlew build jacocoTestReport assembleAndroidTest
+- ./gradlew connectedCheck jacocoTestReport
+after_success:
+- bash <(curl -s https://codecov.io/bash)
+
+
+#  before_install:
+#  - mkdir "$ANDROID_HOME/licenses" || true
+#  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+#  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+#  before_script:
+#  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+#  - emulator -avd test -no-audio -no-window -no-skin -no-window &
+#  - android-wait-for-emulator
+#  - adb shell settings put global window_animation_scale 0 &
+#  - adb shell settings put global transition_animation_scale 0 &
+#  - adb shell settings put global animator_duration_scale 0 &
+#  - adb shell input keyevent 82 &
+
+#
+#  #Emulator Management: Create, Start and Wait
+#
+#  before_cache:
+#    - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+#    - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+#
+#  cache:
+#    directories:      #Cache all dirs under .gradle folder
+#      - $HOME/.gradle/daemon      #Cache daemon logs
+#      - $HOME/.gradle/native      #Cache library downloaded from the gradle dependency
+#      - $HOME/.gradle/wrapper     #Cache the gradle
+#
+#  after_failure:
+#    - ./gradlew clean check --debug
