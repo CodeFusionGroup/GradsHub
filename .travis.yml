@@ -1,25 +1,23 @@
 language: android
+jdk: oraclejdk8
 dist: trusty
-install: ant deps
 
 android:
   components:
-    - build-tools-26.0.2
-  
-    - android-26
-    - extra
-  
-    - extra-google-google_play_services
-    - extra-google-m2repository
+    - platform-tools
+    - tools
+    - build-tools-24.0.2
+    - android-22
+    - android-24
+    - sys-img-armeabi-v7a-android-22
     - extra-android-m2repository
-  
-    - sys-img-x86-android-26
-#   - sys-img-armeabli-v7a-android-17
   
   before_cache:
     - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
     - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-   
+    
+  script: ./gradlew connectedAndroidTest 
+  
   cache:
     directories:
       - $HOME/.gradle/caches/
