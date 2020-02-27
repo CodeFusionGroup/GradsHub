@@ -16,7 +16,7 @@ android :
     - addon-google_apis-google-$ANDROID_API_LEVEL
 before_script :
         - mkdir -p "$ANDROID_HOME/licenses"
-        - cp ./licenses/* "$ANDROID_HOME/licenses"
+#        - cp ./licenses/* "$ANDROID_HOME/licenses"
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
