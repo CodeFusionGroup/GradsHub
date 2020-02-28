@@ -25,7 +25,7 @@ plugins {
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.6.3'
 }
-
+apply plugin: 'com.vanniktech.android.junit.jacoco'
 jacocoTestReport {
     reports {
         xml.enabled = true // coveralls plugin depends on xml format report
