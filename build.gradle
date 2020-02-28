@@ -18,6 +18,7 @@ buildTypes {
        debug { 
           testCoverageEnabled = true 
        }
+      }
  
  plugins {
     id 'jacoco'
