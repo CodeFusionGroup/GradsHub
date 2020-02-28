@@ -5,7 +5,7 @@ Jdk: oraclejdk8
 env:
   global:
     - ADB_INSTALL_TIMEOUT=5 # minutes
-    - ANDROID_API_LEVEL=26
+    - ANDROID_API_LEVEL=22
     - EMULATOR_API_LEVEL=21
     - ANDROID_ABI=armeabi-v7a
     - ANDROID_TAG=google_apis
@@ -23,13 +23,13 @@ android:
   components:
     - tools
     - tools
-    - android-26
+    - android-28
     - android-22
     - platform-tools
-    - build-tools-26.1.1
+    - build-tools-28.0.3
     - extra
     # To run emulator during your tests
-    - sys-img-x86-android-26
+    - sys-img-x86-android-28
     - sys-img-armeabi-v7a-android-22
     - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
     - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
@@ -40,41 +40,13 @@ android:
     - 'google-gdk-license-.+'
 
 before_install:
-  - sudo service postgresql stop || true
-  - sudo service mysql stop || true
-  - sudo service memcached stop || true
-  - sudo service bootlogd stop || true
-  - sudo service elasticsearch stop || true
-  - sudo service mongodb stop || true
-  - sudo service cassandra stop || true
-  - sudo service rsync stop || true
-  - sudo service x11-common stop || true
-  - export ANDROID_HOME=~/android-sdk-linux
-  - wget -q "https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip" -O android-sdk-tools.zip
-  - unzip -q android-sdk-tools.zip -d ${ANDROID_HOME}
-  - rm android-sdk-tools.zip
-  - PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
-  - mkdir -p ~/.android
-  - touch ~/.android/repositories.cfg
-  - yes | sdkmanager --licenses
-  - sdkmanager "emulator" "tools" "platform-tools" > /dev/null
-  - sdkmanager --list | head -15
-  - sdkmanager "build-tools;$ANDROID_BUILD_TOOLS_VERSION" "platforms;android-$TARGET_VERSION" > /dev/null
-  - sdkmanager "platforms;android-$EMULATOR_VERSION" "system-images;android-$EMULATOR_VERSION;$ABI" > /dev/null
-  - sdkmanager --list | head -15
-  - yes | sdkmanager "cmake;3.10.2.4988404"
-  - wget https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
-  - unzip android-ndk-r18b-linux-x86_64.zip -d $HOME > /dev/null
-  - export ANDROID_NDK_HOME=$HOME/android-ndk-r18b
-  - export PATH=$PATH:$ANDROID_NDK_HOME
-  - mkdir "$ANDROID_HOME/licenses" || true
-  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
-  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-  - echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_VERSION;$ABI"
   - chmod +x gradlew
+  - yes | sdkmanager "build-tools;28.0.3"
+  - yes | sdkmanager "platforms;android-28"
 
 before_script:
-  - echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
+  #- echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a -c 32M
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   #- adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
@@ -82,9 +54,10 @@ before_script:
   
 
 script:
-#  - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
-  - ./gradlew assembleAndroidTest
-  - ./gradlew connectedAndroidTest
+  - ./gradlew build checkstyle connectedCheck -PdisablePreDex
+  #- "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
+  #- ./gradlew assembleAndroidTest
+  #- ./gradlew connectedAndroidTest
 
 #after_success:
 #- bash <(curl -s https://codecov.io/bash)
