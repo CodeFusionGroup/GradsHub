@@ -60,4 +60,4 @@ script:
   #- ./gradlew connectedAndroidTest
 
 after_success:
-  - ./gradlew test jacocoTestReport coveralls
+- ./gradlew cobertura coveralls
