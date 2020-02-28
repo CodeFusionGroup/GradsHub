@@ -3,6 +3,8 @@ sudo: required
 Jdk: oraclejdk8
 
 env:
+  matrix:
+    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
   global:
     - ADB_INSTALL_TIMEOUT=5 # minutes
     - ANDROID_API_LEVEL=22
@@ -41,9 +43,14 @@ android:
     - 'google-gdk-license-.+'
 
 before_install:
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
   - chmod +x gradlew
   - yes | sdkmanager "build-tools;28.0.3"
   - yes | sdkmanager "platforms;android-28"
+  -
 
 before_script:
   #- echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
@@ -58,8 +65,9 @@ script:
   #- ./gradlew build checkstyle connectedCheck -PdisablePreDex
   - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrack #--scan
   - ./gradlew connectedAndroidTest coveralls
+  - ./gradlew assembleDebug
   #- ./gradlew assembleAndroidTest
-  #- ./gradlew connectedAndroidTest
+  - ./gradlew connectedAndroidTest
 
 after_success:
 - ./gradlew cobertura coveralls
