@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-cp /opt/mc/gradle/gradle-wrapper.properties ./gradle/wrapper
-echo "Fixed"
