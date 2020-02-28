@@ -14,11 +14,7 @@ buildscript {
     }
 }
 
-buildTypes { 
-       debug { 
-          testCoverageEnabled = true 
-       }
-      }
+
  
  plugins {
     id 'jacoco'
@@ -51,4 +47,9 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+buildTypes { 
+       debug { 
+          testCoverageEnabled = true 
+       }
+      }
 
