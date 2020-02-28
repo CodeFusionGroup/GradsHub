@@ -1,73 +1,32 @@
 language: android
-sudo: required
-Jdk: oraclejdk8
-
+jdk: oraclejdk8
 env:
-  matrix:
-    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
   global:
-    - ADB_INSTALL_TIMEOUT=5 # minutes
-    - ANDROID_API_LEVEL=22
-    - EMULATOR_API_LEVEL=21
-    - ANDROID_ABI=armeabi-v7a
-    - ANDROID_TAG=google_apis
-
-#So that cache isnt always uploaded
-before_cache:
-  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
+    - ANDROID_API_LEVEL=25
+    - ANDROID_BUILD_TOOLS_VERSION=25.0.0
 android:
+  licenses:
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
   components:
     - tools
     - tools
-    - android-28
-    - android-22
     - platform-tools
-    - build-tools-28.0.3
-    - extra
-    # To run emulator during your tests
-    - sys-img-x86-android-28
-    - sys-img-armeabi-v7a-android-22
-    - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
-    - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
+    - extra-google-google_play_services
+    - extra-google-m2repository
     - extra-android-m2repository
+    - build-tools-25.0.0
+    - android-22
+    - sys-img-armeabi-v7a-android-22
 
-  licenses:
-    - 'android-sdk-preview-license-52d11cd2'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
 
 before_install:
-  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-  - chmod +x gradlew
-  - yes | sdkmanager "build-tools;28.0.3"
+  - yes | sdkmanager "platforms;android-27"
   - yes | sdkmanager "platforms;android-28"
-  -
 
 before_script:
-  #- echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a -c 32M
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
-  #- adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
   - adb shell input keyevent 82 &
-  
-
-script:
-  #- ./gradlew build checkstyle connectedCheck -PdisablePreDex
-  - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrack #--scan
-  - ./gradlew connectedAndroidTest coveralls
-  - ./gradlew assembleDebug
-  #- ./gradlew assembleAndroidTest
-  - ./gradlew connectedAndroidTest
-
-after_success:
-- ./gradlew cobertura coveralls
