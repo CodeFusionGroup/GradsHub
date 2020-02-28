@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -39,6 +41,3 @@ tasks.coveralls {
     onlyIf { System.env.'CI' }
 }
 
-apply plugin: 'com.github.kt3k.coveralls'
-
-apply plugin: 'com.google.gms.google-services'
