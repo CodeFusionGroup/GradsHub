@@ -33,7 +33,7 @@ jacocoTestReport {
 }
 
 apply plugin: "com.vanniktech.android.junit.jacoco"
-#apply plugin: 'com.gradle.build-scan'
+//apply plugin: 'com.gradle.build-scan'
 buildScan {
     licenseAgreementUrl = 'https://gradle.com/terms-of-service'
     licenseAgree = 'yes'
