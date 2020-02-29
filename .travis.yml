@@ -58,6 +58,6 @@ script:
   - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrack #--scan
   #- ./gradlew assembleAndroidTest
   #- ./gradlew connectedAndroidTest
-
+  
 after_success:
   - ./gradlew test jacocoTestReport coveralls
