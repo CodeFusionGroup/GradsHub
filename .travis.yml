@@ -62,4 +62,5 @@ script:
   
 after_success:
   #- ./gradlew test jacocoTestReport coveralls
-  - ./gradlew check jacocoTestReport coveralls
+  #- ./gradlew check jacocoTestReport coveralls
+  - ./gradlew jacocoTestReport coveralls
