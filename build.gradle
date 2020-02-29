@@ -29,6 +29,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         
     }
 }
@@ -36,6 +37,7 @@ allprojects {
 jacocoTestReport {
     reports {
         xml.enabled true
+        xml.destination = file("build/foo.xml")
     }
 }
 
