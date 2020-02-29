@@ -4,43 +4,26 @@ buildscript {
     repositories {
         google()
         jcenter()
-        
-        maven {
-            url "https://plugins.gradle.org/m2/"
-              }
-        
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
-        
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
-        classpath 'org.codehaus.groovy:groovy-all:2.4.12'
+        classpath 'com.android.tools.build:gradle:3.6.0'
         
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
-
- 
- plugins {
-    id 'jacoco'
-    id 'com.github.kt3k.coveralls' version '2.6.3'
-}
-apply plugin: 'com.vanniktech.android.junit.jacoco'
-jacocoTestReport {
-    reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
-        html.enabled = true
-    }
+plugins {
+    id "java-gradle-plugin"
+    id "com.gradle.build-scan" version "2.3"
+    id "groovy"
+    id "jacoco"
+    id "com.gradle.plugin-publish" version "0.10.1"
+    id "com.github.kt3k.coveralls" version "2.5.0"
 }
 
-#apply plugin: "com.vanniktech.android.junit.jacoco"
-#apply plugin: 'com.gradle.build-scan'
-buildScan {
-    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-    licenseAgree = 'yes'
-}
+group 'org.kt3k.gradle.plugin'
+version '2.10.1'
 
 allprojects {
     repositories {
@@ -50,12 +33,39 @@ allprojects {
     }
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+gradlePlugin {
+    plugins {
+        coverallsPlugin {
+            id = 'com.github.kt3k.coveralls'
+            implementationClass = 'org.kt3k.gradle.plugin.CoverallsPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/CodeFusionGroup/GradsHub/'
+    vcsUrl = 'https://github.com/CodeFusionGroup/GradsHub.git'
+    description = 'Send coverage data to coveralls.io'
+    tags = ['coverage', 'coveralls']
+
+    plugins {
+        coverallsPlugin {
+            displayName = 'Coveralls Gradle Plugin'
+        }
+    }
+}
+
+buildScan {
+    termsOfServiceUrl   = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-buildTypes { 
-       debug { 
-          testCoverageEnabled = true 
-       }
-      }
