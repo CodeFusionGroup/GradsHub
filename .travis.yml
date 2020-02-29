@@ -59,11 +59,5 @@ script:
   #- ./gradlew assembleAndroidTest
   #- ./gradlew connectedAndroidTest
   
-jobs:
-  include:
-    - stage: Produce Coverage
-      node_js: node
-      script: jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
-
-#after_success:
-  #- ./gradlew test jacocoTestReport coveralls
+after_success:
+  - ./gradlew test jacocoTestReport coveralls
