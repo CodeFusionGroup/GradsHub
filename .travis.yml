@@ -58,8 +58,8 @@ script:
   #- ./gradlew build checkstyle connectedCheck -PdisablePreDex
   - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
   - ./gradlew -Dscan=true build
-  - ./gradlew connectedAndroidTest coveralls
-  - ./gradlew jacocoTestReport coveralls
+#  - ./gradlew connectedAndroidTest coveralls
+#  - ./gradlew jacocoTestReport coveralls
 
   #- ./gradlew assembleAndroidTest
   #- ./gradlew connectedAndroidTest
