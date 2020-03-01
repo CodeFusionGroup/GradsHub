@@ -9,8 +9,8 @@
 
     <EditText
         android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="253dp"
+        android:layout_height="64dp"
         android:layout_marginStart="99dp"
         android:layout_marginLeft="99dp"
         android:layout_marginTop="367dp"
@@ -19,17 +19,18 @@
         android:layout_marginBottom="18dp"
         android:drawableLeft="@mipmap/profile"
         android:ems="10"
-        android:hint="USERNAME"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:drawableStart="@mipmap/profile" />
 
     <EditText
         android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="253dp"
+        android:layout_height="64dp"
         android:layout_marginStart="99dp"
         android:layout_marginLeft="99dp"
         android:layout_marginTop="18dp"
@@ -42,6 +43,7 @@
         android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
@@ -66,22 +68,23 @@
 
         <Button
             android:id="@+id/button"
-            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-            android:layout_width="257dp"
-            android:layout_height="74dp"
+            android:style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="253dp"
+            android:layout_height="64dp"
             android:layout_marginStart="24dp"
             android:layout_marginLeft="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:layout_marginRight="24dp"
             android:layout_marginBottom="10dp"
-            android:background="#B71C1C"
+            android:background="#D6AE1E"
             android:text="LOGIN"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
     </android.support.constraint.ConstraintLayout>
 
 
