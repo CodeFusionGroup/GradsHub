@@ -26,14 +26,15 @@ android:
     - android-28
     - android-22
     - platform-tools
-    - build-tools-29.0.0
+    - build-tools-28.0.0
     - extra
     # To run emulator during your tests
     - sys-img-x86-android-28
-    - sys-img-x86-android-29
     - sys-img-armeabi-v7a-android-22
     - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
     - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
+    - extra-android-support
+    - extra-android-m2repository
 
   licenses:
     - 'android-sdk-preview-license-52d11cd2'
@@ -56,6 +57,7 @@ before_script:
   
 
 script:
+  - chmod +x ./gradlew
   - ./gradlew build checkstyle connectedCheck -PdisablePreDex
   - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace --debug #--scan
   - ./gradlew -Dscan=true build
