@@ -27,7 +27,7 @@ android {
     
     testOptions {
     	unitTests {
-    		includeAndroidResouces = true
+    		includeAndroidResources = true
     		returnDefaultValues = true
     	}
     }
