@@ -61,6 +61,13 @@ gradlePlugin {
     }
 }
 
+apply plugin: 'com.github.kt3k.coveralls'
+
+tasks.coveralls {
+    dependsOn 'connectedAndroidTest'
+    onlyIf { System.env.'CI' }
+}
+
 pluginBundle {
     website = 'https://github.com/CodeFusionGroup/GradsHub/'
     vcsUrl = 'https://github.com/CodeFusionGroup/GradsHub.git'
