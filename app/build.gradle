@@ -24,7 +24,26 @@ android {
         sourceCompatibility = 1.8
     }
     buildToolsVersion = '29.0.0'
+    
+    testOptions {
+    	unitTests {
+    		includeAndroidResouces = true
+    		returnDefaultValues = true
+    	}
+    }
 }
+
+	coveralls {
+		jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
+	}
+	
+	task jacocoTestReport(type: JacocoReport, dependsOn:['testDebugUnitTest', 'createDebugCoverageReport']){
+		reports {
+			xml.enabled = true
+			html.enabled = true
+		}	
+		
+	}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
