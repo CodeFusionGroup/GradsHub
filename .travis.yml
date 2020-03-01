@@ -25,6 +25,7 @@ android:
     - tools
     - android-28
     - android-22
+    - android-29
     - platform-tools
     - build-tools-28.0.3
     - extra
@@ -57,7 +58,7 @@ before_script:
 script:
   #- ./gradlew build checkstyle connectedCheck -PdisablePreDex
   - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
-  - ./gradlew -Dscan=true build
+ # - ./gradlew -Dscan=true build
   #- ./gradlew assembleAndroidTest
   #- ./gradlew connectedAndroidTest
   
