@@ -27,6 +27,7 @@ android:
     - android-22
     - platform-tools
     - build-tools-28.0.3
+    - build-tools-29.0.0
     - extra
     # To run emulator during your tests
     - sys-img-x86-android-28
@@ -56,7 +57,7 @@ before_script:
 script:
   #- ./gradlew build checkstyle connectedCheck -PdisablePreDex
   - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
-  - ./gradlew -Dscan=true build
+  - ./gradlew build --scan
   #- ./gradlew assembleAndroidTest
   #- ./gradlew connectedAndroidTest
 
