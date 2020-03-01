@@ -59,7 +59,7 @@ before_script:
 script:
   - chmod +x ./gradlew
   - ./gradlew build checkstyle connectedCheck -PdisablePreDex
-  - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace --debug #--scan
+  - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace
   - ./gradlew -Dscan=true build
   #- ./gradlew assembleAndroidTest
   #- ./gradlew connectedAndroidTest
