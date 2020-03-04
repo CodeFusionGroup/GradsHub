@@ -60,8 +60,8 @@ script:
   - android-wait-for-emulator
   - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
 
-  #- ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
-  #- ./gradlew -Dscan=true build
+  - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
+  - ./gradlew -Dscan=true build
   - ./gradlew connectedCheck
 
 after_success:
