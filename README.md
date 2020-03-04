@@ -13,4 +13,4 @@ GradsHub is a Social Research Android Application. It essentially allows people 
 [travis-image]:https://travis-ci.org/CodeFusionGroup/GradsHub.svg?branch=master
 [travis]:https://travis-ci.org/CodeFusionGroup/GradsHub
 
-[![codecov.io](https://codecov.io/github/CodeFusionGroup/GradsHub/coverage.svg?branch=master)](https://codecov.io/github/CodeFusionGroup/GradsHub?branch=master)
+[![codecov.io](https://codecov.io/github/CodeFusionGroup/GradsHub/branch/master/graph/badge.svg)](https://codecov.io/gh/CodeFusionGroup/GradsHub)|
