@@ -20,6 +20,14 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Button regBtn = findViewById(R.id.registBtn);
+        regBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registrationActivity();
+            }
+        });
+
         Button lecLoginBtn = findViewById(R.id.loginBtn);
         lecLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +107,11 @@ public class Login extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    public void registrationActivity(){
+        Intent intent =  new Intent(this,Registration.class);
+        startActivity(intent);
     }
 
     public void feedActivity() {
