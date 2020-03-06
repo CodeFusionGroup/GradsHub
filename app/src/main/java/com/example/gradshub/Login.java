@@ -20,11 +20,11 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Button regBtn = findViewById(R.id.registBtn);
-        regBtn.setOnClickListener(new View.OnClickListener() {
+        Button regButton = findViewById(R.id.registBtn);
+        regButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                registrationActivity();
+            public void onClick(View view) {
+                registerActivity();
             }
         });
 
@@ -109,14 +109,14 @@ public class Login extends AppCompatActivity {
 
     }
 
-    public void registrationActivity(){
-        Intent intent =  new Intent(this,Registration.class);
-        startActivity(intent);
-    }
-
     public void feedActivity() {
         Intent intent = new Intent(this, Feed.class);
         startActivity(intent);
     }
 
+
+    public void registerActivity() {
+        Intent intent = new Intent(this, Registration.class);
+        startActivity(intent);
+    }
 }

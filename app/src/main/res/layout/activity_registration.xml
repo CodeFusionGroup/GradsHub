@@ -70,9 +70,9 @@
         app:layout_constraintVertical_bias="0.291" />
 
     <EditText
-        android:id="@+id/enailEt"
-        android:layout_width="215dp"
-        android:layout_height="52dp"
+        android:id="@+id/emailEt"
+        android:layout_width="206dp"
+        android:layout_height="61dp"
         android:ems="10"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toBottomOf="parent"
