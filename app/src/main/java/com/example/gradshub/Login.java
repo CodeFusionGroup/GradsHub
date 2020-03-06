@@ -16,21 +16,18 @@ import org.json.JSONObject;
 public class Login extends AppCompatActivity {
 
     User user = new User();
-    //
-    String userEmail,userPassword;
+    String userEmail, userPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
         EditText emailET = findViewById(R.id.emailET);
         EditText passwordET = findViewById(R.id.passwordET);
 
         userEmail = emailET.getText().toString().trim();
         userPassword = passwordET.getText().toString().trim();
-
 
         Button loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -99,9 +96,10 @@ public class Login extends AppCompatActivity {
 
             if (success.equals("1")) {
                 Toast.makeText(Login.this, message, Toast.LENGTH_SHORT).show();
-                feedActivity();
+                //if the user entered the valid login credentials then we initialise the user login credentials.
                 user.setEmail(userEmail);
                 user.setPassword(userPassword);
+                feedActivity();
             }
             else if(success.equals("0")) {
                 Toast.makeText(Login.this,message,Toast.LENGTH_SHORT).show();
