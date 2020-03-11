@@ -2,10 +2,13 @@ package com.example.gradshub;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,44 +19,53 @@ import org.json.JSONObject;
 public class Login extends AppCompatActivity {
 
     User user = new User();
-    String userEmail, userPassword;
+    String email, password;
+    EditText[] editTexts = new EditText[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText emailET = findViewById(R.id.emailET);
-        EditText passwordET = findViewById(R.id.passwordET);
-
-        userEmail = emailET.getText().toString().trim();
-        userPassword = passwordET.getText().toString().trim();
-
         Button loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(final View v) {
-                requestLogin(userEmail, userPassword);
+            public void onClick(View v) {
+                EditText emailET = findViewById(R.id.emailET);
+                EditText passwordET = findViewById(R.id.passwordET);
+                editTexts[0] = emailET;
+                editTexts[1] = passwordET;
+                email = emailET.getText().toString().trim();
+                password = passwordET.getText().toString().trim();
+                requestLogin(email, password);
             }
         });
+
+        Button registerBtn = findViewById(R.id.registerBtn);
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registrationActivity(v);
+            }
+        });
+
     }
 
 
-    public void requestLogin(String userEmail, String userPassword) {
+    public void requestLogin(String email, String password) {
         ContentValues params = new ContentValues();
 
-        params.put("USER_EMAIL", userEmail);
-        params.put("USER_PASSWORD", userPassword);
+        params.put("USER_EMAIL", email);
+        params.put("USER_PASSWORD", password);
 
         AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/login.php", params) {
             @SuppressLint("StaticFieldLeak")
             @Override
             protected void onPostExecute(String output) {
-
-                if (validateLoginInput() == false) {
+                if ( User.validateInputData(editTexts)== false) {
                     Toast.makeText(Login.this, "One or more fields are missing!", Toast.LENGTH_SHORT).show();
                 } else {
-                    requestResponse(output);
+                    loginRequestOutcome(output);
                 }
             }
 
@@ -62,31 +74,7 @@ public class Login extends AppCompatActivity {
     }
 
 
-    public boolean validateLoginInput() {
-
-        EditText emailET = findViewById(R.id.emailET);
-        EditText passwordET = findViewById(R.id.passwordET);
-
-        userEmail = emailET.getText().toString().trim();
-        userPassword = passwordET.getText().toString().trim();
-
-        if (userEmail.isEmpty()) {
-            emailET.setError("Field can't be empty!");
-            emailET.requestFocus();
-            return false;
-        }
-
-        if (userPassword.isEmpty()) {
-            passwordET.setError("Field can't be empty!");
-            passwordET.requestFocus();
-            return false;
-        }
-
-        return true;
-    }
-
-
-    public void requestResponse(String output) {
+    public void loginRequestOutcome(String output) {
 
         try {
 
@@ -94,13 +82,21 @@ public class Login extends AppCompatActivity {
             String success = jo.getString("success");
             String message =jo.getString("message");
 
+            //Toast msg: Successfully logged in!
             if (success.equals("1")) {
                 Toast.makeText(Login.this, message, Toast.LENGTH_SHORT).show();
-                //if the user entered the valid login credentials then we initialise the user login credentials.
-                user.setEmail(userEmail);
-                user.setPassword(userPassword);
+                //if the user entered correct login credentials, we initialise the user with the login credentials.
+                user.setEmail(email);
+                user.setPassword(password);
                 feedActivity();
             }
+
+            //Toast msg: Incorrect email, try again!.
+            else if(success.equals("-1")) {
+                Toast.makeText(Login.this,message,Toast.LENGTH_SHORT).show();
+            }
+
+            //Toast msg: Incorrect password. Please try again!
             else if(success.equals("0")) {
                 Toast.makeText(Login.this,message,Toast.LENGTH_SHORT).show();
             }
@@ -111,9 +107,17 @@ public class Login extends AppCompatActivity {
 
     }
 
+
     public void feedActivity() {
         Intent intent = new Intent(this, Feed.class);
         startActivity(intent);
     }
+
+
+    public void registrationActivity(View v) {
+        Intent intent = new Intent(this, Registration.class);
+        startActivity(intent);
+    }
+
 
 }
