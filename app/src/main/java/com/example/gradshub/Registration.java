@@ -23,6 +23,7 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
     User user = new User();
     String firstName, lastName, email, phoneNumber, academicStatus, password;
     EditText[] editTexts = new EditText[6];
+    Spinner[] spinners = new Spinner[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_registration);
 
         Spinner spinner = findViewById(R.id.spinner);
+        spinners[0] = spinner;
         initialiseSpinner(spinner);
 
         Button confirmBtn = findViewById(R.id.confirmBtn);
@@ -50,7 +52,6 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
                 editTexts[3] = fnameET;
                 editTexts[4] = lnameET;
                 editTexts[5] = phoneNumberET;
-                // TODO: must also store spinner item to be evaluated
 
                 firstName = fnameET.getText().toString().trim();
                 lastName = lnameET.getText().toString().trim();
@@ -82,7 +83,7 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
             @Override
             protected void onPostExecute(String output) {
 
-                if(User.validateInputData(editTexts) == false){
+                if(User.validateInputData(editTexts, spinners) == false){
                     Toast.makeText(Registration.this,"one or more fields missing!",Toast.LENGTH_LONG).show();
                 } else {
                     registrationOutcome(output);
@@ -127,7 +128,6 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-
     // this part of the code allows us to create a spinner with a drop down list of items we want to display to the user to select.
     public void initialiseSpinner(Spinner spinner) {
 
@@ -141,35 +141,21 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    // not sure how this function behaves??????
-    public boolean isEnabled(int position) {
-
-        if (position == 0) {
-            // Disable the first item on the Spinner drop down menu (First item will be used as a hint "Choose Category")
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        String text = parent.getItemAtPosition(position).toString(); // get the selected item and save it in text variable
-        Spinner sp = findViewById(R.id.spinner);
+        String text = parent.getItemAtPosition(position).toString();
         TextView tv = (TextView) view;
 
         if (position == 0) {
-            isEnabled(position);
-            // to set an error sign (exclamation sign) for the first item since it is invalid for selection.
-            ((TextView)sp.getSelectedView()).setError("selected item is invalid!");
-            // first item (which by default is the displayed item) is set to grey to indicate its not part of the selection from the list.
+            // the first item (which by default is the displayed item) is set to gray to indicate its not
+            // part of the selection from the list.
             tv.setTextColor(Color.rgb(112,128,144));
         }
 
         else {
-            // the font colour of valid items once selected, is set to black, otherwise set to grey (for invalid item) when they're displayed
-            // after being selected.
+            // the font colour for valid items once selected, is set to black, otherwise set to gray
+            // (for invalid item) when displayed after being selected.
             tv.setTextColor(Color.BLACK);
         }
 
@@ -190,7 +176,6 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
-
 
 }
 

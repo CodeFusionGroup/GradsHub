@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -21,6 +22,8 @@ public class Login extends AppCompatActivity {
     User user = new User();
     String email, password;
     EditText[] editTexts = new EditText[2];
+    Spinner[] spinners = new Spinner[1];// we don't really need this for login but because validateInputData()
+                                        // method is generic we need to pass in "spinners" so that it validates for registration
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +34,16 @@ public class Login extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 EditText emailET = findViewById(R.id.emailET);
                 EditText passwordET = findViewById(R.id.passwordET);
+
                 editTexts[0] = emailET;
                 editTexts[1] = passwordET;
+
                 email = emailET.getText().toString().trim();
                 password = passwordET.getText().toString().trim();
+
                 requestLogin(email, password);
             }
         });
@@ -62,7 +69,7 @@ public class Login extends AppCompatActivity {
             @SuppressLint("StaticFieldLeak")
             @Override
             protected void onPostExecute(String output) {
-                if ( User.validateInputData(editTexts)== false) {
+                if ( User.validateInputData(editTexts, spinners) == false) {
                     Toast.makeText(Login.this, "One or more fields are missing!", Toast.LENGTH_SHORT).show();
                 } else {
                     loginRequestOutcome(output);

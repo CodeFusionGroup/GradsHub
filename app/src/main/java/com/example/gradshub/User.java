@@ -1,7 +1,10 @@
 package com.example.gradshub;
 
+import android.graphics.Color;
 import android.util.Patterns;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 public class User {
 
@@ -74,41 +77,15 @@ public class User {
     }
 
 
-    // this method is called whenever a user logs in or registers so that we can validate the data they entered.
-    // its necessary we pass editTexts and not the values in editTexts so that we can get reference to
-    // EditTexts for setting the error message according to which field is empty.
-    public static boolean validateInputData(EditText[] editTexts) {
+    // this method is called whenever a login/registration activity is running in order to verify data input.
+    public static boolean validateInputData(EditText[] editTexts, Spinner[] spinners) {
 
-        // using a for loop to loop through editTexts as previously did not evaluate Edit texts fields in order, so changed to this style of evaluation
-
-        //==========================================================================================
-        // check that the email field is not empty
-        String email = editTexts[0].getText().toString().trim();
-        if (email.isEmpty()) {
-            editTexts[0].setError("Field can't be empty!");
-            editTexts[0].requestFocus();
-            return false;
-        }
-
-        // if an email is entered, check that the entered email is formatted correctly (is it a valid email address).
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            editTexts[0].setError("check that your email address is entered correctly!");
-            editTexts[0].requestFocus();
-            return false;
-        }
-        //==========================================================================================
-        // check that the password field is not empty
-        String password = editTexts[1].getText().toString().trim();
-        if (password.isEmpty()) {
-            editTexts[1].setError("Field can't be empty!");
-            editTexts[1].requestFocus();
-            return false;
-        }
-        //==========================================================================================
+        // NOTE: tried to order these in such a way that the errors are displayed in the order of EditTexts as in the UI
 
         // if the registration activity is running then we have more fields to check
         if(editTexts.length > 2) {
 
+            //======================================================================================
             // check that the first name field is not empty
             String firstName = editTexts[3].getText().toString().trim();
             if (firstName.isEmpty()) {
@@ -116,6 +93,7 @@ public class User {
                 editTexts[3].requestFocus();
                 return false;
             }
+
             //======================================================================================
             // check that the last name field is not empty
             String lastName = editTexts[4].getText().toString().trim();
@@ -124,6 +102,7 @@ public class User {
                 editTexts[4].requestFocus();
                 return false;
             }
+
             //======================================================================================
             // check that the phone number field is not empty
             String phoneNumber = editTexts[5].getText().toString().trim();
@@ -132,17 +111,23 @@ public class User {
                 editTexts[5].requestFocus();
                 return false;
             }
+
             //======================================================================================
-            //TODO: must validate the spinner for selected value
-            /*String academicStatus = editTexts[6].getText().toString().trim();
-            if (academicStatus.equals("Choose Category")) {
-                editTexts[6].setError("Please select a valid academic status");
-                editTexts[6].requestFocus();
+            // check that the user selects a valid academic status from list (Honours, Masters, PhD)
+            // first item is invalid (used as hint)
+            String academicStatus = spinners[0].getSelectedItem().toString();;
+            if (academicStatus.equals("Select your academic status:")) {
+                TextView errorText = (TextView)spinners[0].getSelectedView();
+                errorText.setError("");
+                errorText.setTextColor(Color.BLACK); // just to highlight that this is an error (for now display with black but need to change once UI colour is changed)
+                errorText.setText(R.string.spinnerErrorMsg); // changes the selected item text to this text.
+                spinners[0].requestFocus();
                 return false;
-            }*/
+            }
 
             //======================================================================================
             // compare to check if the passwords match for the fields: (password & confirm password).
+            String password = editTexts[1].getText().toString().trim();
             String confirmPassword = editTexts[2].getText().toString().trim();
             if (!confirmPassword.equals(password)) {
                 editTexts[2].setError("password doesn't match the above entered password!");
@@ -153,9 +138,34 @@ public class User {
 
         }
 
+        //==========================================================================================
+        // accommodates login activity as well.
+        // check that the email field is not empty
+        String email = editTexts[0].getText().toString().trim();
+        if (email.isEmpty()) {
+            editTexts[0].setError("Field can't be empty!");
+            editTexts[0].requestFocus();
+            return false;
+        }
+
+        // if an email is entered, check that the entered email is formatted correctly (is it a valid email address).
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editTexts[0].setError("check that your email address is entered correctly!");
+            editTexts[0].requestFocus();
+            return false;
+        }
+
+        //==========================================================================================
+        // check that the password field is not empty
+        String password = editTexts[1].getText().toString().trim();
+        if (password.isEmpty()) {
+            editTexts[1].setError("Field can't be empty!");
+            editTexts[1].requestFocus();
+            return false;
+        }
+        //==========================================================================================
+
         return true;
     }
-
-
 
 }
