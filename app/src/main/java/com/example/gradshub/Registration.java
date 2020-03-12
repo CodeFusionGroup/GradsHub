@@ -60,7 +60,18 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
                 academicStatus = spinner.getSelectedItem().toString();
                 password = passwordET.getText().toString().trim();
 
-                registerUser(firstName, lastName, email, phoneNumber, academicStatus, password);
+                // if there are fields missing don't register the user.
+                if(!User.validateInputData(editTexts, spinners)) {
+                    // we do nothing here except set errors where fields are not filled by user.
+
+                } else { // if all fields are correct then register the user
+
+                    // in the case of all fields filled in correctly but the user's provided email already exits, then the user
+                    // is not registered since the DB first checks for this condition before inserting.
+                    // so instead a toast msg is displayed indicating that the provided email is already taken, hence provide another.
+                    registerUser(firstName, lastName, email, phoneNumber, academicStatus, password);
+                }
+
             }
         });
 
@@ -82,12 +93,7 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
         AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/register.php",params) {
             @Override
             protected void onPostExecute(String output) {
-
-                if(User.validateInputData(editTexts, spinners) == false){
-                    Toast.makeText(Registration.this,"one or more fields missing!",Toast.LENGTH_LONG).show();
-                } else {
-                    registrationOutcome(output);
-                }
+                registrationOutcome(output);
             }
 
         };
@@ -116,7 +122,7 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
                 loginActivity();
             }
 
-            // can't have the same email address for different users, so we check for this on the DB.
+            // can't have the same email address for different users, so we check for this on the DB before inserting the registration details of user
             // Toast msg: Email already exists!, Please use another email.
             else if(success.equals("-1")) {
                 Toast.makeText(Registration.this,message,Toast.LENGTH_LONG).show();
