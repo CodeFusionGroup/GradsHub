@@ -44,7 +44,13 @@ public class Login extends AppCompatActivity {
                 email = emailET.getText().toString().trim();
                 password = passwordET.getText().toString().trim();
 
-                requestLogin(email, password);
+                if (!User.validateInputData(editTexts, spinners)) {
+                    // we do nothing, except set errors where fields are not filled in (done by validateInputData() already)
+
+                } else { // if all the fields are filled then call this method and respond appropriately using toast messages.
+                    requestLogin(email, password);
+                }
+
             }
         });
 
@@ -69,11 +75,7 @@ public class Login extends AppCompatActivity {
             @SuppressLint("StaticFieldLeak")
             @Override
             protected void onPostExecute(String output) {
-                if ( User.validateInputData(editTexts, spinners) == false) {
-                    Toast.makeText(Login.this, "One or more fields are missing!", Toast.LENGTH_SHORT).show();
-                } else {
-                    loginRequestOutcome(output);
-                }
+                loginRequestOutcome(output);
             }
 
         };
