@@ -13,9 +13,10 @@
     <string name="menu_slideshow">Slideshow</string>
 
     <string name="home_second">Home Second</string>
+    <string name="spinnerErrorMsg">please select valid academic status</string>
 
     <string-array name="ACADEMIC_STATUS">
-        <item>Choose Category:</item>
+        <item>Select your academic status:</item>
         <item>Honours</item>
         <item>Masters</item>
         <item>PhD</item>
