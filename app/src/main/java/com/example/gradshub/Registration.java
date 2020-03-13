@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,12 +38,12 @@ public class Registration extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(final View v) {
 
-                EditText fnameET = findViewById(R.id.fnameET);
-                EditText lnameET = findViewById(R.id.lnameET);
+                EditText fnameET = findViewById(R.id.fnameEt);
+                EditText lnameET = findViewById(R.id.lnameEt);
                 EditText emailET = findViewById(R.id.emailET);
-                EditText phoneNumberET = findViewById(R.id.phoneNumberET);
-                EditText passwordET = findViewById(R.id.passwordET);
-                EditText confirmPasswordET = findViewById(R.id.confirmPasswordET);
+                EditText phoneNumberET = findViewById(R.id.phoneNoEt);
+                EditText passwordET = findViewById(R.id.passEt);
+                EditText confirmPasswordET = findViewById(R.id.confirmPassEt);
 
                 editTexts[0] = emailET;
                 editTexts[1] = passwordET;
