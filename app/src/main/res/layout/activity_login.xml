@@ -53,7 +53,7 @@
         tools:text="Login" />
 
     <Button
-        android:id="@+id/registerBtn"
+        android:id="@+id/registBtn"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loginBtn"
-        app:layout_constraintVertical_bias="0.57" />
+        app:layout_constraintVertical_bias="0.57"/>
 
 
 </android.support.constraint.ConstraintLayout>
