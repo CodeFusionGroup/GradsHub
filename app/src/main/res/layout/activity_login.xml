@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/passwordET"
+        android:id="@+id/passEt"
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordET"
+        app:layout_constraintTop_toBottomOf="@+id/passEt"
         app:layout_constraintVertical_bias="0.76"
         tools:text="Login" />
 

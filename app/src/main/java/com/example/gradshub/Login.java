@@ -2,13 +2,10 @@ package com.example.gradshub;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -36,7 +33,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
 
                 EditText emailET = findViewById(R.id.emailET);
-                EditText passwordET = findViewById(R.id.passwordET);
+                EditText passwordET = findViewById(R.id.passEt);
 
                 editTexts[0] = emailET;
                 editTexts[1] = passwordET;

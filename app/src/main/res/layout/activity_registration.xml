@@ -8,10 +8,10 @@
     tools:context=".Registration">
 
     <TextView
-        android:id="@+id/fnameTV"
+        android:id="@+id/nameTv"
         android:layout_width="71dp"
         android:layout_height="30dp"
-        android:text="Name"
+        android:text="Name:"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.022" />
 
     <EditText
-        android:id="@+id/fnameET"
+        android:id="@+id/fnameEt"
         android:layout_width="213dp"
         android:layout_height="52dp"
         android:ems="10"
@@ -33,7 +33,7 @@
         app:layout_constraintVertical_bias="0.093" />
 
     <TextView
-        android:id="@+id/lnameTV"
+        android:id="@+id/surnameTV"
         android:layout_width="93dp"
         android:layout_height="24dp"
         android:text="Surname:"
@@ -45,7 +45,7 @@
         app:layout_constraintVertical_bias="0.164" />
 
     <EditText
-        android:id="@+id/lnameET"
+        android:id="@+id/lnameEt"
         android:layout_width="224dp"
         android:layout_height="52dp"
         android:ems="10"
@@ -57,7 +57,7 @@
         app:layout_constraintVertical_bias="0.221" />
 
     <TextView
-        android:id="@+id/emailTV"
+        android:id="@+id/emailTv"
         android:layout_width="82dp"
         android:layout_height="31dp"
         android:text="Email:"
@@ -70,7 +70,7 @@
         app:layout_constraintVertical_bias="0.291" />
 
     <EditText
-        android:id="@+id/emailET"
+        android:id="@+id/emailEt"
         android:layout_width="206dp"
         android:layout_height="61dp"
         android:ems="10"
@@ -83,7 +83,7 @@
         app:layout_constraintVertical_bias="0.351" />
 
     <TextView
-        android:id="@+id/phoneNumberTV"
+        android:id="@+id/phoneNoTv"
         android:layout_width="131dp"
         android:layout_height="34dp"
         android:text="Phone Number:"
@@ -95,7 +95,7 @@
         app:layout_constraintVertical_bias="0.417" />
 
     <EditText
-        android:id="@+id/phoneNumberET"
+        android:id="@+id/phoneNoEt"
         android:layout_width="215dp"
         android:layout_height="52dp"
         android:ems="10"
@@ -109,22 +109,18 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="311dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_width="172dp"
+        android:layout_height="37dp"
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.595" />
+        app:layout_constraintVertical_bias="0.582" />
 
     <TextView
-        android:id="@+id/acadStatusTV"
+        android:id="@+id/academicStTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Academic Status:"
@@ -137,7 +133,7 @@
         app:layout_constraintVertical_bias="0.537" />
 
     <TextView
-        android:id="@+id/passwordTV"
+        android:id="@+id/passTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Password:"
@@ -150,7 +146,7 @@
         app:layout_constraintVertical_bias="0.64" />
 
     <EditText
-        android:id="@+id/passwordET"
+        android:id="@+id/passEt"
         android:layout_width="215dp"
         android:layout_height="52dp"
         android:ems="10"
@@ -162,7 +158,7 @@
         app:layout_constraintVertical_bias="0.7" />
 
     <TextView
-        android:id="@+id/confirmPasswordTV"
+        android:id="@+id/confirmPassTv"
         android:layout_width="171dp"
         android:layout_height="26dp"
         android:text="Confirm Password:"
@@ -174,7 +170,7 @@
         app:layout_constraintVertical_bias="0.763" />
 
     <EditText
-        android:id="@+id/confirmPasswordET"
+        android:id="@+id/confirmPassEt"
         android:layout_width="215dp"
         android:layout_height="52dp"
         android:ems="10"
