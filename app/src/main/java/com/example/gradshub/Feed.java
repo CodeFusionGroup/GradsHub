@@ -31,7 +31,7 @@ public class Feed extends AppCompatActivity implements NavigationView.OnNavigati
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        switch(menuItem.getItemId()){
+        switch(menuItem.getItemId()) {
             case R.id.nav_addgroup:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new AddGroupFragment()).commit();
                 break;
