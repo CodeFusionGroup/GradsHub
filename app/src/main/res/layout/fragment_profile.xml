@@ -9,4 +9,16 @@
         android:text="Profile"
         android:textSize="30dp" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="228dp"
+        android:layout_height="76dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="81dp"
+        android:layout_marginRight="81dp"
+        android:layout_marginBottom="493dp"
+        android:text="TextView" />
+
 </RelativeLayout>
