@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+        This holds items that appear in the overflow menu on the action bar (if the app:showAsAction="never" attribute
+        is set as indicated) or on the action bar as action buttons (if the app:showAsAction="isRoom" attribute is set
+        as indicated if there's space on the action bar)
+     -->
+
+    <!--
+        Settings, should always be on the overflow menu (appears on the far right of the action bar), when clicked the
+        Settings item appears) NOTE: android:orderInCategory="100" is used to order the items in the overflow menu (ascending
+        order) where 100 is used as the starting value (can be any value), an item with 200 will come after an item with 100, etc.
+     -->
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <!--
+        for more items that you think should be on the overflow menu or as action buttons on the action bar add them here
+        following the Settings item example above. Note that there's limited space on the action bar so if these items
+        have top priority you can send them to the overflow menu and assign them priority accordingly by setting the
+        android:orderInCategory attribute.
+     -->
+</menu>
