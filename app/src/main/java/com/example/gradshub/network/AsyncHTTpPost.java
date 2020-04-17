@@ -1,4 +1,4 @@
-package com.example.gradshub;
+package com.example.gradshub.network;
 
 import android.content.ContentValues;
 import android.net.Uri;
@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 
 public abstract class AsyncHTTpPost extends AsyncTask<String, String, String> {
 
