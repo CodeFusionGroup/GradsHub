@@ -1,4 +1,4 @@
-package com.example.gradshub.main.ui.home;
+package com.example.gradshub.main.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

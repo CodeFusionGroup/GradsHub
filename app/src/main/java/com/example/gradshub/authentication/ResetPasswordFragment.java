@@ -23,10 +23,12 @@ public class ResetPasswordFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_reset_password, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class ResetPasswordFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // navigate back to userLoginFragment after the user has reset their password, so that they can login.
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
                 navController.navigate(R.id.action_resetPasswordFragment_to_loginFragment);
             }
         });

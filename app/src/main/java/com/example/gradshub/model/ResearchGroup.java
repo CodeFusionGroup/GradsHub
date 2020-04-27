@@ -1,7 +1,10 @@
 package com.example.gradshub.model;
 
 
-public class ResearchGroup {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ResearchGroup implements Parcelable {
 
     private String groupAdmin;
     private String groupName;
@@ -20,6 +23,40 @@ public class ResearchGroup {
     // we provide the default constructor so that we can also be able to set fields on a research group object if needed.
     public ResearchGroup() {}
 
+
+    protected ResearchGroup(Parcel in) {
+        groupAdmin = in.readString();
+        groupName = in.readString();
+        groupVisibility = in.readString();
+        //groupInviteCode = in.readString();
+        groupID = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(groupAdmin);
+        dest.writeString(groupName);
+        dest.writeString(groupVisibility);
+        //dest.writeString(groupInviteCode);
+        dest.writeString(groupID);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ResearchGroup> CREATOR = new Creator<ResearchGroup>() {
+        @Override
+        public ResearchGroup createFromParcel(Parcel in) {
+            return new ResearchGroup(in);
+        }
+
+        @Override
+        public ResearchGroup[] newArray(int size) {
+            return new ResearchGroup[size];
+        }
+    };
 
     public void setGroupAdmin(String groupAdmin) {
         this.groupAdmin = groupAdmin;

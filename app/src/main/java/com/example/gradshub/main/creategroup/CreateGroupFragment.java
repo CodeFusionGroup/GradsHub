@@ -1,4 +1,4 @@
-package com.example.gradshub.main.ui.creategroup;
+package com.example.gradshub.main.creategroup;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -17,7 +18,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.gradshub.R;
-import com.example.gradshub.main.ui.MainActivity;
+import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.network.AsyncHTTpPost;
 
@@ -30,6 +31,7 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
     private RadioButton publicRadioBtn, privateRadioBtn;
     private EditText groupNameET;
     private String groupName, groupVisibility, groupInviteCode=null;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -45,6 +47,7 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
+        progressBar = view.findViewById(R.id.progress_circular);
         groupNameET = view.findViewById(R.id.groupNameET);
         publicRadioBtn = view.findViewById(R.id.publicRB);
         privateRadioBtn = view.findViewById(R.id.privateRB);
@@ -76,6 +79,7 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
                         groupInviteCode = "1";
                     }
                     createResearchGroup(new ResearchGroup(groupAdmin, groupName, groupVisibility, groupInviteCode));
+                    progressBar.setVisibility(View.VISIBLE);
                 }
                 break;
         }
@@ -106,8 +110,9 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
 
 
     private void createResearchGroup(ResearchGroup researchGroup) {
+
         ContentValues params = new ContentValues();
-        params.put("USER_EMAIL", researchGroup.getGroupAdmin());
+        params.put("USER_EMAIL", researchGroup.getGroupAdmin());//change to GROUP_ID
         params.put("GROUP_NAME", researchGroup.getGroupName());
         params.put("GROUP_VISIBILITY", researchGroup.getGroupVisibility());
         params.put("GROUP_CODE", researchGroup.getGroupInviteCode());
@@ -121,27 +126,39 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
 
         };
         asyncHttpPost.execute();
+
     }
 
 
     private void serverCreateResearchGroupResponse(String output) {
+
         try {
-            JSONObject jo = new JSONObject(output);
-            String success = jo.getString("success");
-            String message =jo.getString("message");
 
-            switch (success) {
-                case "1": // Toast message: New group created.
-                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
-                    // switch to my groups fragment to see the updated list of your groups.
-                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-                    navController.navigate(R.id.action_createGroupFragment_to_myGroupsFragment);
-                    break;
+            if(output.equals("")) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+            }
+            else {
 
-                case "0": // Toast message: didn't send the required values (not necessarily communicated back to user for this case)
-                case "-1": // Toast message: group name taken, please choose another one.
-                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
-                    break;
+                JSONObject jo = new JSONObject(output);
+                String success = jo.getString("success");
+                String message =jo.getString("message");
+
+                switch (success) {
+                    case "1": // Toast message: New group created.
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                        // switch to my groups fragment to see the updated list of your groups.
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+                        navController.navigate(R.id.action_createGroupFragment_to_myGroupsListFragment);
+                        break;
+
+                    case "0": // Toast message: didn't send the required values (not necessarily communicated back to user for this case)
+                    case "-1": // Toast message: group name taken, please choose another one.
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
 
         } catch (JSONException e) {

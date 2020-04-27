@@ -63,8 +63,18 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_myGroups">My Groups</string>
     <string name="menu_createGroup">Create Group</string>
+    <string name="menu_exploreGroup">Search Groups</string>
 
    <!-- button that appears in the recycler view in my groups page -->
     <string name="see_available_groups">see available groups</string>
+
+
+    <!-- these are attributes that belong to the dialog private group xml file -->
+    <string name="alert_dialog_title">Private Group</string>
+    <string name="alert_dialog_message">You need an invite code to join this group, please enter the code below and click CONFIRM to continue or CANCEL to withdraw.</string>
+    <string name="alert_dialog_hint">Enter invite code</string>
+
+    <!-- these are attributes belong to fragment_explore_groups_item xml file -->
+    <string name="join_button">JOIN GROUP</string>
 
 </resources>
