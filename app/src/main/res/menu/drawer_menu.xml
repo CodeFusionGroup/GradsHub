@@ -19,13 +19,18 @@
             android:title="@string/menu_profile" />
 
         <item
-            android:id="@+id/myGroupsFragment"
+            android:id="@+id/myGroupsListFragment"
             android:icon="@drawable/ic_menu_my_groups"
             android:title="@string/menu_myGroups" />
         <item
             android:id="@+id/createGroupFragment"
             android:icon="@drawable/ic_menu_create_group"
             android:title="@string/menu_createGroup" />
+
+        <item
+            android:id="@+id/availableGroupsListFragment"
+            android:icon="@drawable/ic_search"
+            android:title="@string/menu_exploreGroup" />
     </group>
 
 </menu>

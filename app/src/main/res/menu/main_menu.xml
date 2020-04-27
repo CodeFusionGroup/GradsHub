@@ -14,11 +14,21 @@
         order) where 100 is used as the starting value (can be any value), an item with 200 will come after an item with 100, etc.
      -->
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+    <group android:id="@+id/settings" >
+        <item
+            android:id="@+id/action_settings"
+            android:orderInCategory="100"
+            android:title="@string/action_settings"
+            app:showAsAction="never" />
+    </group>
+
+    <group android:id="@+id/logout" >
+        <item
+            android:id="@+id/action_logout"
+            android:orderInCategory="200"
+            android:title="logout"
+            app:showAsAction="never" />
+    </group>
 
     <!--
         for more items that you think should be on the overflow menu or as action buttons on the action bar add them here

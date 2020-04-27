@@ -19,7 +19,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.gradshub.R;
-import com.example.gradshub.main.ui.MainActivity;
+import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
 
@@ -71,6 +71,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         NavController navController;
         switch (v.getId()) {
+
             case R.id.loginBtn:
                 email = emailET.getText().toString().trim();
                 password = passwordET.getText().toString().trim();
@@ -81,12 +82,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.registerBtn:
-                navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
                 navController.navigate(R.id.action_loginFragment_to_registerFragment);
                 break;
 
             case R.id.forgotPasswordBtn:
-                navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+                navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
                 navController.navigate(R.id.action_loginFragment_to_resetPasswordFragment);
                 break;
         }
@@ -135,41 +136,49 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private void serverLoginResponse(String output) {
         try {
-            JSONObject jo = new JSONObject(output);
-            String success = jo.getString("success");
 
-            switch (success) {
-                // login successful
-                case "1":
-                    JSONObject jsonObject = jo.getJSONObject("message");
+            if(output.equals("")) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+            }
+            else {
 
-                    // get user details.
-                    String userId = jsonObject.getString("USER_ID");
-                    String firstName = jsonObject.getString("USER_FNAME");
-                    String lastName = jsonObject.getString("USER_LNAME");
-                    String email = jsonObject.getString("USER_EMAIL");
-                    String phoneNumber = jsonObject.getString("USER_PHONE_NO");
-                    String academicStatus = jsonObject.getString("USER_ACAD_STATUS");
+                JSONObject jo = new JSONObject(output);
+                String success = jo.getString("success");
 
-                    // initialise fields for the user.
-                    user.setFirstName(firstName);
-                    user.setLastName(lastName);
-                    user.setEmail(email);
-                    user.setPhoneNumber(phoneNumber);
-                    user.setAcademicStatus(academicStatus);
-                    user.setUserID(userId);
+                switch (success) {
+                    // login successful
+                    case "1":
+                        JSONObject jsonObject = jo.getJSONObject("message");
 
-                    progressBar.setVisibility(View.GONE);
-                    startMainActivity();
-                    Toast.makeText(requireActivity(), "Successfully logged in!", Toast.LENGTH_SHORT).show();
-                    break;
+                        // get user details.
+                        String userId = jsonObject.getString("USER_ID");
+                        String firstName = jsonObject.getString("USER_FNAME");
+                        String lastName = jsonObject.getString("USER_LNAME");
+                        String email = jsonObject.getString("USER_EMAIL");
+                        String phoneNumber = jsonObject.getString("USER_PHONE_NO");
+                        String academicStatus = jsonObject.getString("USER_ACAD_STATUS");
 
-                // login unsuccessful
-                case "0":
-                case "-1":
-                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                    break;
+                        // initialise fields for the user.
+                        user.setFirstName(firstName);
+                        user.setLastName(lastName);
+                        user.setEmail(email);
+                        user.setPhoneNumber(phoneNumber);
+                        user.setAcademicStatus(academicStatus);
+                        user.setUserID(userId);
+
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Successfully logged in.", Toast.LENGTH_SHORT).show();
+                        startMainActivity();
+                        break;
+
+                    // login unsuccessful
+                    case "0":
+                    case "-1":
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
 
         } catch (JSONException e) {
@@ -177,12 +186,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
     private void startMainActivity() {
         Intent intent = new Intent(requireContext(), MainActivity.class);
         intent.putExtra("USER", user);
         startActivity(intent);
-        // prevent user from navigating back to login screen once they have logged in.
-        requireActivity().finish();
     }
 
 }

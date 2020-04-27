@@ -1,21 +1,22 @@
-package com.example.gradshub.main.ui;
+package com.example.gradshub.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.gradshub.R;
 
-import com.example.gradshub.main.ui.mygroups.MyGroupsFragment;
+import com.example.gradshub.authentication.AuthenticationActivity;
+import com.example.gradshub.main.availablegroups.AvailableGroupsListFragment;
+import com.example.gradshub.main.mygroups.MyGroupsListFragment;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.core.view.MenuCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -25,7 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 
-public class MainActivity extends AppCompatActivity implements MyGroupsFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
+        AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener {
 
     public User user;
     private AppBarConfiguration mAppBarConfiguration;
@@ -43,29 +45,29 @@ public class MainActivity extends AppCompatActivity implements MyGroupsFragment.
         setSupportActionBar(toolbar);
 
         //===========================================================================================
-        // NOTE: will be moved later so that it appears only in specific destinations where its relevant.
         // a floating action button is a circular button that triggers the primary action in your app's UI.
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Temporary code
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Temporary code
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
         //==========================================================================================
 
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.homeFragment, R.id.profileFragment,R.id.myGroupsFragment, R.id.createGroupFragment).setDrawerLayout(drawer).build();
+                R.id.homeFragment, R.id.profileFragment,R.id.myGroupsListFragment, R.id.createGroupFragment,
+                R.id.availableGroupsListFragment).setDrawerLayout(drawer).build();
 
 
         // NavController is responsible for replacing the contents of the NavHost with the new destination.
         // (layout content_main contains the navigation host fragment for MainActivity)
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         // By calling this method, the title in the action bar will automatically be updated when the destination changes.
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         // updates the UI with the contents of the current destination.
@@ -85,23 +87,53 @@ public class MainActivity extends AppCompatActivity implements MyGroupsFragment.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuCompat.setGroupDividerEnabled(menu, true);
         return true;
     }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                Intent intent = new Intent(this, AuthenticationActivity.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.action_settings:
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     // this method is called whenever the user chooses to navigate up (back button) within your application's activity hierarchy from
     // the action bar
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
-    // added so that main activity can be notified of the selected item in the recycler view on My Groups fragment and potentially
-    // notify other fragments that also need this information.
+
     @Override
-    public void onListFragmentInteraction(ResearchGroup item) {
-        // does nothing for now, only displays a toast of the selected item.
-        Toast.makeText(this, "selected "+item.getGroupName(), Toast.LENGTH_SHORT).show();
+    public void onMyGroupsListFragmentInteraction(ResearchGroup item) {
+        // pass the selected group to the Group Profile page for the group the user belongs to.
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("group_item", item);
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_myGroupsFragment_to_myGroupProfileFragment, bundle);
+    }
+
+
+    @Override
+    public void onAvailableGroupsListFragmentInteraction(ResearchGroup item) {
+        // pass the selected group to the Group Profile page for the available group.
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("group_item", item);
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_availableGroupsListFragment_to_availableGroupProfileFragment, bundle);
     }
 
 }

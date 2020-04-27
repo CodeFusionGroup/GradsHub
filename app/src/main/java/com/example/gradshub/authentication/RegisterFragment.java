@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
     private EditText firstNameET, lastNameET, emailET, phoneNumberET, passwordET, confirmPasswordET;
     private String firstName, lastName, email, phoneNumber, academicStatus, password, confirmPassword;
     private Spinner spinner;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -50,6 +52,8 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
+        progressBar = view.findViewById(R.id.progress_circular);
         spinner = view.findViewById(R.id.spinner);
         initialiseSpinner(spinner);
 
@@ -76,6 +80,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 
                 if (isValidInput()) {
                     registerUser(new User(firstName, lastName, email, phoneNumber, academicStatus, password));
+                    progressBar.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -113,6 +118,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
             Toast.makeText(parent.getContext(), "selected " + text, Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
@@ -182,6 +188,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 
 
     private void registerUser(User user) {
+
         ContentValues params = new ContentValues();
         params.put("USER_FNAME", user.getFirstName());
         params.put("USER_LNAME", user.getLastName());
@@ -198,28 +205,42 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 
         };
         asyncHttpPost.execute();
+
     }
+
 
     private void serverRegisterUserResponse(String output) {
         try {
-            JSONObject jo = new JSONObject(output);
-            String success = jo.getString("success");
-            String message = jo.getString("message");
 
-            if(success.equals("1")) {
-                Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show();// Toast msg: Registration successful!
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-                navController.navigate(R.id.action_registerFragment_to_loginFragment);
+            if(output.equals("")) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
             }
+            else {
 
-            else if(success.equals("-1")) {
-                // Toast msg: Email already exists!, Please use another email.
-                Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show();
+                JSONObject jo = new JSONObject(output);
+                String success = jo.getString("success");
+                String message = jo.getString("message");
+
+                if(success.equals("1")) {
+                    progressBar.setVisibility(View.GONE);
+                    // Toast msg: Registration successful!
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show();
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
+                    navController.navigate(R.id.action_registerFragment_to_loginFragment);
+                }
+
+                else if(success.equals("-1")) {
+                    progressBar.setVisibility(View.GONE);
+                    // Toast msg: Email already exists!, Please use another email.
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show();
+                }
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
     }
 
 }

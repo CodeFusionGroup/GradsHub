@@ -1,4 +1,4 @@
-package com.example.gradshub.main.ui.mygroups;
+package com.example.gradshub.main.mygroups;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +11,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.example.gradshub.R;
-import com.example.gradshub.main.ui.mygroups.MyGroupsFragment.OnListFragmentInteractionListener;
+import com.example.gradshub.main.mygroups.MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener;
 import com.example.gradshub.model.ResearchGroup;
 
 import java.util.ArrayList;
@@ -20,16 +20,16 @@ import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ResearchGroup} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnMyGroupsListFragmentInteractionListener}.
  */
-public class MyGroupsRecyclerViewAdapter extends RecyclerView.Adapter<MyGroupsRecyclerViewAdapter.ViewHolder> implements Filterable {
+public class MyGroupsListRecyclerViewAdapter extends RecyclerView.Adapter<MyGroupsListRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     private List<ResearchGroup> mValuesFull;
     private final List<ResearchGroup> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnMyGroupsListFragmentInteractionListener mListener;
 
 
-    public MyGroupsRecyclerViewAdapter(List<ResearchGroup> items, OnListFragmentInteractionListener listener) {
+    public MyGroupsListRecyclerViewAdapter(List<ResearchGroup> items, OnMyGroupsListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
         mValuesFull = new ArrayList<>(mValues);
@@ -39,7 +39,7 @@ public class MyGroupsRecyclerViewAdapter extends RecyclerView.Adapter<MyGroupsRe
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_my_groups_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -57,7 +57,7 @@ public class MyGroupsRecyclerViewAdapter extends RecyclerView.Adapter<MyGroupsRe
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onMyGroupsListFragmentInteraction(holder.mItem);
                 }
             }
         });
