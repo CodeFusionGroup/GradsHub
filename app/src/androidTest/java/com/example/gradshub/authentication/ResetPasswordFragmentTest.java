@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class ResetPasswordFragmentTest {
 
-    @Rule
+   /* @Rule
     public FragmentTestRule<?,ResetPasswordFragment> fragmentTestRule = FragmentTestRule.create(ResetPasswordFragment.class);
 
     @Test
@@ -27,7 +27,7 @@ public class ResetPasswordFragmentTest {
         onView(withId(R.id.confirmNewPasswordTV)).check(matches(isDisplayed()));
         onView(withId(R.id.confirmNewPasswordET)).check(matches(isDisplayed()));
         onView(withId(R.id.resetPasswordBtn)).check(matches(isDisplayed()));
-    }
+    }*/
 
     /*@Test
     public void ResetPasswordTest()
