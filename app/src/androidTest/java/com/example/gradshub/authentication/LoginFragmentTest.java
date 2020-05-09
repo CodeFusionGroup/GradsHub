@@ -60,7 +60,7 @@ public class LoginFragmentTest {
         onView(withId(R.id.passwordET)).perform(typeText("1234mmmm"));
         closeSoftKeyboard();
         onView(withId(R.id.loginBtn)).perform(click());
-        //onView(withId(R.id.homeFragmentView)).check(matches(isDisplayed()));
+        onView(withId(R.id.homeFragmentView)).check(matches(isDisplayed()));
     }
 
     //@Rule
