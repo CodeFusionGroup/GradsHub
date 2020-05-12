@@ -6,16 +6,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
-
 import com.example.gradshub.R;
-
 import com.example.gradshub.authentication.AuthenticationActivity;
 import com.example.gradshub.main.availablegroups.AvailableGroupsListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsListFragment;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.google.android.material.navigation.NavigationView;
-
 import androidx.core.view.MenuCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -31,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     public User user;
     private AppBarConfiguration mAppBarConfiguration;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         MenuCompat.setGroupDividerEnabled(menu, true);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
