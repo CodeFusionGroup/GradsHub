@@ -7,4 +7,6 @@
         android:icon="@drawable/ic_filter_feeds"
         android:title="filter_feeds"
         app:showAsAction="always"/>
+
+
 </menu>
