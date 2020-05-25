@@ -1,5 +1,7 @@
 package com.example.gradshub.authentication;
 
+import androidx.core.widget.TextViewCompat;
+
 import com.android21buttons.fragmenttestrule.FragmentTestRule;
 import com.example.gradshub.R;
 
@@ -16,8 +18,14 @@ import static org.junit.Assert.*;
 
 public class ResetPasswordFragmentTest {
 
-   /* @Rule
+    @Rule
     public FragmentTestRule<?,ResetPasswordFragment> fragmentTestRule = FragmentTestRule.create(ResetPasswordFragment.class);
+
+    @Test
+    public void PasswordReset()
+    {
+        onView(withId(R.id.PassWordReset)).check(matches(isDisplayed()));
+    }
 
     @Test
     public void ResetPasswordLaunched()
@@ -27,14 +35,14 @@ public class ResetPasswordFragmentTest {
         onView(withId(R.id.confirmNewPasswordTV)).check(matches(isDisplayed()));
         onView(withId(R.id.confirmNewPasswordET)).check(matches(isDisplayed()));
         onView(withId(R.id.resetPasswordBtn)).check(matches(isDisplayed()));
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void ResetPasswordTest()
     {
         onView(withId(R.id.newPasswordET)).perform(typeText("3333nnnn"));
         onView(withId(R.id.confirmNewPasswordET)).perform(typeText("3333nnnn"));
         onView(withId(R.id.resetPasswordBtn)).perform(click());
-    }*/
+    }
 
 }

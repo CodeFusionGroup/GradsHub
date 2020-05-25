@@ -92,6 +92,7 @@ dependencies {
 
     androidTestImplementation 'com.21buttons:fragment-test-rule:2.0.1'
     debugImplementation 'com.21buttons:fragment-test-rule-extras:2.0.1'
+    implementation 'androidx.navigation:navigation-runtime:2.2.2'
 
     //def fragment_version = "1.2.4"
     //debugImplementation "androidx.fragment:fragment-testing:$fragment_version"

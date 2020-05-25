@@ -46,6 +46,10 @@ public class AvailableGroupProfileFragment extends Fragment {
         }
     }
 
+    /*@Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        //super.onSaveInstanceState(outState);
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

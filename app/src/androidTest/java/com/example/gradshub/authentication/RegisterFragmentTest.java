@@ -23,6 +23,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withSpinnerText;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
@@ -33,6 +35,13 @@ public class RegisterFragmentTest {
     @Rule
     public FragmentTestRule<?, RegisterFragment> fragmentTestRule =
             FragmentTestRule.create(RegisterFragment.class);
+
+    @Test
+    public void RegisterLaunched()
+    {
+        getInstrumentation().waitForIdleSync();
+        onView(withId(R.id.registerLaunched)).check(matches(isDisplayed()));
+    }
 
     @Test
     public void RegistrationFragmentLaunched()
