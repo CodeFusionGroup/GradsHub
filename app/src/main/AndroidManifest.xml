@@ -28,8 +28,8 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".authentication.TestingActivity"></activity>
 
-        <activity android:name=".main.TestActivity"></activity>
 
     </application>
 

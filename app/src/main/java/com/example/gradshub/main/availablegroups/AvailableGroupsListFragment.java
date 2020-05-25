@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -91,6 +92,7 @@ public class AvailableGroupsListFragment extends Fragment {
             @Override
             protected void onPostExecute(String output) {
                 serverGetGroupsToExploreResponse(output);
+                //FragmentTransaction.commitAllowingStateLoss();
             }
 
         };
