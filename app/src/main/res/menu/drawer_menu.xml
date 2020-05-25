@@ -9,7 +9,7 @@
      -->
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/homeFragment"
+            android:id="@+id/feedListFragment"
             android:icon="@drawable/ic_menu_home"
             android:title="@string/menu_home" />
 
