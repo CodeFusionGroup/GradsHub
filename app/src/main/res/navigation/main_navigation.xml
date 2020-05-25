@@ -3,19 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@+id/homeFragment">
+    app:startDestination="@+id/feedListFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.gradshub.main.home.HomeFragment"
+        android:id="@+id/feedListFragment"
+        android:name="com.example.gradshub.main.home.FeedListFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_feed_item_list" />
+
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.gradshub.main.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile"/>
+
 
     <fragment
         android:id="@+id/myGroupsListFragment"
@@ -27,11 +29,17 @@
             app:destination="@id/myGroupProfileFragment" />
     </fragment>
 
+
     <fragment
         android:id="@+id/myGroupProfileFragment"
         android:name="com.example.gradshub.main.mygroups.MyGroupsProfileFragment"
         android:label="Group Profile"
-        tools:layout="@layout/fragment_my_groups_information" />
+        tools:layout="@layout/fragment_my_groups_information" >
+        <action
+            android:id="@+id/action_myGroupProfileFragment_to_createPostFragment"
+            app:destination="@id/createPostFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/createGroupFragment"
@@ -51,6 +59,7 @@
         app:popUpToInclusive="true" />
     </fragment>
 
+
     <fragment
         android:id="@+id/availableGroupsListFragment"
         android:name="com.example.gradshub.main.availablegroups.AvailableGroupsListFragment"
@@ -60,6 +69,7 @@
             android:id="@+id/action_availableGroupsListFragment_to_availableGroupProfileFragment"
             app:destination="@id/availableGroupProfileFragment" />
     </fragment>
+
 
     <fragment
         android:id="@+id/availableGroupProfileFragment"
@@ -77,6 +87,17 @@
 
             app:popUpTo="@id/availableGroupProfileFragment"
             app:popUpToInclusive="true"/>
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/createPostFragment"
+        android:name="com.example.gradshub.main.createpost.CreatePostFragment"
+        android:label="Create Post"
+        tools:layout="@layout/fragment_create_post" >
+        <action
+            android:id="@+id/action_createPostFragment_to_myGroupProfileFragment"
+            app:destination="@id/myGroupProfileFragment" />
     </fragment>
 
 </navigation>

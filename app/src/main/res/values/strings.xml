@@ -65,7 +65,7 @@
     <string name="menu_createGroup">Create Group</string>
     <string name="menu_exploreGroup">Search Groups</string>
 
-   <!-- button that appears in the recycler view in my groups page -->
+    <!-- button that appears in the recycler view in my groups page -->
     <string name="see_available_groups">see available groups</string>
 
 
@@ -76,5 +76,11 @@
 
     <!-- these are attributes belong to fragment_explore_groups_item xml file -->
     <string name="join_button">JOIN GROUP</string>
+
+    <!-- these are attributes belong to fragment_create_post xml file -->
+    <string name="post_title">Post Title</string>
+    <string name="subject">Subject</string>
+    <string name="description">Description</string>
+    <string name="post_hint">add link or attach a pdf file</string>
 
 </resources>

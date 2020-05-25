@@ -112,7 +112,7 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
     private void createResearchGroup(ResearchGroup researchGroup) {
 
         ContentValues params = new ContentValues();
-        params.put("USER_EMAIL", researchGroup.getGroupAdmin());//change to GROUP_ID
+        params.put("USER_EMAIL", researchGroup.getGroupAdmin());
         params.put("GROUP_NAME", researchGroup.getGroupName());
         params.put("GROUP_VISIBILITY", researchGroup.getGroupVisibility());
         params.put("GROUP_CODE", researchGroup.getGroupInviteCode());

@@ -10,6 +10,8 @@ import com.example.gradshub.R;
 import com.example.gradshub.authentication.AuthenticationActivity;
 import com.example.gradshub.main.availablegroups.AvailableGroupsListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsListFragment;
+import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
+import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.google.android.material.navigation.NavigationView;
@@ -24,10 +26,12 @@ import androidx.appcompat.widget.Toolbar;
 
 
 public class MainActivity extends AppCompatActivity implements MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
-        AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener {
+        AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
+        MyGroupsProfileFragment.OnPostsListFragmentInteractionListener {
 
     public User user;
     private AppBarConfiguration mAppBarConfiguration;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +44,11 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //===========================================================================================
-        // a floating action button is a circular button that triggers the primary action in your app's UI.
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // Temporary code
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-        //==========================================================================================
-
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.homeFragment, R.id.profileFragment,R.id.myGroupsListFragment, R.id.createGroupFragment,
+                R.id.feedListFragment, R.id.profileFragment,R.id.myGroupsListFragment, R.id.createGroupFragment,
                 R.id.availableGroupsListFragment).setDrawerLayout(drawer).build();
 
 
@@ -78,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     }
 
+
     // the options menu is the primary collection of menu items for an activity.
     // initialise the contents of the Activity's standard menu.
     @Override
@@ -87,16 +79,19 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
+
                 Intent intent = new Intent(this, AuthenticationActivity.class);
                 startActivity(intent);
+                finish(); // finish MainActivity
                 return true;
 
             case R.id.action_settings:
-
+                // nothing implemented yet
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -130,5 +125,12 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_availableGroupsListFragment_to_availableGroupProfileFragment, bundle);
     }
+
+
+    @Override
+    public void onPostsListFragmentInteraction(Post item) {
+        // nothing implemented yet
+    }
+
 
 }
