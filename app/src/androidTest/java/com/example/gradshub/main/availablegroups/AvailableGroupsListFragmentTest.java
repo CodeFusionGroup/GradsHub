@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 
 public class AvailableGroupsListFragmentTest {
 
-    @Rule
+    /*@Rule
     public FragmentTestRule<?,AvailableGroupsListFragment> fragmentTestRule = FragmentTestRule.create(AvailableGroupsListFragment.class);
 
     @Test
@@ -22,6 +22,6 @@ public class AvailableGroupsListFragmentTest {
     {
         //onView(withId(R.id.listAvailable)).check(matches(isDisplayed()));
         onView(withId(R.id.card_view)).check(matches(isDisplayed()));
-    }
+    }*/
 
 }
