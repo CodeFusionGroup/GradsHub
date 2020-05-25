@@ -27,6 +27,8 @@
         </activity>
         <activity android:name=".authentication.TestingActivity"></activity>
 
+        <activity android:name=".main.availablegroups.AvailableTestingActivity"></activity>
+
 
     </application>
 
