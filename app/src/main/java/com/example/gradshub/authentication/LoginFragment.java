@@ -186,6 +186,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+
 
     private void startMainActivity() {
         Intent intent = new Intent(requireContext(), MainActivity.class);
