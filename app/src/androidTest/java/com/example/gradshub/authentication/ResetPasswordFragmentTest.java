@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 
 public class ResetPasswordFragmentTest {
 
-    @Rule
+    /*@Rule
     public FragmentTestRule<?,ResetPasswordFragment> fragmentFragmentTestRule = FragmentTestRule.create(ResetPasswordFragment.class);
 
     @Test
@@ -42,7 +42,7 @@ public class ResetPasswordFragmentTest {
         onView(withId(R.id.confirmNewPasswordTV)).check(matches(isDisplayed()));
         onView(withId(R.id.confirmNewPasswordET)).check(matches(isDisplayed()));
         onView(withId(R.id.resetPasswordBtn)).check(matches(isDisplayed()));
-    }
+    }*/
 
    /* @Test
     public void UnitTesting()
@@ -53,7 +53,7 @@ public class ResetPasswordFragmentTest {
         onView(withId(R.id.confirmNewPasswordET)).perform(typeText("12345mmmmm"));
         onView(withId(R.id.resetPasswordBtn)).perform(click());
     }*/
-   /* @Rule
+    @Rule
     public ActivityTestRule<TestingActivity> activityTestRule = new ActivityTestRule<TestingActivity>(TestingActivity.class);
 
     private TestingActivity mActivity = null;
@@ -80,5 +80,5 @@ public class ResetPasswordFragmentTest {
         mActivity = null;
 
         mActivity = null;
-    }*/
+    }
 }

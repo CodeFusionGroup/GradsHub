@@ -29,6 +29,8 @@
 
         <activity android:name=".main.availablegroups.AvailableTestingActivity"></activity>
 
+        <activity android:name=".authentication.FragmentRegisterActivity"></activity>
+
 
     </application>
 
