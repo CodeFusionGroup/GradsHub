@@ -43,7 +43,10 @@ android:
 before_install:
   - chmod +x gradlew
   - yes | sdkmanager "build-tools;28.0.3"
+  - yes | sdkmanager "build-tools;29.0.0"
   - yes | sdkmanager "platforms;android-28"
+  - yes | sdkmanager "platforms;android-29"
+
 
 before_script:
   #- echo no | android create avd --force -n test -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG
