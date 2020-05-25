@@ -19,9 +19,9 @@ import static org.junit.Assert.*;
 public class RegisterFragmentTest {
 
     @Rule
-    public ActivityTestRule<TestingActivity> mActivityTestRule = new ActivityTestRule<TestingActivity>(TestingActivity.class);
+    public ActivityTestRule<FragmentRegisterActivity> mActivityTestRule = new ActivityTestRule<FragmentRegisterActivity>(FragmentRegisterActivity.class);
 
-    private TestingActivity mActivity = null;
+    private FragmentRegisterActivity mActivity = null;
 
     @Before
     public void setUp() throws Exception {
@@ -31,7 +31,7 @@ public class RegisterFragmentTest {
     @Test
     public void TestingLaunched()
     {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.containing_tests);
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_test);
         assertNotNull(rlContainer);
         RegisterFragment Fragment = new RegisterFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
@@ -43,7 +43,7 @@ public class RegisterFragmentTest {
     @Test
     public void TestLaunched()
     {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.containing_tests);
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_test);
         assertNotNull(rlContainer);
         RegisterFragment Fragment = new RegisterFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
