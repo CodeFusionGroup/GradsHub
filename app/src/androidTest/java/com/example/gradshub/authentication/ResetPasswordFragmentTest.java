@@ -44,7 +44,7 @@ public class ResetPasswordFragmentTest {
         onView(withId(R.id.resetPasswordBtn)).check(matches(isDisplayed()));
     }
 
-    /*@Test
+    @Test
     public void UnitTesting()
     {
         //onView(withId(R.id.resetPasswordTV)).perform(TypeTextAction(""));
@@ -52,7 +52,7 @@ public class ResetPasswordFragmentTest {
         //onView(withId(R.id.confirmNewPasswordTV)).check(matches(isDisplayed()));
         onView(withId(R.id.confirmNewPasswordET)).perform(typeText("12345mmmmm"));
         onView(withId(R.id.resetPasswordBtn)).perform(click());
-    }*/
+    }
    /* @Rule
     public ActivityTestRule<TestingActivity> activityTestRule = new ActivityTestRule<TestingActivity>(TestingActivity.class);
 
