@@ -9,10 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -21,8 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.gradshub.R;
+import com.example.gradshub.main.postcomments.Comment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
+import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -30,29 +36,49 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MyGroupsProfileFragment extends Fragment {
 
-    private static ResearchGroup researchGroup;
 
+    private static ResearchGroup researchGroup;
+    private static User user;
+
+    private static ArrayList<String> userAlreadyLikedPosts = new ArrayList<>(); // values are post IDs
+    private static ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>(); // values are post IDs
     private static List<Post> items = new ArrayList<>();
+
+    // listener that keeps track of which post is liked in the particular group
+    private GroupPostsListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener;
+    // listener that keeps track of which post the user wishes to comment on
+    private GroupPostsListRecyclerViewAdapter.OnPostItemCommentListener onPostItemCommentListener;
+    // listener that keeps track of which post has the user clicked on
+    private MyGroupsProfileFragment.OnPostsListFragmentInteractionListener mListener;
+
     private View view;
     private RecyclerView recyclerView;
-    private PostsListRecyclerViewAdapter adapter;
-    private MyGroupsProfileFragment.OnPostsListFragmentInteractionListener mListener;
+    private GroupPostsListRecyclerViewAdapter adapter;
+
     private ProgressBar progressBar;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
         Bundle bundle = this.getArguments();
         if(bundle != null) {
             researchGroup = bundle.getParcelable("group_item");
+            user = bundle.getParcelable("user");
         }
+
     }
 
 
@@ -64,7 +90,7 @@ public class MyGroupsProfileFragment extends Fragment {
             Context context = view.getContext();
             recyclerView = view.findViewById(R.id.postsList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new PostsListRecyclerViewAdapter(items, mListener);
+            adapter = new GroupPostsListRecyclerViewAdapter(items, mListener, onPostItemLikedListener, onPostItemCommentListener);
             recyclerView.setAdapter(adapter);
         }
 
@@ -77,26 +103,42 @@ public class MyGroupsProfileFragment extends Fragment {
 
         progressBar = view.findViewById(R.id.progress_circular);
         TextView groupNameTV = view.findViewById(R.id.groupNameTV);
-
         groupNameTV.setText(researchGroup.getGroupName());
 
-        getGroupPosts(researchGroup);
-        //progressBar.setVisibility(View.VISIBLE);
+        if ( userCurrentlyLikedPosts.size() > 0 ) {
+            insertGroupLikedPosts();
+            userCurrentlyLikedPosts.clear();
+        }
 
+        getUserLikedPosts();
+
+        getGroupPosts();
+        progressBar.setVisibility(View.VISIBLE);
+
+        onPostItemLikedListener = item -> {
+            userCurrentlyLikedPosts.add(item.getPostID());
+        };
+
+        onPostItemCommentListener = item -> {
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("post_item", item);
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+            navController.navigate(R.id.action_myGroupProfileFragment_to_groupPostCommentsFragment, bundle);
+
+        };
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
-                navController.navigate(R.id.action_myGroupProfileFragment_to_createPostFragment);
-            }
+        fab.setOnClickListener(view1 -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+            navController.navigate(R.id.action_myGroupProfileFragment_to_createPostFragment);
         });
 
     }
 
 
-    private void getGroupPosts(ResearchGroup researchGroup) {
+    private void getGroupPosts() {
+
         ContentValues params = new ContentValues();
         params.put("GROUP_ID", researchGroup.getGroupID());
 
@@ -109,6 +151,7 @@ public class MyGroupsProfileFragment extends Fragment {
 
         };
         asyncHttpPost.execute();
+
     }
 
 
@@ -119,64 +162,65 @@ public class MyGroupsProfileFragment extends Fragment {
             JSONObject jo = new JSONObject(output);
             String success = jo.getString("success");
 
-            if(output.equals("")) {
+            if (output.equals("")) {
                 if (view instanceof RelativeLayout) {
                     progressBar.setVisibility(View.GONE);
                 }
                 Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
             }
 
-            else if(success.equals("0")) {
-                //progressBar.setVisibility(View.GONE);
-                String message = jo.getString("message");
-                Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
-            }
+            else {
 
-            else if(success.equals("1")) {
-                //progressBar.setVisibility(View.GONE);
-                //switch (success) {
+                items.clear();
 
-                    //case "1":
+                if (success.equals("0")) {
+                    if (view instanceof RelativeLayout) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    // Toast msg: this group has no posts yet.
+                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+                }
 
-                        items.clear();// clear the items so that we don't have duplicate entries in our recycle view
-                        JSONArray ja = jo.getJSONArray("message");
+                else {
 
-                        for(int i = 0 ; i < ja.length(); i++) {
-                            JSONObject j = (JSONObject)ja.get(i);
-                            String postSubject = j.getString("POST_TITLE");
-                            String postDate = j.getString("POST_DATE");
-                            String postDescription = j.getString("POST_URL");
-                            String firstName = j.getString("USER_FNAME");
-                            String lastName = j.getString("USER_LNAME");
-                            String postCreator = firstName + " "+ lastName;
-                            //int postLikesCount = Integer.parseInt(j.getString("POST_LIKES_NO"));
-                            //int postCommentsCount = Integer.parseInt(j.getString("POST_COMMENTS_NO"));
+                    JSONArray ja = jo.getJSONArray("message");
 
-                            Post post = new Post();
-                            //post.setPostID(postID);
-                            post.setPostDate(postDate);
-                            post.setPostCreator(postCreator);
-                            post.setPostSubject(postSubject);
-                            post.setPostDescription(postDescription);
-                            post.setPostLikesCount("0");
-                            post.setPostCommentsCount("0");
+                    for(int i = 0 ; i < ja.length(); i++) {
+                        JSONObject jasonObject = (JSONObject)ja.get(i);
 
-                            items.add(post);
+                        String firstName = jasonObject.getString("USER_FNAME");
+                        String lastName = jasonObject.getString("USER_LNAME");
+                        String postCreator = firstName + " "+ lastName;
+                        String postSubject = jasonObject.getString("POST_TITLE");
+                        String postDate = jasonObject.getString("POST_DATE");
+                        String postDescription = jasonObject.getString("POST_ATTACHMENT_URL");
+                        String postID = jasonObject.getString("GROUP_POST_ID");
+                        int noLikes = Integer.parseInt(jasonObject.getString("NO_OF_LIKES"));
+                        int noComments = Integer.parseInt(jasonObject.getString("NO_OF_COMMENTS"));
 
-                        }
+                        Post post = new Post();
+                        post.setPostID(postID);
+                        post.setPostDate(postDate);
+                        post.setPostCreator(postCreator);
+                        post.setPostSubject(postSubject);
+                        post.setPostDescription(postDescription);
+                        post.setPostLikesCount(noLikes);
+                        post.setPostCommentsCount(noComments);
 
-                        if (view instanceof RelativeLayout) {
-                            progressBar.setVisibility(View.GONE);
-                            Context context = view.getContext();
-                            recyclerView = view.findViewById(R.id.postsList);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                            adapter = new PostsListRecyclerViewAdapter(items, mListener);
-                            recyclerView.setAdapter(adapter);
-                        }
+                        items.add(post);
 
-                        //break;
+                    }
 
-               // }
+                    if (view instanceof RelativeLayout) {
+                        progressBar.setVisibility(View.GONE);
+                        Context context = view.getContext();
+                        recyclerView = view.findViewById(R.id.postsList);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        adapter = new GroupPostsListRecyclerViewAdapter(items, mListener, onPostItemLikedListener, onPostItemCommentListener);
+                        recyclerView.setAdapter(adapter);
+                    }
+
+                }
 
             }
 
@@ -185,6 +229,165 @@ public class MyGroupsProfileFragment extends Fragment {
         }
     }
 
+
+    private void getUserLikedPosts() {
+
+        ContentValues params = new ContentValues();
+        params.put("GROUP_ID", researchGroup.getGroupID());
+        params.put("USER_ID", user.getUserID());
+
+        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievelikesGP.php", params) {
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            protected void onPostExecute(String output) {
+                serverGetUserLikedPostsResponse(output);
+            }
+
+        };
+        asyncHttpPost.execute();
+
+    }
+
+
+    private void serverGetUserLikedPostsResponse(String output) {
+
+        try {
+
+            JSONObject jo = new JSONObject(output);
+            String success = jo.getString("success");
+            userAlreadyLikedPosts.clear();
+
+            if (output.equals("")) {
+                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+            }
+
+            // user has previously liked posts in this group
+            else if (success.equals("1")) {
+
+                JSONArray ja = jo.getJSONArray("message");
+
+                for(int i = 0 ; i < ja.length(); i++) {
+                    JSONObject jasonObject = (JSONObject)ja.get(i);
+                    userAlreadyLikedPosts.add(jasonObject.getString("GROUP_POST_ID"));
+                }
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void insertGroupLikedPosts() {
+
+        StringBuilder likedPostsIDs = new StringBuilder();
+
+        for(int i = 0; i < userCurrentlyLikedPosts.size(); i++) {
+
+            likedPostsIDs.append(userCurrentlyLikedPosts.get(i));
+
+            if (i != userCurrentlyLikedPosts.size()-1) {
+                likedPostsIDs.append(",");
+            }
+        }
+
+        ContentValues params = new ContentValues();
+        params.put("USER_ID", user.getUserID());
+        params.put("GROUP_ID", researchGroup.getGroupID());
+        params.put("POST_ID", likedPostsIDs.toString());
+
+        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/insertlikesGP.php", params) {
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            protected void onPostExecute(String output) {
+                serverInsertGroupLikedPostsResponse(output);
+            }
+
+        };
+        asyncHttpPost.execute();
+
+    }
+
+
+    private void serverInsertGroupLikedPostsResponse(String output) {
+
+        if (output.equals("")) {
+            Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+        }
+
+        // below code is commented out cause not sure if we should indicate to the user that they have successfully liked the
+        // post since they can visually see the change in number of likes when they like a post.
+
+//        try {
+//
+//            JSONObject jo = new JSONObject(output);
+//            String success = jo.getString("success");
+//
+//            if (success.equals("1")) {
+//                Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+//            }
+
+//            else if (success.equals("0") {
+//              Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+//            }
+//
+//        }
+//
+//        catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+    }
+
+
+    public static ResearchGroup getGroup() {
+        return researchGroup;
+    }
+
+
+    public static User getUser() { return user; }
+
+
+    public static ArrayList<String> getCurrentlyLikedPosts() {
+
+        if (userCurrentlyLikedPosts.size() == 0) {
+            return null;
+        }
+
+        return userCurrentlyLikedPosts;
+    }
+
+
+    public static ArrayList<String> getPreviouslyLikedPosts() {
+
+        if (userAlreadyLikedPosts.size() == 0) {
+            return null;
+        }
+
+        return userAlreadyLikedPosts;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.my_group_info_menu, menu);
+        super.onCreateOptionsMenu(menu, menuInflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                // TODO: share invite code if you're the person who created the group
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
     @Override
@@ -205,6 +408,7 @@ public class MyGroupsProfileFragment extends Fragment {
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -215,10 +419,5 @@ public class MyGroupsProfileFragment extends Fragment {
         void onPostsListFragmentInteraction(Post item);
     }
 
-
-
-    public static ResearchGroup getGroup() {
-        return researchGroup;
-    }
 
 }

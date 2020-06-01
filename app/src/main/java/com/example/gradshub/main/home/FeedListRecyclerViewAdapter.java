@@ -52,7 +52,6 @@ import java.util.List;
 //        holder.mPostNoOfLikesView.setText(mValues.get(position).getPostLikesCount());
 //        holder.mPostNoOfCommentsView.setText(mValues.get(position).getPostCommentsCount());
 //
-//        // TODO: set onClick listeners for likes and comment buttons. for comment button must pop up a new screen to type comment
 //
 //        holder.mView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -95,45 +94,5 @@ import java.util.List;
 //        }
 //
 //    }
-//
-//
-////    @Override
-////    public Filter getFilter() {
-////        return new Filter() {
-////            @Override
-////            protected FilterResults performFiltering(CharSequence constraint) {
-////                List<ResearchGroup> filteredResults;
-////
-////                if(constraint == null || constraint.length() == 0) {
-////                    filteredResults = new ArrayList<>(mValuesFull);
-////                }
-////                else {
-////                    filteredResults = getFilteredResults(constraint.toString().toLowerCase().trim());
-////                }
-////
-////                FilterResults results = new FilterResults();
-////                results.values = filteredResults;
-////                return results;
-////            }
-////
-////            @Override
-////            protected void publishResults(CharSequence constraint, FilterResults results) {
-////                mValues.clear();
-////                mValues.addAll((List)results.values);
-////                notifyDataSetChanged();
-////            }
-////        };
-////    }
-////
-////
-////    private List<ResearchGroup> getFilteredResults(String constraint) {
-////        List<ResearchGroup> results = new ArrayList<>();
-////        for (ResearchGroup item: mValuesFull) {
-////            if(item.getGroupName().toLowerCase().contains(constraint) || item.getGroupVisibility().toLowerCase().contains(constraint)){
-////                results.add(item);
-////            }
-////        }
-////        return results;
-////    }
 //
 //}

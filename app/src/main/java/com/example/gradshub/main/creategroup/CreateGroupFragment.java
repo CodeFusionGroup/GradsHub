@@ -76,7 +76,7 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
                 groupName = groupNameET.getText().toString().trim();
                 if (isValidInput()) {
                     if(privateRadioBtn.isChecked()) {
-                        groupInviteCode = "1";
+                        groupInviteCode = GenerateInviteCode.generateString();
                     }
                     createResearchGroup(new ResearchGroup(groupAdmin, groupName, groupVisibility, groupInviteCode));
                     progressBar.setVisibility(View.VISIBLE);
