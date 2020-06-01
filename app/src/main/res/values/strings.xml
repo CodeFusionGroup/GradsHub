@@ -78,9 +78,9 @@
     <string name="join_button">JOIN GROUP</string>
 
     <!-- these are attributes belong to fragment_create_post xml file -->
-    <string name="post_title">Post Title</string>
+    <string name="post_title">Title</string>
     <string name="subject">Subject</string>
     <string name="description">Description</string>
-    <string name="post_hint">add link or attach a pdf file</string>
+    <string name="post_hint">add link and/or attach a pdf file</string>
 
 </resources>
