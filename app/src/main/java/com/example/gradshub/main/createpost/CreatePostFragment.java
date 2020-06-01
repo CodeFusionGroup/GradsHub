@@ -1,7 +1,6 @@
 package com.example.gradshub.main.createpost;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +36,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -54,7 +51,7 @@ public class CreatePostFragment extends Fragment {
     private ProgressBar progressBar;
 
     private TextView fileAttachmentTV;
-    private static final int PICKFILE_RESULT_CODE = 1;
+    private static final int PICK_FILE_RESULT_CODE = 1;
 
 
     @Override
@@ -73,33 +70,30 @@ public class CreatePostFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
 
-        fileAttachmentTV = view.findViewById(R.id.fileAttachmentTV);
         progressBar = view.findViewById(R.id.progress_circular);
+        fileAttachmentTV = view.findViewById(R.id.fileAttachmentTV);
         postSubjectET = view.findViewById(R.id.postSubjectET);
         postDescriptionET = view.findViewById(R.id.postDescriptionET);
 
         Button postBtn = view.findViewById(R.id.postBtn);
-        postBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        postBtn.setOnClickListener(v -> {
 
-                postSubject = postSubjectET.getText().toString().trim();
-                postDescription = postDescriptionET.getText().toString().trim();
+            postSubject = postSubjectET.getText().toString().trim();
+            postDescription = postDescriptionET.getText().toString().trim();
 
-                if (isValidInput()) {
+            if (isValidInput()) {
 
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    Date date = new Date();
-                    String postDate = df.format(date);
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = new Date();
+                String postDate = df.format(date);
 
-                    MainActivity mainActivity = (MainActivity) requireActivity();
-                    ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
+                MainActivity mainActivity = (MainActivity) requireActivity();
+                ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
 
-                    createGroupPost( new Post( postDate, postSubject, postDescription), mainActivity.user, researchGroup );
-                    progressBar.setVisibility(View.VISIBLE);
-                }
-
+                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
+                progressBar.setVisibility(View.VISIBLE);
             }
+
         });
 
     }
@@ -109,6 +103,13 @@ public class CreatePostFragment extends Fragment {
 
         if (postSubject.isEmpty()) {
             postSubjectET.setError("Not a valid post subject!");
+            postSubjectET.requestFocus();
+            return false;
+        }
+
+        int maxCharLength = 30;
+        if (postSubject.length() > maxCharLength) {
+            postSubjectET.setError("Exceeded the maximum number of characters allowed!");
             postSubjectET.requestFocus();
             return false;
         }
@@ -160,17 +161,14 @@ public class CreatePostFragment extends Fragment {
                 String success = jo.getString("success");
                 String message =jo.getString("message");
 
-                switch (success) {
-                    case "1": // Toast message: successfully created a post
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                if (success.equals("1")) {
+                    progressBar.setVisibility(View.GONE);
+                    // Toast message: successfully created a post
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
 
-                        // might have to call getPosts after creating post to update feed
-
-                        NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
-                        navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
-                        break;
-
+                    // might have to call getPosts after creating post to update feed??
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+                    navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
                 }
             }
 
@@ -212,7 +210,7 @@ public class CreatePostFragment extends Fragment {
         chooseFile.setType("*/*");
         chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
         chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-        startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+        startActivityForResult(chooseFile, PICK_FILE_RESULT_CODE);
 
     }
 
@@ -220,7 +218,7 @@ public class CreatePostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode == PICKFILE_RESULT_CODE && resultCode == RESULT_OK) {
+        if(requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK) {
 
             if(data != null && data.getData() != null) {
                 Uri fileUri = data.getData();

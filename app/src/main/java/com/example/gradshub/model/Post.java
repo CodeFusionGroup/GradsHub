@@ -1,17 +1,18 @@
 package com.example.gradshub.model;
 
 
-public class Post {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Post implements Parcelable {
 
     private String postID;
     private String postCreator;
+    private String postDate;
     private String postSubject;
     private String postDescription;
-    private String postDate;
-
-    // have to change these to int types but for now just String types will do
-    private String postLikesCount = "0";
-    private String postCommentsCount = "0";
+    private int postLikesCount = 0;
+    private int postCommentsCount = 0;
 
 
     public String getPostID() { return postID; }
@@ -26,18 +27,6 @@ public class Post {
         this.postCreator = postCreator;
     }
 
-    public String getPostDescription() {
-        return postDescription;
-    }
-
-    public void setPostDescription(String postDescription) {
-        this.postDescription = postDescription;
-    }
-
-    public String getPostSubject() { return postSubject; }
-
-    public void setPostSubject(String postSubject) { this.postSubject = postSubject; }
-
     public String getPostDate() {
         return postDate;
     }
@@ -46,13 +35,25 @@ public class Post {
         this.postDate = postDate;
     }
 
-    public void setPostLikesCount(String postLikesCount) { this.postLikesCount = postLikesCount; }
+    public String getPostSubject() { return postSubject; }
 
-    public String getPostLikesCount() { return postLikesCount; }
+    public void setPostSubject(String postSubject) { this.postSubject = postSubject; }
 
-    public void setPostCommentsCount(String postCommentsCount) { this.postCommentsCount = postCommentsCount; }
+    public String getPostDescription() {
+        return postDescription;
+    }
 
-    public String getPostCommentsCount() { return postCommentsCount; }
+    public void setPostDescription(String postDescription) {
+        this.postDescription = postDescription;
+    }
+
+    public int getPostLikesCount() { return postLikesCount; }
+
+    public void setPostLikesCount(int postLikesCount) { this.postLikesCount += postLikesCount; }
+
+    public int getPostCommentsCount() { return postCommentsCount; }
+
+    public void setPostCommentsCount(int postCommentsCount) { this.postCommentsCount += postCommentsCount; }
 
 
     public Post(String postDate, String postSubject, String postDescription) {
@@ -63,4 +64,43 @@ public class Post {
 
     public Post() {}
 
+
+    protected Post(Parcel in) {
+        postID = in.readString();
+        postCreator = in.readString();
+        postDate = in.readString();
+        postSubject = in.readString();
+        postDescription = in.readString();
+        //postLikesCount = in.readInt();
+        postCommentsCount = in.readInt();
+    }
+
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(postID);
+        dest.writeString(postCreator);
+        dest.writeString(postDate);
+        dest.writeString(postSubject);
+        dest.writeString(postDescription);
+        //dest.writeInt(postLikesCount);
+        //dest.writeInt(postCommentsCount);
+    }
 }

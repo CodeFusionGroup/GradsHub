@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
         MyGroupsProfileFragment.OnPostsListFragmentInteractionListener {
 
+
     public User user;
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         // updates the UI with the contents of the current destination.
         NavigationUI.setupWithNavController(navigationView, navController);
+
 
         View headerView = navigationView.getHeaderView(0);
         TextView fullNameTV = headerView.findViewById(R.id.userFullNameTV);
@@ -111,27 +113,30 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     @Override
     public void onMyGroupsListFragmentInteraction(ResearchGroup item) {
-        // pass the selected group to the Group Profile page for the group the user belongs to.
+
         Bundle bundle = new Bundle();
         bundle.putParcelable("group_item", item);
+        bundle.putParcelable("user", user);
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_myGroupsFragment_to_myGroupProfileFragment, bundle);
+
     }
 
 
     @Override
     public void onAvailableGroupsListFragmentInteraction(ResearchGroup item) {
-        // pass the selected group to the Group Profile page for the available group.
+
         Bundle bundle = new Bundle();
         bundle.putParcelable("group_item", item);
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_availableGroupsListFragment_to_availableGroupProfileFragment, bundle);
+
     }
 
 
     @Override
     public void onPostsListFragmentInteraction(Post item) {
-        // nothing implemented yet
+        // not implemented
     }
 
 
