@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".main.createpost.CreatePostFragment">
 
 
@@ -15,25 +16,34 @@
         android:textStyle="bold"/>
 
 
-    <EditText
-        android:id="@+id/postSubjectET"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/postSubjectContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="45dp"
         android:layout_marginEnd="16dp"
-        android:layout_below="@id/postTitleTV"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/subject" />
+        android:layout_marginRight="16dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="30"
+        app:errorEnabled="true"
+        app:errorTextAppearance="@color/colorRed" >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/postSubjectET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="type title" />
+        <!--android:maxLength="50"-->
+    </com.google.android.material.textfield.TextInputLayout>
 
 
     <TextView
         android:id="@+id/descriptionTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/postSubjectET"
+        android:layout_below="@id/postSubjectContainer"
         android:layout_margin="16dp"
         android:text="@string/description"
         android:textStyle="bold"/>
