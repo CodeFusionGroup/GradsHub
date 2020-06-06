@@ -47,9 +47,9 @@ public class AvailableGroupProfileFragmentTest {
     @Test
     public void Launched()
     {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.available_testing);
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.available_test_testing);
         assertNotNull(rlContainer);
-        RegisterFragment Fragment = new RegisterFragment();
+        AvailableGroupProfileFragment Fragment = new AvailableGroupProfileFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
         View view = Fragment.getView().findViewById(R.id.launchedAvailableGroup);
@@ -59,9 +59,9 @@ public class AvailableGroupProfileFragmentTest {
     @Test
     public void FragmentLaunched()
     {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.available_testing);
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.available_test_testing);
         assertNotNull(rlContainer);
-        RegisterFragment Fragment = new RegisterFragment();
+        AvailableGroupProfileFragment Fragment = new AvailableGroupProfileFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
         View view = Fragment.getView().findViewById(R.id.groupNameTV);

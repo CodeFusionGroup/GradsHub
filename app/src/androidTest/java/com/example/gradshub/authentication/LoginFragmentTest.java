@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class LoginFragmentTest {
 
-    @Rule
+    /*@Rule
     public FragmentTestRule<?, LoginFragment> fragmentTestRule =
             FragmentTestRule.create(LoginFragment.class);
 
@@ -59,9 +59,9 @@ public class LoginFragmentTest {
         closeSoftKeyboard();
         onView(withId(R.id.loginBtn)).perform(click());
         //onView(withId(R.id.homeFragmentView)).check(matches(isDisplayed()));
-    }
+    }*/
 
-    /*@Rule
+    @Rule
     public ActivityTestRule<TestingActivity> activityActivityTestRule = new ActivityTestRule<TestingActivity>(TestingActivity.class);
     private TestingActivity loginFragment = null;
 
@@ -147,5 +147,5 @@ public class LoginFragmentTest {
 
         loginFragment = null;
 
-    }*/
+    }
 }
