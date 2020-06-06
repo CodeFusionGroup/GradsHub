@@ -31,7 +31,7 @@ public class RegisterFragmentTest {
     @Test
     public void TestingLaunched()
     {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_test);
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         assertNotNull(rlContainer);
         RegisterFragment Fragment = new RegisterFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
@@ -43,7 +43,7 @@ public class RegisterFragmentTest {
     @Test
     public void TestLaunched()
     {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_test);
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         assertNotNull(rlContainer);
         RegisterFragment Fragment = new RegisterFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
@@ -68,7 +68,7 @@ public class RegisterFragmentTest {
         assertNotNull(view8);
     }
 
-    @Test
+    /*@Test
     public void UnitTesting()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.containing_tests);
@@ -94,7 +94,7 @@ public class RegisterFragmentTest {
         assertNotNull(view7);
         View view8 = Fragment.getView().findViewById(R.id.submitBtn);
         assertNotNull(view8);
-    }
+    }*/
 
     @After
     public void tearDown() throws Exception {

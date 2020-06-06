@@ -34,6 +34,16 @@
 
         <activity android:name=".authentication.FragmentRegisterActivity"></activity>
 
+        <activity android:name=".authentication.ResetActivity"></activity>
+
+        <activity android:name=".main.profile.ProfileTestActivity"></activity>
+
+        <activity android:name=".main.creategroup.CreateGroupActivity"></activity>
+
+        <activity android:name=".main.createpost.CreatePostActivity"></activity>
+
+        <activity android:name=".main.availablegroups.GroupListActivity"></activity>>
+
 
     </application>
 

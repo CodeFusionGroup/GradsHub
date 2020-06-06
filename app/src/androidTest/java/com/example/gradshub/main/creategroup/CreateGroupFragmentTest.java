@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 public class CreateGroupFragmentTest {
 
-    /*@Rule
+    @Rule
     public ActivityTestRule<CreateGroupActivity> activityTestRule = new ActivityTestRule<CreateGroupActivity>(CreateGroupActivity.class);
     private CreateGroupActivity mActivity = null;
 
@@ -38,7 +38,7 @@ public class CreateGroupFragmentTest {
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
         assertNotNull(rlContainer);
-        RegisterFragment Fragment = new RegisterFragment();
+        CreateGroupFragment Fragment = new CreateGroupFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
         View view = Fragment.getView().findViewById(R.id.create_group);
@@ -50,6 +50,6 @@ public class CreateGroupFragmentTest {
         mActivity = null;
 
         mActivity = null;
-    }*/
+    }
 
 }

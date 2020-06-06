@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.widget.TextView;
 import com.example.gradshub.R;
 import com.example.gradshub.authentication.AuthenticationActivity;
+import com.example.gradshub.main.availablegroups.AvailableGroupProfileFragment;
 import com.example.gradshub.main.availablegroups.AvailableGroupsListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
