@@ -42,7 +42,7 @@
 
         <activity android:name=".main.createpost.CreatePostActivity"></activity>
 
-        <activity android:name=".main.availablegroups.GroupListActivity"></activity>>
+        <activity android:name=".main.availablegroups.GroupListActivity"></activity>
 
 
     </application>
