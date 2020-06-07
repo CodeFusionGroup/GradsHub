@@ -10,10 +10,10 @@ import com.example.gradshub.R;
 
 public class GroupListActivity extends AppCompatActivity {
 
-    /*@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grouplist_testing);
-    }*/
+    }
 }
