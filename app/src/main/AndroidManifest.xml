@@ -44,6 +44,8 @@
 
         <activity android:name=".main.availablegroups.GroupListActivity"></activity>
 
+        <activity android:name=".main.home.HomeTestActivity"></activity>
+
 
     </application>
 
