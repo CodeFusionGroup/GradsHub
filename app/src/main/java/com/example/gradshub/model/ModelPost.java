@@ -1,7 +1,7 @@
 package com.example.gradshub.model;
 
 public class ModelPost {
-    /*String postId,postTitle,postDescr,postImage,postTime,userId,userEmail,userDp,uName;
+    String postId,postTitle,postDescr,postImage,postTime,userId,userEmail,userDp,uName;
 
     public ModelPost(){
 
@@ -89,5 +89,5 @@ public class ModelPost {
 
     public void setuName(String uName) {
         this.uName = uName;
-    }*/
+    }
 }

@@ -4,7 +4,7 @@ package com.example.gradshub.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/*public class ResearchGroup implements Parcelable {
+public class ResearchGroup implements Parcelable {
 
     private String groupAdmin;
     private String groupName;
@@ -88,4 +88,4 @@ import android.os.Parcelable;
 
     public String getGroupID() {return groupID;}
 
-}*/
+}
