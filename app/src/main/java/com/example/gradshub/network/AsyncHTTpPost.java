@@ -15,7 +15,7 @@ import java.net.URL;
 
 public abstract class AsyncHTTpPost extends AsyncTask<String, String, String> {
 
-    String address;
+    /*String address;
     ContentValues parameters;
 
     public AsyncHTTpPost(String address, ContentValues parameters) {
@@ -65,6 +65,6 @@ public abstract class AsyncHTTpPost extends AsyncTask<String, String, String> {
     }
 
     @Override
-    protected abstract void onPostExecute(String output);
+    protected abstract void onPostExecute(String output);*/
 
 }

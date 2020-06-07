@@ -4,7 +4,7 @@ package com.example.gradshub.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Post implements Parcelable {
+/*public class Post implements Parcelable {
 
     private String postID;
     private String postCreator;
@@ -103,4 +103,4 @@ public class Post implements Parcelable {
         //dest.writeInt(postLikesCount);
         //dest.writeInt(postCommentsCount);
     }
-}
+}*/
