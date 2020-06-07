@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
-public class User implements Parcelable {
+/*public class User implements Parcelable {
 
     private String firstName;
     private String lastName;
@@ -112,4 +112,4 @@ public class User implements Parcelable {
         dest.writeString(userID);
     }
 
-}
+}*/
