@@ -78,10 +78,10 @@ public class GroupPostCommentsFragment extends Fragment {
         TextView postSubjectTV = view.findViewById(R.id.postSubjectTV);
         TextView postDescriptionTV = view.findViewById(R.id.postDescriptionTV);
 
-        postDateTV.setText(post.getPostDate());
-        postCreatorTV.setText(post.getPostCreator());
-        postSubjectTV.setText(post.getPostSubject());
-        postDescriptionTV.setText(post.getPostDescription());
+        //postDateTV.setText(post.getPostDate());
+        //postCreatorTV.setText(post.getPostCreator());
+        //postSubjectTV.setText(post.getPostSubject());
+        //postDescriptionTV.setText(post.getPostDescription());
 
         getGroupPostComments(post);
         progressBar.setVisibility(View.VISIBLE);
@@ -138,7 +138,7 @@ public class GroupPostCommentsFragment extends Fragment {
     private void getGroupPostComments(Post post) {
 
         ContentValues params = new ContentValues();
-        params.put("POST_ID", post.getPostID());
+        //params.put("POST_ID", post.getPostID());
 
         AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievecommentsGP.php", params) {
             @SuppressLint("StaticFieldLeak")

@@ -46,6 +46,10 @@
 
         <activity android:name=".main.home.HomeTestActivity"></activity>
 
+        <activity android:name=".main.postcomments.PostCommentActivity"></activity>
+
+        <activity android:name=".main.mygroups.GroupListlistActivity" ></activity>
+
 
     </application>
 
