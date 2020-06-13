@@ -1,6 +1,7 @@
 package com.example.gradshub.authentication;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import androidx.test.espresso.ViewAction;
@@ -88,7 +89,6 @@ public class LoginFragmentTest {
     @Test
     public void LoginfragmentLaunching()
     {
-
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);
 
@@ -111,11 +111,10 @@ public class LoginFragmentTest {
         assertNotNull(NoAccountTV);
         View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
         assertNotNull(RegisterBT);
-
-
     }
 
-    /*@Test
+    ///*
+    @Test
     public void AutoTesting()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
@@ -129,9 +128,21 @@ public class LoginFragmentTest {
         view2.perform(ViewActions.typeText("maccayley@gmail.com"));
         ViewInteraction view = onView(withId(R.id.passwordET));
         view.perform(ViewActions.typeText("1234mmmm"));
+        closeSoftKeyboard();
+        //spinner = (ProgressBar)viewIinflated.findViewById(R.id.progressBar1);//same case with dialogs
+        //Spinner = (Button) viewIinflated.findViewById(R.id.forgotPasswordBtn);
+        //spinner.setVisibility(View.GONE);
+        //rootView.findViewById(R.id.forgotPasswordBtn).setVisibility(View.GONE);
+        View ForgotPasswordBT = Fragment.getView().findViewById(R.id.forgotPasswordBtn);
+        assertNotNull(ForgotPasswordBT);
+        View NoAccountTV = Fragment.getView().findViewById(R.id.noAccountTV);
+        assertNotNull(NoAccountTV);
+        View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
+        assertNotNull(RegisterBT);
         ViewInteraction view1 = onView(withId(R.id.loginBtn));
         view1.perform(click());
     }
+    //*/
 
     @Test
     public void AutoTestingTest()
@@ -143,8 +154,22 @@ public class LoginFragmentTest {
         loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
 
-        View LoginBT = loginFragment.findViewById(R.id.registerBtn);
-        assertNotNull(LoginBT);
+        View registerBT = loginFragment.findViewById(R.id.registerBtn);
+        assertNotNull(registerBT);
+    }
+
+    /*@Test
+    public void AutoTestingRegisterTest()
+    {
+        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
+        assertNotNull(rlContainer);
+
+        LoginFragment Fragment = new LoginFragment();
+        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+
+        View fView = loginFragment.findViewById(R.id.registerBtn);
+        fView.performClick();
     }*/
 
 
@@ -153,6 +178,5 @@ public class LoginFragmentTest {
         loginFragment = null;
 
         loginFragment = null;
-
     }
 }
