@@ -32,7 +32,7 @@
     <!-- attributes for fragment_reset_password-->
     <string name="new_password_tv">Enter new password</string>
     <string name="new_password_hint">password</string>
-    <string name="confirm_password_tv">confirm password</string>
+    <string name="confirm_password_tv">Confirm password</string>
     <string name="confirm_password_hint">re-enter password</string>
     <string name="reset_password_button">reset password</string>
 
