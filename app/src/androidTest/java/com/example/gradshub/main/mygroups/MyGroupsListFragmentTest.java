@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class MyGroupsListFragmentTest {
 
-    @Rule
+    /*@Rule
     public ActivityTestRule<GroupListlistActivity> activityTestRule = new ActivityTestRule<GroupListlistActivity>(GroupListlistActivity.class);
     private GroupListlistActivity mActivity = null;
 
@@ -60,5 +60,5 @@ public class MyGroupsListFragmentTest {
         mActivity = null;
 
         mActivity = null;
-    }
+    }*/
 }
