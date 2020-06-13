@@ -3,7 +3,9 @@ package com.example.gradshub.authentication;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.TypeTextAction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.rule.ActivityTestRule;
 
 import com.android21buttons.fragmenttestrule.FragmentTestRule;
@@ -90,6 +92,33 @@ public class ResetPasswordFragmentTest {
         assertNotNull(view2);
         View view3 = Fragment.getView().findViewById(R.id.confirmNewPasswordET);
         assertNotNull(view3);
+        View view4 = Fragment.getView().findViewById(R.id.resetPasswordBtn);
+        assertNotNull(view4);
+    }
+
+    @Test
+    public void ResetTestLaunched()
+    {
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.reset_containing_tests);
+        assertNotNull(rlContainer);
+        ResetPasswordFragment Fragment = new ResetPasswordFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+        View view = Fragment.getView().findViewById(R.id.resetPasswordTV);
+        assertNotNull(view);
+        //View view1 = Fragment.getView().findViewById(R.id.newPasswordET);
+        //assertNotNull(view1);
+        ViewInteraction view1 = onView(withId(R.id.newPasswordET));
+        view1.perform(ViewActions.typeText("nnn123n4"));
+
+        View view2 = Fragment.getView().findViewById(R.id.confirmNewPasswordTV);
+        assertNotNull(view2);
+
+        //View view3 = Fragment.getView().findViewById(R.id.confirmNewPasswordET);
+        //assertNotNull(view3);
+        ViewInteraction view3 = onView(withId(R.id.newPasswordET));
+        view3.perform(ViewActions.typeText("nnn123n4"));
+
         View view4 = Fragment.getView().findViewById(R.id.resetPasswordBtn);
         assertNotNull(view4);
     }
