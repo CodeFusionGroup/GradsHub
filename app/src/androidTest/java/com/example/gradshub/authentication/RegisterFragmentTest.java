@@ -84,7 +84,7 @@ public class RegisterFragmentTest {
         assertNotNull(view8);
     }
 
-    @Test
+    /*@Test
     public void UnitTesting() {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         assertNotNull(rlContainer);
@@ -140,7 +140,7 @@ public class RegisterFragmentTest {
         //assertNotNull(view8);
         ViewInteraction view8 = onView(withId(R.id.submitBtn));
         view8.perform(click());
-    }
+    }*/
 
     @After
     public void tearDown() throws Exception {
