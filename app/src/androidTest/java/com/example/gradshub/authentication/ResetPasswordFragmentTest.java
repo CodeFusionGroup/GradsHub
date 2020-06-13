@@ -54,9 +54,9 @@ public class ResetPasswordFragmentTest {
         onView(withId(R.id.resetPasswordBtn)).perform(click());
     }*/
     @Rule
-    public ActivityTestRule<TestingActivity> activityTestRule = new ActivityTestRule<TestingActivity>(TestingActivity.class);
+    public ActivityTestRule<ResetActivity> activityTestRule = new ActivityTestRule<ResetActivity>(ResetActivity.class);
 
-    private TestingActivity mActivity = null;
+    private ResetActivity mActivity = null;
 
     @Before
     public void setUp() throws Exception {
@@ -66,13 +66,32 @@ public class ResetPasswordFragmentTest {
     @Test
     public void TestingLaunched()
     {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.containing_tests);
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.reset_containing_tests);
         assertNotNull(rlContainer);
-        RegisterFragment Fragment = new RegisterFragment();
+        ResetPasswordFragment Fragment = new ResetPasswordFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
         View view = Fragment.getView().findViewById(R.id.PassWordReset);
         assertNotNull(view);
+    }
+    @Test
+    public void ResetTestingLaunched()
+    {
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.reset_containing_tests);
+        assertNotNull(rlContainer);
+        ResetPasswordFragment Fragment = new ResetPasswordFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+        View view = Fragment.getView().findViewById(R.id.resetPasswordTV);
+        assertNotNull(view);
+        View view1 = Fragment.getView().findViewById(R.id.newPasswordET);
+        assertNotNull(view1);
+        View view2 = Fragment.getView().findViewById(R.id.confirmNewPasswordTV);
+        assertNotNull(view2);
+        View view3 = Fragment.getView().findViewById(R.id.confirmNewPasswordET);
+        assertNotNull(view3);
+        View view4 = Fragment.getView().findViewById(R.id.resetPasswordBtn);
+        assertNotNull(view4);
     }
 
     @After

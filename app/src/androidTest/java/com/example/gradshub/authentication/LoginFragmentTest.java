@@ -3,6 +3,9 @@ package com.example.gradshub.authentication;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.rule.ActivityTestRule;
 
 import com.android21buttons.fragmenttestrule.FragmentTestRule;
@@ -29,9 +32,8 @@ import static org.junit.Assert.assertNotNull;
 
 public class LoginFragmentTest {
 
-    @Rule
-    public FragmentTestRule<?, LoginFragment> fragmentTestRule =
-            FragmentTestRule.create(LoginFragment.class);
+    /*@Rule
+    public FragmentTestRule<?, LoginFragment> fragmentTestRule = FragmentTestRule.create(LoginFragment.class);
 
     @Test
     public void LoginFragmentLaunched()
@@ -59,9 +61,9 @@ public class LoginFragmentTest {
         closeSoftKeyboard();
         onView(withId(R.id.loginBtn)).perform(click());
         //onView(withId(R.id.homeFragmentView)).check(matches(isDisplayed()));
-    }
+    }*/
 
-    /*@Rule
+    @Rule
     public ActivityTestRule<TestingActivity> activityActivityTestRule = new ActivityTestRule<TestingActivity>(TestingActivity.class);
     private TestingActivity loginFragment = null;
 
@@ -113,7 +115,7 @@ public class LoginFragmentTest {
 
     }
 
-    @Test
+    /*@Test
     public void AutoTesting()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
@@ -122,23 +124,28 @@ public class LoginFragmentTest {
         LoginFragment Fragment = new LoginFragment();
         loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
-        View fView = Fragment.getView().findViewById(R.id.emailET);
-        assertNotNull(fView);
 
-        View EmailET = loginFragment.findViewById(R.id.emailET);
-        assertNotNull(EmailET);
-
-        View PasswordET = Fragment.getView().findViewById(R.id.passwordET);
-        assertNotNull(PasswordET);
-        View ForgotPasswordBT = Fragment.getView().findViewById(R.id.forgotPasswordBtn);
-        assertNotNull(ForgotPasswordBT);
-        View LoginBT = Fragment.getView().findViewById(R.id.loginBtn);
-        assertNotNull(LoginBT);
-        View NoAccountTV = Fragment.getView().findViewById(R.id.noAccountTV);
-        assertNotNull(NoAccountTV);
-        View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
-        assertNotNull(RegisterBT);
+        ViewInteraction view2 = onView(withId(R.id.emailET));
+        view2.perform(ViewActions.typeText("maccayley@gmail.com"));
+        ViewInteraction view = onView(withId(R.id.passwordET));
+        view.perform(ViewActions.typeText("1234mmmm"));
+        ViewInteraction view1 = onView(withId(R.id.loginBtn));
+        view1.perform(click());
     }
+
+    @Test
+    public void AutoTestingTest()
+    {
+        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
+        assertNotNull(rlContainer);
+
+        LoginFragment Fragment = new LoginFragment();
+        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+
+        View LoginBT = loginFragment.findViewById(R.id.registerBtn);
+        assertNotNull(LoginBT);
+    }*/
 
 
     @After
@@ -147,5 +154,5 @@ public class LoginFragmentTest {
 
         loginFragment = null;
 
-    }*/
+    }
 }

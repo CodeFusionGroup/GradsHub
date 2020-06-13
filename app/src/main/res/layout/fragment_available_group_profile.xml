@@ -22,6 +22,8 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
+        android:background="@drawable/register_rounded_button"
+        android:textColor="@color/colorWhite"
         android:text="@string/join_button"/>
 
     <ProgressBar
