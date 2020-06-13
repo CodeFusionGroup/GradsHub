@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#9A7B4F</color>//Tortilla
+    <color name="colorPrimaryDark">#3F301D</color>
+    <color name="colorAccent">#9A7B4F</color>
 
-    <color name="colorWhite">#FFFFFF</color>
-    <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#E6D1AB</color>
+    <color name="colorBlack">#231709</color>
     <color name="colorGray">#808080</color>
-    <color name="mainBackground">#D7D7D7D7</color>
+    <color name="mainBackground">#E6D1AB</color>
 
     <color name="colorRed">#FF0000</color>
 </resources>
