@@ -207,9 +207,9 @@ public class CreatePostFragment extends Fragment {
     private void openFile() {
 
         Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFile.setType("*/*");
+        chooseFile.setType("application/pdf");
         chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-        chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+        chooseFile = Intent.createChooser(chooseFile, "Select PDF");
         startActivityForResult(chooseFile, PICK_FILE_RESULT_CODE);
 
     }
@@ -218,10 +218,11 @@ public class CreatePostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK) {
+        if(requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK && data != null) {
 
-            if(data != null && data.getData() != null) {
+            if(data.getData() != null) {
                 Uri fileUri = data.getData();
+                //pdfView.fromUri(fileUri).defaultPage(0).spacing(10).load();
                 //String filePath;
                 //File file = new File(fileUri.get)
                 fileAttachmentTV.setText(fileUri.getLastPathSegment());

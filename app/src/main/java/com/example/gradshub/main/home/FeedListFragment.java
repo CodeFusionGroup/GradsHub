@@ -51,9 +51,6 @@ public class FeedListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_filter:
-                //nothing implemented yet
-                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
