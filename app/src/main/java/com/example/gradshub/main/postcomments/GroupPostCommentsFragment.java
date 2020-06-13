@@ -78,10 +78,10 @@ public class GroupPostCommentsFragment extends Fragment {
         TextView postSubjectTV = view.findViewById(R.id.postSubjectTV);
         TextView postDescriptionTV = view.findViewById(R.id.postDescriptionTV);
 
-        postDateTV.setText(post.getPostDate());
-        postCreatorTV.setText(post.getPostCreator());
-        postSubjectTV.setText(post.getPostSubject());
-        postDescriptionTV.setText(post.getPostDescription());
+        //postDateTV.setText(post.getPostDate());
+        //postCreatorTV.setText(post.getPostCreator());
+        //postSubjectTV.setText(post.getPostSubject());
+        //postDescriptionTV.setText(post.getPostDescription());
 
         getGroupPostComments(post);
         progressBar.setVisibility(View.VISIBLE);
@@ -94,16 +94,16 @@ public class GroupPostCommentsFragment extends Fragment {
 
                 ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
                 User user = MyGroupsProfileFragment.getUser();
-                String fullName = user.getFirstName() + " " + user.getLastName();
+                //String fullName = user.getFirstName() + " " + user.getLastName();
 
                 String commentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
                 Comment userComment = new Comment();
-                userComment.setCommentCreator(fullName);
+                //userComment.setCommentCreator(fullName);
                 userComment.setComment(comment);
                 userComment.setCommentDate(commentDate);
 
-                insertGroupPostComment(user, researchGroup, post, userComment);
+                //insertGroupPostComment(user, researchGroup, post, userComment);
 
                 commentsList.add(userComment);
                 mAdapter = new CommentsAdapter(requireContext(), commentsList);
@@ -138,7 +138,7 @@ public class GroupPostCommentsFragment extends Fragment {
     private void getGroupPostComments(Post post) {
 
         ContentValues params = new ContentValues();
-        params.put("POST_ID", post.getPostID());
+        //params.put("POST_ID", post.getPostID());
 
         AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievecommentsGP.php", params) {
             @SuppressLint("StaticFieldLeak")
@@ -204,7 +204,7 @@ public class GroupPostCommentsFragment extends Fragment {
     private void insertGroupPostComment(User user, ResearchGroup researchGroup, Post post, Comment comment) {
 
         ContentValues params = new ContentValues();
-        params.put("USER_ID", user.getUserID());
+        //params.put("USER_ID", user.getUserID());
         params.put("GROUP_ID", researchGroup.getGroupID());
         params.put("POST_ID", post.getPostID());
         params.put("POST_COMMENT_DATE", comment.getCommentDate());
