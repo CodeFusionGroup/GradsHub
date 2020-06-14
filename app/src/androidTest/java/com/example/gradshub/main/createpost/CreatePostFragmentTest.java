@@ -54,7 +54,7 @@ public class CreatePostFragmentTest {
         assertNotNull(view);
     }
 
-    /*@Test
+    @Test
     public void AutoLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
@@ -88,7 +88,7 @@ public class CreatePostFragmentTest {
         //assertNotNull(view6);
         ViewInteraction view6 = onView(withId(R.id.postBtn));
         view6.perform(click());
-    }*/
+    }
 
     @After
     public void tearDown() throws Exception {

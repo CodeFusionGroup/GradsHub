@@ -98,7 +98,7 @@ public class CreateGroupFragmentTest {
         view3.perform(click());
     }
 
-    @Test
+    /*@Test
     public void AutoLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
@@ -125,7 +125,7 @@ public class CreateGroupFragmentTest {
 
         ViewInteraction view3 = onView(withId(R.id.doneBtn));
         view3.perform(click());
-    }
+    }*/
 
     @After
     public void tearDown() throws Exception {
