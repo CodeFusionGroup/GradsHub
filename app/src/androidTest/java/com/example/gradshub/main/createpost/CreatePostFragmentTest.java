@@ -18,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -54,7 +55,7 @@ public class CreatePostFragmentTest {
         assertNotNull(view);
     }
 
-    /*@Test
+    @Test
     public void AutoLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
@@ -83,12 +84,13 @@ public class CreatePostFragmentTest {
         //assertNotNull(view5);
         ViewInteraction view5 = onView(withId(R.id.postDescriptionET));
         view5.perform(ViewActions.typeText("http link to post"));
+        closeSoftKeyboard();
 
         //View view6 = Fragment.getView().findViewById(R.id.postBtn);
         //view6.performClick();
         ViewInteraction view6 = onView(withId(R.id.postBtn));
         view6.perform(click());
-    }*/
+    }
 
     @After
     public void tearDown() throws Exception {
