@@ -3,6 +3,7 @@ package com.example.gradshub.main.createpost;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.gradshub.R;
@@ -13,21 +14,31 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.*;
 
+//@RunWith(AndroidJUnit4::class)
 public class CreatePostFragmentTest {
 
-    /*@Rule
+    @Rule
     public ActivityTestRule<CreatePostActivity> activityTestRule = new ActivityTestRule<CreatePostActivity>(CreatePostActivity.class);
     private CreatePostActivity mActivity = null;
 
     @Before
     public void setUp() throws Exception {
+        mActivity = activityTestRule.getActivity();
+        
     }
 
     @Test
+    public void justFrag(){
+
+    }
+
+
+ /*   @Test
     public void Launched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
@@ -38,8 +49,8 @@ public class CreatePostFragmentTest {
         View view = Fragment.getView().findViewById(R.id.crete_post);
         assertNotNull(view);
     }
-
+*/
     @After
     public void tearDown() throws Exception {
-    }*/
+    }
 }

@@ -123,63 +123,139 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
 
+//setters for testing purposes
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-    private boolean isValidInput() {
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setAcademicStatus(String academicStatus) {
+        this.academicStatus = academicStatus;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public boolean isValidInput() {
         if (firstName.isEmpty()) {
-            firstNameET.setError("Not a valid first name!");
-            firstNameET.requestFocus();
+            try {
+                firstNameET.setText("");
+                firstNameET.setError("Not a valid first name!");
+                firstNameET.requestFocus();
+            }
+            catch (Exception e){
+                //This helps for testing purposes
+            }
             return false;
         }
 
         if (lastName.isEmpty()) {
-            lastNameET.setError("Not a valid last name!");
-            lastNameET.requestFocus();
+            try {
+                lastNameET.setError("Not a valid last name!");
+                lastNameET.requestFocus();
+            }
+            catch(Exception e){
+
+            }
             return false;
         }
 
         if (email.isEmpty()) {
-            emailET.setError("Not a valid email address!");
-            emailET.requestFocus();
+            try {
+                emailET.setError("Not a valid email address!");
+                emailET.requestFocus();
+            }
+            catch (Exception e){
+
+            }
             return false;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailET.setError("check that your email address is entered correctly!");
-            emailET.requestFocus();
+            try {
+                emailET.setError("check that your email address is entered correctly!");
+                emailET.requestFocus();
+            }
+            catch(Exception e){
+
+            }
             return false;
         }
 
         if (phoneNumber.isEmpty()) {
-            phoneNumberET.setError("Not a valid phone number!");
-            phoneNumberET.requestFocus();
+            try {
+                phoneNumberET.setError("Not a valid phone number!");
+                phoneNumberET.requestFocus();
+            }
+            catch(Exception e){
+
+            }
             return false;
         }
         // check that the user selected a valid academic status from the list (Honours, Masters, PhD).
         String placeHolder = "Select your academic status here"; // first item is invalid (used as hint)
         if (academicStatus.equals(placeHolder)) {
-            TextView errorText = (TextView)spinner.getSelectedView();
-            errorText.setError("");
-            errorText.setTextColor(Color.RED); // just to highlight that this is an error message, we display it in red.
-            errorText.setText(R.string.spinnerErrorMsg); // changes the selected item text to this text.
-            spinner.requestFocus();
+            try {
+                TextView errorText = (TextView) spinner.getSelectedView();
+                errorText.setError("");
+                errorText.setTextColor(Color.RED); // just to highlight that this is an error message, we display it in red.
+                errorText.setText(R.string.spinnerErrorMsg); // changes the selected item text to this text.
+                spinner.requestFocus();
+            }
+            catch(Exception e){
+
+            }
             return false;
         }
 
         if (password.isEmpty()) {
-            passwordET.setError("Not a valid password!");
-            passwordET.requestFocus();
+            try {
+                passwordET.setError("Not a valid password!");
+                passwordET.requestFocus();
+            }
+            catch(Exception e){
+
+            }
             return false;
         }
 
         if (confirmPassword.isEmpty()) {
-            confirmPasswordET.setError("Please confirm your password!");
-            confirmPasswordET.requestFocus();
+            try {
+                confirmPasswordET.setError("Please confirm your password!");
+                confirmPasswordET.requestFocus();
+            }
+            catch(Exception e){
+
+            }
             return false;
         }
         // compare to check if the passwords match for the fields: (password & confirm password).
         if (!confirmPassword.equals(password)) {
-            confirmPasswordET.setError("password doesn't match the above entered password!");
-            confirmPasswordET.requestFocus();
+            try {
+                confirmPasswordET.setError("password doesn't match the above entered password!");
+                confirmPasswordET.requestFocus();
+            }
+            catch(Exception e){
+
+            }
             return false;
         }
 

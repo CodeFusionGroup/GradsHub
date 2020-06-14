@@ -1,7 +1,9 @@
 package com.example.gradshub.authentication;
 
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.TypeTextAction;
@@ -19,6 +21,7 @@ import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.doubleClick;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -84,6 +87,164 @@ public class RegisterFragmentTest {
         assertNotNull(view8);
     }
 
+    @Test
+    public void testValidInput(){
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+		
+		//All input is valid
+        Fragment.setFirstName("Wits");
+        Fragment.setLastName("University");
+        Fragment.setAcademicStatus("Honors");
+        Fragment.setEmail("stud@wits.ac.za");
+        Fragment.setPassword("1234Abbssa");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("0123456789");
+
+        assertTrue(Fragment.isValidInput());
+    }
+    
+    @Test
+    public void testInvalidInputFName(){
+    	//All input is correct except first name
+    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+        Fragment.setFirstName("");
+        Fragment.setLastName("University");
+        Fragment.setAcademicStatus("Honors");
+        Fragment.setEmail("stud@wits.ac.za");
+        Fragment.setPassword("1234Abbssa");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("0123456789");
+
+        assertFalse(Fragment.isValidInput());
+
+    
+    }
+
+	@Test
+    public void testInvalidInputLName(){
+    	//All input is correct except last name
+    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+
+        Fragment.setFirstName("Wits");
+        Fragment.setLastName("");
+        Fragment.setAcademicStatus("Honors");
+        Fragment.setEmail("stud@wits.ac.za");
+        Fragment.setPassword("1234Abbssa");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("0123456789");
+
+        assertFalse(Fragment.isValidInput());
+    
+    }
+    
+    @Test
+    public void testInvalidInputAcadStatus(){
+    	//All input is correct except academic status
+    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+
+
+
+        Fragment.setFirstName("Wits");
+        Fragment.setLastName("University");
+        Fragment.setAcademicStatus("Select your academic status here");
+        Fragment.setEmail("stud@wits.ac.za");
+        Fragment.setPassword("1234Abbssa");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("0123456789");
+
+        assertFalse(Fragment.isValidInput());
+
+    
+    }
+    
+    @Test
+    public void testInvalidInputEmail(){
+    	//All input is correct except email
+    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+
+        Fragment.setFirstName("Wits");
+        Fragment.setLastName("University");
+        Fragment.setAcademicStatus("Honors");
+        Fragment.setEmail("");
+        Fragment.setPassword("1234Abbssa");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("0123456789");
+
+        assertFalse(Fragment.isValidInput());
+
+    
+    }
+    
+    @Test
+    public void testInvalidInputPassword(){
+    	//All input is correct except password
+    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+
+        Fragment.setFirstName("Wits");
+        Fragment.setLastName("University");
+        Fragment.setAcademicStatus("Honors");
+        Fragment.setEmail("stud@wits.ac.za");
+        Fragment.setPassword("");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("0123456789");
+
+        assertFalse(Fragment.isValidInput());
+    }
+    
+    @Test
+    public void testInvalidInputPasswordNotMatching(){
+    	//All input is correct except passwords do not match
+    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+
+        Fragment.setFirstName("Wits");
+        Fragment.setLastName("University");
+        Fragment.setAcademicStatus("Honors");
+        Fragment.setEmail("stud@wits.ac.za");
+        Fragment.setPassword("1234Abbssa1");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("0123456789");
+
+        assertFalse(Fragment.isValidInput());
+
+    
+    }
+    
+    @Test
+    public void testInvalidInputPhoneNumber(){
+    	//All input is correct except phone number is invalid
+    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+        RegisterFragment Fragment = new RegisterFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+
+        Fragment.setFirstName("Wits");
+        Fragment.setLastName("University");
+        Fragment.setAcademicStatus("Honors");
+        Fragment.setEmail("stud@wits.ac.za");
+        Fragment.setPassword("1234Abbssa1");
+        Fragment.setConfirmPassword("1234Abbssa");
+        Fragment.setPhoneNumber("");
+
+        assertFalse(Fragment.isValidInput());
+
+    
+    }
+    
+    
+    
     /*@Test
     public void UnitTesting() {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
