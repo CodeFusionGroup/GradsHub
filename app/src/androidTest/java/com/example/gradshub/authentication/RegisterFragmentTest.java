@@ -219,7 +219,40 @@ public class RegisterFragmentTest {
 
         assertFalse(Fragment.isValidInput());
     }
-    
+
+    @Test
+    public void testValidInputPhD(){
+
+        //Unit test
+        RegisterFragment Fragment = new RegisterFragment();
+        //All input is valid
+        Fragment.setFirstName("weWits");
+        Fragment.setLastName("weUniversity");
+        Fragment.setAcademicStatus("PhD");
+        Fragment.setEmail("westud@wits.ac.za");
+        Fragment.setPassword("1313lnln");
+        Fragment.setConfirmPassword("1313lnln");
+        Fragment.setPhoneNumber("0123456799");
+
+        assertTrue(Fragment.isValidInput());
+    }
+
+    @Test
+    public void testValidInputMasters(){
+
+        //Unit test
+        RegisterFragment Fragment = new RegisterFragment();
+        //All input is valid
+        Fragment.setFirstName("IamWits");
+        Fragment.setLastName("IamUniversity");
+        Fragment.setAcademicStatus("Masters");
+        Fragment.setEmail("iam@wits.ac.za");
+        Fragment.setPassword("1212nmnm");
+        Fragment.setConfirmPassword("1212nmnm");
+        Fragment.setPhoneNumber("0123456788");
+
+        assertTrue(Fragment.isValidInput());
+    }
     
 
     //User interface testing, slows down travis buid.
