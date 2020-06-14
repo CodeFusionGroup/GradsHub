@@ -6,7 +6,7 @@ import android.widget.RelativeLayout;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.gradshub.R;
-import com.example.gradshub.authentication.LoginFragment;
+//import com.example.gradshub.authentication.LoginFragment;
 
 import org.junit.After;
 import org.junit.Before;

@@ -35,7 +35,7 @@ public class AvailableGroupProfileFragmentTest {
         onView(withId(R.id.launchedAvailableGroup)).check(matches(isDisplayed()));
     }*/
 
-    /*@Rule
+    @Rule
     public ActivityTestRule<AvailableTestingActivity> activityTestRule = new ActivityTestRule<AvailableTestingActivity>(AvailableTestingActivity.class);
     private AvailableTestingActivity mActivity = null;
 
@@ -77,5 +77,5 @@ public class AvailableGroupProfileFragmentTest {
         mActivity = null;
 
         mActivity = null;
-    }*/
+    }
 }

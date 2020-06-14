@@ -71,14 +71,14 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
                 break;
 
             case R.id.doneBtn:
-                MainActivity mainActivity = (MainActivity) requireActivity();
-                String groupAdmin = mainActivity.user.getEmail();
+                //MainActivity mainActivity = (MainActivity) requireActivity();
+                //String groupAdmin = mainActivity.user.getEmail();
                 groupName = groupNameET.getText().toString().trim();
                 if (isValidInput()) {
                     if(privateRadioBtn.isChecked()) {
                         groupInviteCode = GenerateInviteCode.generateString();
                     }
-                    createResearchGroup(new ResearchGroup(groupAdmin, groupName, groupVisibility, groupInviteCode));
+                    //createResearchGroup(new ResearchGroup(groupAdmin, groupName, groupVisibility, groupInviteCode));
                     progressBar.setVisibility(View.VISIBLE);
                 }
                 break;
