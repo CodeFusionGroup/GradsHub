@@ -144,7 +144,7 @@ public class LoginFragmentTest {
     }
     //*/
 
-    @Test
+    /*@Test
     public void AutoTestingTest()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
@@ -154,9 +154,27 @@ public class LoginFragmentTest {
         loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
 
-        View registerBT = loginFragment.findViewById(R.id.registerBtn);
-        assertNotNull(registerBT);
-    }
+        View fView = Fragment.getView().findViewById(R.id.emailET);
+        assertNotNull(fView);
+
+        View EmailET = loginFragment.findViewById(R.id.emailET);
+        assertNotNull(EmailET);
+
+        View PasswordET = Fragment.getView().findViewById(R.id.passwordET);
+        assertNotNull(PasswordET);
+
+        //View forgotBT = loginFragment.findViewById(R.id.forgotPasswordBtn);
+        //forgotBT.performClick();
+        ViewInteraction view1 = onView(withId(R.id.forgotPasswordBtn));
+        view1.perform(click());
+
+        View LoginBT = Fragment.getView().findViewById(R.id.loginBtn);
+        assertNotNull(LoginBT);
+        View NoAccountTV = Fragment.getView().findViewById(R.id.noAccountTV);
+        assertNotNull(NoAccountTV);
+        View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
+        assertNotNull(RegisterBT);
+    }*/
 
     /*@Test
     public void AutoTestingRegisterTest()
@@ -168,8 +186,8 @@ public class LoginFragmentTest {
         loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
 
-        View fView = loginFragment.findViewById(R.id.registerBtn);
-        fView.performClick();
+        ViewInteraction fView = onView(withId(R.id.registerBtn));
+        fView.perform(click());
     }*/
 
 
