@@ -3,9 +3,12 @@ package com.example.gradshub.main.mygroups;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -19,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -317,28 +321,6 @@ public class MyGroupsProfileFragment extends Fragment {
             Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
         }
 
-        // below code is commented out cause not sure if we should indicate to the user that they have successfully liked the
-        // post since they can visually see the change in number of likes when they like a post.
-
-//        try {
-//
-//            JSONObject jo = new JSONObject(output);
-//            String success = jo.getString("success");
-//
-//            if (success.equals("1")) {
-//                Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-//            }
-
-//            else if (success.equals("0") {
-//              Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-//            }
-//
-//        }
-//
-//        catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
 
@@ -381,12 +363,61 @@ public class MyGroupsProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                // TODO: share invite code if you're the person who created the group
+                // share invite code if the user is the one who created the group (group admin)
+                if ( researchGroup.getGroupAdmin().equals(user.getEmail()) &&
+                        researchGroup.getGroupVisibility().toLowerCase().equals("private") ) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+                    LayoutInflater inflater = requireActivity().getLayoutInflater();
+                    View alertDialogView = inflater.inflate(R.layout.dialog_private_group_display_code, null);
+
+                    TextView groupNameTV = alertDialogView.findViewById(R.id.groupNameTV);
+                    TextView inviteCodeTV = alertDialogView.findViewById(R.id.inviteCodeTV);
+
+                    groupNameTV.setText(researchGroup.getGroupName());
+                    String text = "invite code: " + researchGroup.getGroupInviteCode();
+                    inviteCodeTV.setText(text);
+
+                    builder.setView(alertDialogView)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    shareGroupInviteCode();
+                                }
+                            })
+                            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+
+                    final AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+
+                }
+
+                else {
+                    Toast.makeText(requireActivity(), "sorry, only admins can share invite code for private groups!", Toast.LENGTH_LONG).show();
+                }
+
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    public void shareGroupInviteCode() {
+
+        Intent shareCodeIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareCodeIntent.setType("text/plain");
+        String groupInviteCode = researchGroup.getGroupInviteCode();
+        shareCodeIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Invite Code");
+        shareCodeIntent.putExtra(android.content.Intent.EXTRA_TEXT, groupInviteCode);
+        startActivity(Intent.createChooser(shareCodeIntent, "share invite code via"));
+
     }
 
 
