@@ -36,6 +36,11 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
+
+/*
+Important to note that travis CI uses IRM emulators, which makes instrumantation tests to take longer. So we will be avoiding them where possible.
+
+ */
 public class RegisterFragmentTest {
 
     @Rule
@@ -87,14 +92,12 @@ public class RegisterFragmentTest {
         View view8 = Fragment.getView().findViewById(R.id.submitBtn);
         assertNotNull(view8);
     }
-	
-	@Ignore
+
     @Test
     public void testValidInput(){
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+
+        //Unit test
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
-		
 		//All input is valid
         Fragment.setFirstName("Wits");
         Fragment.setLastName("University");
@@ -108,13 +111,12 @@ public class RegisterFragmentTest {
     }
     
     
-    @Ignore
     @Test
     public void testInvalidInputFName(){
     	//All input is correct except first name
-    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
+    	//RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
+        //mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
         Fragment.setFirstName("");
         Fragment.setLastName("University");
         Fragment.setAcademicStatus("Honors");
@@ -128,14 +130,9 @@ public class RegisterFragmentTest {
     
     }
 
-	@Ignore
 	@Test
     public void testInvalidInputLName(){
-    	//All input is correct except last name
-    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
-
         Fragment.setFirstName("Wits");
         Fragment.setLastName("");
         Fragment.setAcademicStatus("Honors");
@@ -145,19 +142,12 @@ public class RegisterFragmentTest {
         Fragment.setPhoneNumber("0123456789");
 
         assertFalse(Fragment.isValidInput());
-    
     }
 
-	@Ignore    
     @Test
     public void testInvalidInputAcadStatus(){
     	//All input is correct except academic status
-    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
-
-
-
         Fragment.setFirstName("Wits");
         Fragment.setLastName("University");
         Fragment.setAcademicStatus("Select your academic status here");
@@ -168,17 +158,12 @@ public class RegisterFragmentTest {
 
         assertFalse(Fragment.isValidInput());
 
-    
     }
 
-	@Ignore    
     @Test
     public void testInvalidInputEmail(){
     	//All input is correct except email
-    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
-
         Fragment.setFirstName("Wits");
         Fragment.setLastName("University");
         Fragment.setAcademicStatus("Honors");
@@ -188,18 +173,12 @@ public class RegisterFragmentTest {
         Fragment.setPhoneNumber("0123456789");
 
         assertFalse(Fragment.isValidInput());
-
-    
     }
 
-	@Ignore    
     @Test
     public void testInvalidInputPassword(){
     	//All input is correct except password
-    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
-
         Fragment.setFirstName("Wits");
         Fragment.setLastName("University");
         Fragment.setAcademicStatus("Honors");
@@ -211,14 +190,9 @@ public class RegisterFragmentTest {
         assertFalse(Fragment.isValidInput());
     }
 	
-	@Ignore    
     @Test
     public void testInvalidInputPasswordNotMatching(){
-    	//All input is correct except passwords do not match
-    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
-
         Fragment.setFirstName("Wits");
         Fragment.setLastName("University");
         Fragment.setAcademicStatus("Honors");
@@ -228,18 +202,13 @@ public class RegisterFragmentTest {
         Fragment.setPhoneNumber("0123456789");
 
         assertFalse(Fragment.isValidInput());
-
-    
     }
 	
-	@Ignore    
+
     @Test
     public void testInvalidInputPhoneNumber(){
     	//All input is correct except phone number is invalid
-    	RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         RegisterFragment Fragment = new RegisterFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
-
         Fragment.setFirstName("Wits");
         Fragment.setLastName("University");
         Fragment.setAcademicStatus("Honors");
@@ -249,12 +218,12 @@ public class RegisterFragmentTest {
         Fragment.setPhoneNumber("");
 
         assertFalse(Fragment.isValidInput());
-
-    
     }
     
     
-    
+
+    //User interface testing, slows down travis buid.
+    //Possible solution: Use Jenkins(alternate CI) or use googles firebase(Good emulators)
     /*@Test
     public void UnitTesting() {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
