@@ -34,8 +34,23 @@ public class FeedListFragmentTest {
         FeedListFragment Fragment = new FeedListFragment();
         mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
+        View view = Fragment.getView().findViewById(R.id.feed_launched);
+        assertNotNull(view);
+    }
+
+    @Test
+    public void Launch()
+    {
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.feedlist_container);
+        assertNotNull(rlContainer);
+        FeedListFragment Fragment = new FeedListFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
         View view = Fragment.getView().findViewById(R.id.feedList);
         assertNotNull(view);
+
+        View view1 = Fragment.getView().findViewById(R.id.progress_circular);
+        assertNotNull(view1);
     }
 
     @After
