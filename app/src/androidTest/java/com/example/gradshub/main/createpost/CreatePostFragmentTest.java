@@ -56,6 +56,31 @@ public class CreatePostFragmentTest {
     }
 
     @Test
+    public void Launch()
+    {
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
+        assertNotNull(rlContainer);
+        CreatePostFragment Fragment = new CreatePostFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+        View view = Fragment.getView().findViewById(R.id.postTitleTV);
+        assertNotNull(view);
+        View view1 = Fragment.getView().findViewById(R.id.postSubjectContainer);
+        assertNotNull(view1);
+        View view2 = Fragment.getView().findViewById(R.id.postSubjectET);
+        assertNotNull(view2);
+        View view3 = Fragment.getView().findViewById(R.id.descriptionTV);
+        assertNotNull(view3);
+        View view4 = Fragment.getView().findViewById(R.id.postDescriptionContainer);
+        assertNotNull(view4);
+        View view5 = Fragment.getView().findViewById(R.id.postDescriptionET);
+        assertNotNull(view5);
+        View view6 = Fragment.getView().findViewById(R.id.postBtn);
+        assertNotNull(view6);
+
+    }
+
+    @Test
     public void AutoLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
