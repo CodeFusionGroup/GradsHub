@@ -106,6 +106,8 @@ public class RegisterFragmentTest {
 
         assertTrue(Fragment.isValidInput());
     }
+    
+    
     @Ignore
     @Test
     public void testInvalidInputFName(){

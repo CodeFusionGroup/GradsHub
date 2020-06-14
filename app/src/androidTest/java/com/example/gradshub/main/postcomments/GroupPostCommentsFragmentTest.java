@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 
 public class GroupPostCommentsFragmentTest {
 
+/*
     @Rule
     public ActivityTestRule<PostCommentActivity> activityTestRule = new ActivityTestRule<PostCommentActivity>(PostCommentActivity.class);
     private PostCommentActivity mActivity = null;
@@ -34,6 +35,7 @@ public class GroupPostCommentsFragmentTest {
         mActivity = activityTestRule.getActivity();
     }
 
+	@Ignore
     @Test
     public void testingLaunched()
     {
@@ -47,6 +49,7 @@ public class GroupPostCommentsFragmentTest {
         assertNotNull(fView);
     }
 
+	@Ignore
     @Test
     public void Launched()
     {
@@ -110,4 +113,5 @@ public class GroupPostCommentsFragmentTest {
 
         mActivity = null;
     }
+    */
 }
