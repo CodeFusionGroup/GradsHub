@@ -12,6 +12,7 @@ import com.example.gradshub.authentication.LoginFragment;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -71,6 +72,7 @@ public class GroupPostCommentsFragmentTest {
         assertNotNull(View6);
     }
 
+	@Ignore
     @Test
     public void AutoLaunch()
     {
