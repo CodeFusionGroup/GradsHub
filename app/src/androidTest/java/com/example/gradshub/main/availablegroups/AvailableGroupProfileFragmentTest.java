@@ -3,6 +3,7 @@ package com.example.gradshub.main.availablegroups;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.rule.ActivityTestRule;
 
 import com.android21buttons.fragmenttestrule.FragmentTestRule;
@@ -71,6 +72,18 @@ public class AvailableGroupProfileFragmentTest {
         View view2 = Fragment.getView().findViewById(R.id.progress_circular);
         assertNotNull(view2);
     }
+
+    /*@Test
+    public void AutoFragmentLaunched()
+    {
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.available_test_testing);
+        assertNotNull(rlContainer);
+        AvailableGroupProfileFragment Fragment = new AvailableGroupProfileFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+        ViewInteraction view1 = onView(withId(R.id.joinBtn));
+        view1.perform(click());
+    }*/
 
     @After
     public void tearDown() throws Exception {
