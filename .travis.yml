@@ -33,7 +33,6 @@ android:
     - sys-img-x86-android-28
     - sys-img-armeabi-v7a-android-22
     - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
-    - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
 
   licenses:
     - 'android-sdk-preview-license-52d11cd2'
