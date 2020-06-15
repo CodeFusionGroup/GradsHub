@@ -100,9 +100,8 @@ public class CreateGroupFragmentTest {
         view3.perform(click());
     }
 
-    /*@Test
-    public void AutoLaunching()
-    {
+    @Test
+    public void AutoLaunching() throws InterruptedException {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
         assertNotNull(rlContainer);
         CreateGroupFragment Fragment = new CreateGroupFragment();
@@ -113,6 +112,7 @@ public class CreateGroupFragmentTest {
         ViewInteraction view = onView(withId(R.id.groupNameET));
         view.perform(ViewActions.typeText("Testing PrivateG"));
         closeSoftKeyboard();
+        Thread.sleep(1000);
 
         View view1 = Fragment.getView().findViewById(R.id.groupVisibilityTV);
         assertNotNull(view1);
@@ -125,7 +125,7 @@ public class CreateGroupFragmentTest {
 
         ViewInteraction view3 = onView(withId(R.id.doneBtn));
         view3.perform(click());
-    }*/
+    }
 
     //Invalid input
     @Ignore
