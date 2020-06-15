@@ -101,8 +101,7 @@ public class CreateGroupFragmentTest {
     }
 
     @Test
-    public void AutoLaunching()
-    {
+    public void AutoLaunching() throws InterruptedException {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
         assertNotNull(rlContainer);
         CreateGroupFragment Fragment = new CreateGroupFragment();
@@ -113,6 +112,7 @@ public class CreateGroupFragmentTest {
         ViewInteraction view = onView(withId(R.id.groupNameET));
         view.perform(ViewActions.typeText("Testing PrivateG"));
         closeSoftKeyboard();
+        Thread.sleep(1000);
 
         View view1 = Fragment.getView().findViewById(R.id.groupVisibilityTV);
         assertNotNull(view1);
