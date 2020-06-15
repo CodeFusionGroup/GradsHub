@@ -41,6 +41,11 @@ public class GroupPostCommentsFragment extends Fragment {
     private TextInputEditText commentET;
     private String comment;
     private Post post;
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
     private CommentsAdapter mAdapter;
     private View view;
 
