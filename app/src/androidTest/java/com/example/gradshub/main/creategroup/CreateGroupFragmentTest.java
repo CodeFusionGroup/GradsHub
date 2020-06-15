@@ -92,13 +92,11 @@ public class CreateGroupFragmentTest {
         ViewInteraction view22 = onView(withId(R.id.publicRB));
         view22.perform(click());
 
-        //View view3 = Fragment.getView().findViewById(R.id.doneBtn);
-        //view3.performClick();
         ViewInteraction view3 = onView(withId(R.id.doneBtn));
         view3.perform(click());
     }
 
-    /*@Test
+    @Test
     public void AutoLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
@@ -118,14 +116,41 @@ public class CreateGroupFragmentTest {
         View view2 = Fragment.getView().findViewById(R.id.radioGroup);
         view2.performClick();
 
-        //View view22 = Fragment.getView().findViewById(R.id.privateRB);
-        //view22.performClick();
         ViewInteraction view22 = onView(withId(R.id.privateRB));
         view22.perform(click());
 
         ViewInteraction view3 = onView(withId(R.id.doneBtn));
         view3.perform(click());
-    }*/
+    }
+
+    //Invalid input
+    @Test
+    public void inValidInput(){
+        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
+        assertNotNull(rlContainer);
+        CreateGroupFragment Fragment = new CreateGroupFragment();
+        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+        ViewInteraction view3 = onView(withId(R.id.doneBtn));
+
+        //No group name
+        view3.perform(click());
+
+        //Buttons unchecked
+        ViewInteraction view = onView(withId(R.id.groupNameET));
+        view.perform(ViewActions.typeText("Lorem ipsum"));
+        closeSoftKeyboard();
+        view3.perform(click());
+
+        //Long group name
+        view = onView(withId(R.id.groupNameET));
+        view.perform(ViewActions.typeText(" dolor sit amet, consectetur adipiscing elit"));
+        closeSoftKeyboard();
+        view3.perform(click());
+
+    }
+
+
 
     @After
     public void tearDown() throws Exception {
