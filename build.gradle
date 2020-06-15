@@ -50,6 +50,15 @@ jacocoTestReport {
         xml.enabled true
         xml.destination = file("build/foo.xml")
     }
+
+    //afterEvaluate {
+    //    classDirectories = files(classDirectories.files.collect {
+    //        fileTree(dir: it, exclude: [
+    //                '**/enum/**',
+    //                '**/util/**',
+    //       ])
+    //    })
+    //}*/
 }
 
 

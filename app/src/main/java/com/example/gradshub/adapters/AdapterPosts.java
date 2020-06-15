@@ -1,6 +1,6 @@
 package com.example.gradshub.adapters;
 
-import android.text.format.DateFormat;
+/*import android.text.format.DateFormat;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -132,4 +132,4 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
         }
     }
-}
+}*/

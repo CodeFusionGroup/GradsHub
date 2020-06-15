@@ -1,5 +1,5 @@
 package com.example.gradshub.main.home;
-
+/*
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,8 +19,9 @@ import com.example.gradshub.model.ModelPost;
 
 import java.util.ArrayList;
 import java.util.List;
+*/
 
-
+/*
 //TODO: implement functionality to display feeds on the home page in the form of card views.
 public class HomeFragment extends Fragment {
 
@@ -55,7 +56,7 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
-    /*This is where we need to load post from database using the ModelPost class*/
+    //This is where we need to load post from database using the ModelPost class
     private void loadPosts() {
         //path of all the posts
         //get data from database and add it to postlist array
@@ -91,4 +92,4 @@ public class HomeFragment extends Fragment {
 
     }
 
-}
+}*/
