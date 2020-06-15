@@ -78,4 +78,7 @@ dependencies {
     debugImplementation 'com.21buttons:fragment-test-rule-extras:2.0.1'
     implementation 'androidx.navigation:navigation-runtime:2.2.2'
 
+    //apply plugin: 'org.sonarqube'
+    apply plugin: 'jacoco'
+
 }
