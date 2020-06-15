@@ -100,7 +100,7 @@ public class CreateGroupFragmentTest {
         view3.perform(click());
     }*/
 
-    @Test
+    /*@Test
     public void CreateGroupFragmentAutoLaunching() throws InterruptedException {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
         assertNotNull(rlContainer);
@@ -125,7 +125,7 @@ public class CreateGroupFragmentTest {
 
         ViewInteraction view3 = onView(withId(R.id.doneBtn));
         view3.perform(click());
-    }
+    }*/
 
     //Invalid input
     /*@Ignore
