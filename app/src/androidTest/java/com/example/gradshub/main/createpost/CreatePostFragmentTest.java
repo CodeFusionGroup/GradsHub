@@ -14,6 +14,7 @@ import com.example.gradshub.main.creategroup.CreateGroupFragment;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,7 +81,9 @@ public class CreatePostFragmentTest {
 
     }
 
-    /*@Test
+    //Ignored tests passiing locally, travis amri emulator fails
+    @Ignore
+    @Test
     public void AutoLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
@@ -115,9 +118,11 @@ public class CreatePostFragmentTest {
         //view6.performClick();
         ViewInteraction view6 = onView(withId(R.id.postBtn));
         view6.perform(click());
-    }*/
+    }
+
 
     @After
     public void tearDown() throws Exception {
+        mActivity = null;
     }
 }

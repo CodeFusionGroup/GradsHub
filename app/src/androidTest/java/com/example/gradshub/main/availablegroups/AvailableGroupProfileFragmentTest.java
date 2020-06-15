@@ -89,6 +89,5 @@ public class AvailableGroupProfileFragmentTest {
     public void tearDown() throws Exception {
         mActivity = null;
 
-        mActivity = null;
     }
 }
