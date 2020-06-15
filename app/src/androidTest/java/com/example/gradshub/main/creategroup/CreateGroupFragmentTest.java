@@ -39,7 +39,7 @@ public class CreateGroupFragmentTest {
     }
 
     @Test
-    public void Launched()
+    public void CreateGroupFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
         assertNotNull(rlContainer);
@@ -51,7 +51,7 @@ public class CreateGroupFragmentTest {
     }
 
     @Test
-    public void Launch()
+    public void CreateGroupFragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
         assertNotNull(rlContainer);
@@ -70,7 +70,7 @@ public class CreateGroupFragmentTest {
 
     //Ignorered tests passing locally, but failing on travis due to travis armi emulator
 
-    @Ignore
+    /*@Ignore
     @Test
     public void AutoLaunch()
     {
@@ -98,10 +98,10 @@ public class CreateGroupFragmentTest {
 
         ViewInteraction view3 = onView(withId(R.id.doneBtn));
         view3.perform(click());
-    }
+    }*/
 
-    /*@Test
-    public void AutoLaunching() throws InterruptedException {
+    @Test
+    public void CreateGroupFragmentAutoLaunching() throws InterruptedException {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
         assertNotNull(rlContainer);
         CreateGroupFragment Fragment = new CreateGroupFragment();
@@ -125,10 +125,10 @@ public class CreateGroupFragmentTest {
 
         ViewInteraction view3 = onView(withId(R.id.doneBtn));
         view3.perform(click());
-    }*/
+    }
 
     //Invalid input
-    @Ignore
+    /*@Ignore
     @Test
     public void inValidInput(){
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
@@ -153,7 +153,7 @@ public class CreateGroupFragmentTest {
         closeSoftKeyboard();
         view3.perform(click());
 
-    }
+    }*/
 
 
 

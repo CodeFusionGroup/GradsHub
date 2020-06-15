@@ -42,7 +42,7 @@ public class ProfileFragmentTest {
     }
 
     @Test
-    public void testingLaunched()
+    public void ProfileFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) profileFragment.findViewById(R.id.profile_testing_test);
         assertNotNull(rlContainer);

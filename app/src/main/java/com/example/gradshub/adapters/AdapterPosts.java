@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+
+
 public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
     Context context;

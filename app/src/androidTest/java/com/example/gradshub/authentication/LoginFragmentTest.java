@@ -74,7 +74,7 @@ public class LoginFragmentTest {
     }
 
     @Test
-    public void testingLaunched()
+    public void LoginFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);
@@ -115,7 +115,7 @@ public class LoginFragmentTest {
 
     ///*
     @Test
-    public void AutoTesting()
+    public void AutoTestingLoginFragment()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);

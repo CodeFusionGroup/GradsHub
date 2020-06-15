@@ -46,7 +46,7 @@ public class AvailableGroupProfileFragmentTest {
     }
 
     @Test
-    public void Launched()
+    public void AvailableGroupProfilefragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.available_test_testing);
         assertNotNull(rlContainer);
@@ -58,7 +58,7 @@ public class AvailableGroupProfileFragmentTest {
     }
 
     @Test
-    public void FragmentLaunched()
+    public void AvailableGroupProfilefragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.available_test_testing);
         assertNotNull(rlContainer);

@@ -10,7 +10,7 @@ import com.example.gradshub.R;
 import com.example.gradshub.authentication.AuthenticationActivity;
 import com.example.gradshub.main.availablegroups.AvailableGroupProfileFragment;
 import com.example.gradshub.main.availablegroups.AvailableGroupsListFragment;
-import com.example.gradshub.main.mygroups.MyGroupsListFragment;
+//import com.example.gradshub.main.mygroups.MyGroupsListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
@@ -28,7 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 
-public class MainActivity extends AppCompatActivity implements MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
+public class MainActivity extends AppCompatActivity implements /*MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,*/
         AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
         MyGroupsProfileFragment.OnPostsListFragmentInteractionListener {
 
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     }
 
 
-    @Override
+    /*@Override
     public void onMyGroupsListFragmentInteraction(ResearchGroup item) {
 
         Bundle bundle = new Bundle();
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_myGroupsFragment_to_myGroupProfileFragment, bundle);
 
-    }
+    }*/
 
 
     @Override

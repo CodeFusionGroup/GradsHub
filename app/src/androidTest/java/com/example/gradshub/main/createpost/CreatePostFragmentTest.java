@@ -45,7 +45,7 @@ public class CreatePostFragmentTest {
     }
 
     @Test
-    public void Launched()
+    public void CreatePostFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
         assertNotNull(rlContainer);
@@ -57,7 +57,7 @@ public class CreatePostFragmentTest {
     }
 
     @Test
-    public void Launch()
+    public void CreatePostFragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
         assertNotNull(rlContainer);
@@ -84,7 +84,7 @@ public class CreatePostFragmentTest {
     //Ignored tests passiing locally, travis amri emulator fails
     @Ignore
     @Test
-    public void AutoLaunched()
+    public void CreatePostFragmentAutoLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
         assertNotNull(rlContainer);

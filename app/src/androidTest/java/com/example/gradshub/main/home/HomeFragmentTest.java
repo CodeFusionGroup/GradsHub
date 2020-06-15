@@ -28,7 +28,7 @@ public class HomeFragmentTest {
     }
 
     @Test
-    public void testingLaunched()
+    public void HomeFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.hometest_container);
         assertNotNull(rlContainer);
@@ -41,7 +41,7 @@ public class HomeFragmentTest {
     }
 
     @Test
-    public void testing()
+    public void HomeFragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.hometest_container);
         assertNotNull(rlContainer);

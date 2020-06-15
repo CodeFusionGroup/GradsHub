@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.gradshub.R;
 
-public class GroupListlistActivity extends AppCompatActivity {
+/*public class GroupListlistActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle onSaveInstance)
@@ -14,4 +14,4 @@ public class GroupListlistActivity extends AppCompatActivity {
         super.onCreate(onSaveInstance);
         setContentView(R.layout.group_list);
     }
-}
+}*/

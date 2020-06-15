@@ -77,7 +77,7 @@ public class ResetPasswordFragmentTest {
         assertNotNull(view);
     }
     @Test
-    public void ResetTestingLaunched()
+    public void ResetPasswordFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.reset_containing_tests);
         assertNotNull(rlContainer);
@@ -97,7 +97,7 @@ public class ResetPasswordFragmentTest {
     }
 
     @Test
-    public void ResetTestLaunched()
+    public void AutoTestingResetPasswordFragment()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.reset_containing_tests);
         assertNotNull(rlContainer);

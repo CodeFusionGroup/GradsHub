@@ -27,7 +27,7 @@ public class FeedListFragmentTest {
     }
 
     @Test
-    public void Launched()
+    public void FeedListFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.feedlist_container);
         assertNotNull(rlContainer);
@@ -39,7 +39,7 @@ public class FeedListFragmentTest {
     }
 
     @Test
-    public void Launch()
+    public void FeedListFragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.feedlist_container);
         assertNotNull(rlContainer);

@@ -54,7 +54,7 @@ public class RegisterFragmentTest {
     }
 
     @Test
-    public void TestingLaunched()
+    public void RegisterFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         assertNotNull(rlContainer);
@@ -66,7 +66,7 @@ public class RegisterFragmentTest {
     }
 
     @Test
-    public void TestLaunched()
+    public void RegisterFragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
         assertNotNull(rlContainer);
