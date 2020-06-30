@@ -39,17 +39,13 @@ public class AvailableGroupProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mainActivity = (MainActivity) requireActivity();
+        mainActivity = (MainActivity) requireActivity();
         Bundle bundle = this.getArguments();
         if(bundle != null) {
             researchGroup = bundle.getParcelable("group_item");
         }
     }
 
-    /*@Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        //super.onSaveInstanceState(outState);
-    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +59,7 @@ public class AvailableGroupProfileFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_circular);
         Button joinBtn = view.findViewById(R.id.joinBtn);
         TextView groupNameTV = view.findViewById(R.id.groupNameTV);
-        //groupNameTV.setText(researchGroup.getGroupName());
+        groupNameTV.setText(researchGroup.getGroupName());
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());

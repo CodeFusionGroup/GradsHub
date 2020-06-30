@@ -1,5 +1,5 @@
 package com.example.gradshub.main.mygroups;
-/*
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,13 +16,13 @@ import com.example.gradshub.model.ResearchGroup;
 
 import java.util.ArrayList;
 import java.util.List;
-*/
+
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ResearchGroup} and makes a call to the
  * specified {@link OnMyGroupsListFragmentInteractionListener}.
  */
-/*public class MyGroupsListRecyclerViewAdapter extends RecyclerView.Adapter<MyGroupsListRecyclerViewAdapter.ViewHolder> implements Filterable {
+public class MyGroupsListRecyclerViewAdapter extends RecyclerView.Adapter<MyGroupsListRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     private List<ResearchGroup> mValuesFull;
     private final List<ResearchGroup> mValues;
@@ -129,4 +129,4 @@ import java.util.List;
         return results;
     }
 
-}*/
+}

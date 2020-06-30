@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/*public class MyGroupsListFragment extends Fragment {
+public class MyGroupsListFragment extends Fragment {
 
     private static List<ResearchGroup> items = new ArrayList<>();
     private View view;
@@ -217,9 +217,9 @@ import java.util.List;
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    /*public interface OnMyGroupsListFragmentInteractionListener {
+    public interface OnMyGroupsListFragmentInteractionListener {
         void onMyGroupsListFragmentInteraction(ResearchGroup item);
     }
 
 
-}*/
+}

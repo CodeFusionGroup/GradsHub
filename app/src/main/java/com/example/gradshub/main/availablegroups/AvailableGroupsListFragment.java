@@ -92,7 +92,6 @@ public class AvailableGroupsListFragment extends Fragment {
             @Override
             protected void onPostExecute(String output) {
                 serverGetGroupsToExploreResponse(output);
-                //FragmentTransaction.commitAllowingStateLoss();
             }
 
         };

@@ -87,10 +87,10 @@ public class CreatePostFragment extends Fragment {
                 Date date = new Date();
                 String postDate = df.format(date);
 
-                //MainActivity mainActivity = (MainActivity) requireActivity();
+                MainActivity mainActivity = (MainActivity) requireActivity();
                 ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
 
-                //createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
+                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 progressBar.setVisibility(View.VISIBLE);
             }
 
