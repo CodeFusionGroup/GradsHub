@@ -28,7 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 
-public class MainActivity extends AppCompatActivity implements /*MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,*/
+public class MainActivity extends AppCompatActivity implements //MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
         AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
         MyGroupsProfileFragment.OnPostsListFragmentInteractionListener {
 
@@ -112,16 +112,16 @@ public class MainActivity extends AppCompatActivity implements /*MyGroupsListFra
     }
 
 
-    /*@Override
-    public void onMyGroupsListFragmentInteraction(ResearchGroup item) {
-
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("group_item", item);
-        bundle.putParcelable("user", user);
-        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
-        navController.navigate(R.id.action_myGroupsFragment_to_myGroupProfileFragment, bundle);
-
-    }*/
+//    @Override
+//    public void onMyGroupsListFragmentInteraction(ResearchGroup item) {
+//
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("group_item", item);
+//        bundle.putParcelable("user", user);
+//        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+//        navController.navigate(R.id.action_myGroupsFragment_to_myGroupProfileFragment, bundle);
+//
+//    }
 
 
     @Override
