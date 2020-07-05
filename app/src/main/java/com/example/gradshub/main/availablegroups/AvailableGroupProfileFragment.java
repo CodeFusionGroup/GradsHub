@@ -137,11 +137,11 @@ public class AvailableGroupProfileFragment extends Fragment {
                 // successfully joined group
                 if(success.equals("1")) {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-
                     // make another call to getGroupsToExplore() to reflect the updated list of available groups for the current user
                     AvailableGroupsListFragment availableGroupsFragment = AvailableGroupsListFragment.getInstance();
                     availableGroupsFragment.getGroupsToExplore(mainActivity.user);
+
+                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
 
                     NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
                     navController.navigate(R.id.action_availableGroupProfileFragment_to_myGroupsListFragment);

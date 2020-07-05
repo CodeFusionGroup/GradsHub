@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -53,6 +54,8 @@ public class CreatePostFragment extends Fragment {
     private TextView fileAttachmentTV;
     private static final int PICK_FILE_RESULT_CODE = 1;
 
+    private View view;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,8 @@ public class CreatePostFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_create_post, container, false);
+        view = inflater.inflate(R.layout.fragment_create_post, container, false);
+        return view;
     }
 
 
@@ -166,7 +170,6 @@ public class CreatePostFragment extends Fragment {
                     // Toast message: successfully created a post
                     Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
 
-                    // might have to call getPosts after creating post to update feed??
                     NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
                     navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
                 }

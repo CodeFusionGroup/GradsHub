@@ -17,7 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -107,8 +106,9 @@ public class AvailableGroupsListFragment extends Fragment {
             if(output.equals("")) {
                 if (view instanceof RelativeLayout) {
                     progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+
             }
             else {
 
@@ -118,9 +118,10 @@ public class AvailableGroupsListFragment extends Fragment {
                 if(success.equals("0")) {
                     if (view instanceof RelativeLayout) {
                         progressBar.setVisibility(View.GONE);
+                        // Toast message: no available groups (current user belongs to all groups)
+                        Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
                     }
-                    // Toast message: no available groups (current user belongs to all groups)
-                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+
                 }
                 else if(success.equals("1")) {
 

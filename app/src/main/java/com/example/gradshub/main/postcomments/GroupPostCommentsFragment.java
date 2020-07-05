@@ -109,7 +109,6 @@ public class GroupPostCommentsFragment extends Fragment {
                 userComment.setCommentDate(commentDate);
 
                 insertGroupPostComment(user, researchGroup, post, userComment);
-                commentsList.add(userComment);
 
                 commentET.setText("");
             }
@@ -238,10 +237,10 @@ public class GroupPostCommentsFragment extends Fragment {
             }
 
             else if(success.equals("1")) {
+
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-                mAdapter = new CommentsAdapter(requireContext(), commentsList);
-                mAdapter.notifyDataSetChanged();
+                getGroupPostComments(post);
             }
 
         }

@@ -107,7 +107,7 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
 
-            app:popUpTo="@id/createPostFragment"
+            app:popUpTo="@id/myGroupProfileFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
