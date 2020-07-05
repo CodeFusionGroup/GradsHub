@@ -103,6 +103,7 @@ public class AvailableGroupsListFragment extends Fragment {
 
         try {
 
+            items.clear(); // clear the items so that we don't have duplicate entries in our recycle view
             if(output.equals("")) {
                 if (view instanceof RelativeLayout) {
                     progressBar.setVisibility(View.GONE);
@@ -125,7 +126,6 @@ public class AvailableGroupsListFragment extends Fragment {
                 }
                 else if(success.equals("1")) {
 
-                    items.clear(); // clear the items so that we don't have duplicate entries in our recycle view
                     JSONArray ja = jo.getJSONArray("message");
 
                     for(int i = 0 ; i < ja.length(); i++) {
