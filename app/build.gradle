@@ -37,9 +37,9 @@ android {
     }
 }
 
-coveralls {
-    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
-}
+//coveralls {
+//    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
+//}
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
     reports {
@@ -80,5 +80,8 @@ dependencies {
 
     //apply plugin: 'org.sonarqube'
     apply plugin: 'jacoco'
+
+    // Used for networking
+    implementation 'com.android.volley:volley:1.1.1'
 
 }

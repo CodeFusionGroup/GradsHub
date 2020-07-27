@@ -1,6 +1,7 @@
 package com.example.gradshub.main.availablegroups;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -19,14 +20,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.NetworkRequestQueue;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 
 public class AvailableGroupProfileFragment extends Fragment {
@@ -34,6 +41,7 @@ public class AvailableGroupProfileFragment extends Fragment {
     private ResearchGroup researchGroup;
     private MainActivity mainActivity;
     private ProgressBar progressBar;
+    private Context context;
 
 
     @Override
@@ -44,6 +52,7 @@ public class AvailableGroupProfileFragment extends Fragment {
         if(bundle != null) {
             researchGroup = bundle.getParcelable("group_item");
         }
+        context = this.getActivity();
     }
 
 
@@ -102,22 +111,51 @@ public class AvailableGroupProfileFragment extends Fragment {
     }
 
 
+//    private void requestToJoinGroup(User user, ResearchGroup researchGroup, String inviteCode) {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("USER_ID",user.getUserID());
+//        params.put("GROUP_ID", researchGroup.getGroupID());
+//        params.put("GROUP_VISIBILITY", researchGroup.getGroupVisibility());
+//        params.put("GROUP_CODE", inviteCode);
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/joingroup.php",params) {
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverRequestToJoinGroupResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//    }
+
     private void requestToJoinGroup(User user, ResearchGroup researchGroup, String inviteCode) {
 
-        ContentValues params = new ContentValues();
-        params.put("USER_ID",user.getUserID());
-        params.put("GROUP_ID", researchGroup.getGroupID());
-        params.put("GROUP_VISIBILITY", researchGroup.getGroupVisibility());
-        params.put("GROUP_CODE", inviteCode);
+        String url = "https://gradshub.herokuapp.com/api/User/joingroup.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("user_id",user.getUserID());
+        params.put("group_id", researchGroup.getGroupID());
+        params.put("group_visibility", researchGroup.getGroupVisibility());
+        params.put("group_code", inviteCode);
+        System.err.println(params);
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/joingroup.php",params) {
-            @Override
-            protected void onPostExecute(String output) {
-                serverRequestToJoinGroupResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.err.println(response);
+                        serverRequestToJoinGroupResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( context.getApplicationContext()).addToRequestQueue(postRequest);
     }
 
 
@@ -138,8 +176,8 @@ public class AvailableGroupProfileFragment extends Fragment {
                 if(success.equals("1")) {
                     progressBar.setVisibility(View.GONE);
                     // make another call to getGroupsToExplore() to reflect the updated list of available groups for the current user
-                    AvailableGroupsListFragment availableGroupsFragment = AvailableGroupsListFragment.getInstance();
-                    availableGroupsFragment.getGroupsToExplore(mainActivity.user);
+//                    AvailableGroupsListFragment availableGroupsFragment = AvailableGroupsListFragment.getInstance();
+//                    availableGroupsFragment.getGroupsToExplore(mainActivity.user);
 
                     Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
 
