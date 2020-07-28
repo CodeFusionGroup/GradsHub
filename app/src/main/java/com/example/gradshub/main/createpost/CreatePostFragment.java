@@ -2,6 +2,7 @@ package com.example.gradshub.main.createpost;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
@@ -31,6 +35,7 @@ import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
@@ -39,6 +44,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -56,11 +62,13 @@ public class CreatePostFragment extends Fragment {
 
     private View view;
 
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        context = this.getActivity();
     }
 
 
@@ -128,24 +136,54 @@ public class CreatePostFragment extends Fragment {
     }
 
 
+//    private void createGroupPost(Post post, User user, ResearchGroup researchGroup) {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("GROUP_ID", researchGroup.getGroupID());
+//        params.put("USER_ID", user.getUserID());
+//        params.put("POST_DATE", post.getPostDate());
+//        params.put("POST_TITLE", post.getPostSubject());
+//        params.put("POST_URL", post.getPostDescription());
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/creategrouppost.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverCreateGroupPostResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//
+//    }
+
     private void createGroupPost(Post post, User user, ResearchGroup researchGroup) {
 
-        ContentValues params = new ContentValues();
-        params.put("GROUP_ID", researchGroup.getGroupID());
-        params.put("USER_ID", user.getUserID());
-        params.put("POST_DATE", post.getPostDate());
-        params.put("POST_TITLE", post.getPostSubject());
-        params.put("POST_URL", post.getPostDescription());
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/create.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("group_id", researchGroup.getGroupID());
+        params.put("user_id", user.getUserID());
+        params.put("post_date", post.getPostDate());
+        params.put("post_title", post.getPostSubject());
+        params.put("post_url", post.getPostDescription());
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/creategrouppost.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverCreateGroupPostResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.err.println(response);
+                        serverCreateGroupPostResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
 
     }
 

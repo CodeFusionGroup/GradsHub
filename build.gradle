@@ -28,7 +28,7 @@ plugins {
     id "groovy"
     id "jacoco"
     id "com.gradle.plugin-publish" version "0.10.1"
-    id "com.github.kt3k.coveralls" version "2.5.0"
+//    id "com.github.kt3k.coveralls" version "2.5.0"
 }
 
 group 'org.kt3k.gradle.plugin'
@@ -40,7 +40,6 @@ allprojects {
         jcenter()
         google()
         mavenCentral()
-        
     }
 }
 
@@ -50,7 +49,6 @@ jacocoTestReport {
         xml.enabled true
         xml.destination = file("build/foo.xml")
     }
-
     //afterEvaluate {
     //    classDirectories = files(classDirectories.files.collect {
     //        fileTree(dir: it, exclude: [
@@ -61,42 +59,43 @@ jacocoTestReport {
     //}*/
 }
 
-
-
-coveralls {
-    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
-}
-
-gradlePlugin {
-    plugins {
-        coverallsPlugin {
-            id = 'com.github.kt3k.coveralls'
-            implementationClass = 'org.kt3k.gradle.plugin.CoverallsPlugin'
-        }
-    }
-}
-
-apply plugin: 'com.github.kt3k.coveralls'
-
-tasks.coveralls {
-    dependsOn 'connectedAndroidTest'
-    onlyIf { System.env.'CI' }
-}
-
-pluginBundle {
-    website = 'https://github.com/CodeFusionGroup/GradsHub/'
-    vcsUrl = 'https://github.com/CodeFusionGroup/GradsHub.git'
-    description = 'Send coverage data to coveralls.io'
-    tags = ['coverage', 'coveralls']
-
-    plugins {
-        coverallsPlugin {
-            displayName = 'Coveralls Gradle Plugin'
-        }
-    }
-}
-
 buildScan {
     termsOfServiceUrl   = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = 'yes'
 }
+
+// OLD COVERALLS STUFF
+
+//coveralls {
+//    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
+//}
+
+//gradlePlugin {
+//    plugins {
+//        coverallsPlugin {
+//            id = 'com.github.kt3k.coveralls'
+//            implementationClass = 'org.kt3k.gradle.plugin.CoverallsPlugin'
+//        }
+//    }
+//}
+
+//apply plugin: 'com.github.kt3k.coveralls'
+
+//tasks.coveralls {
+//    dependsOn 'connectedAndroidTest'
+//    onlyIf { System.env.'CI' }
+//}
+
+//pluginBundle {
+//    website = 'https://github.com/CodeFusionGroup/GradsHub/'
+//    vcsUrl = 'https://github.com/CodeFusionGroup/GradsHub.git'
+//    description = 'Send coverage data to coveralls.io'
+//    tags = ['coverage', 'coveralls']
+//
+//    plugins {
+//        coverallsPlugin {
+//            displayName = 'Coveralls Gradle Plugin'
+//        }
+//    }
+//}
+

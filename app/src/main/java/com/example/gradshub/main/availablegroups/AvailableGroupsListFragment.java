@@ -20,17 +20,22 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.NetworkRequestQueue;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -42,12 +47,14 @@ public class AvailableGroupsListFragment extends Fragment {
     private AvailableGroupsListRecyclerViewAdapter adapter;
     private OnAvailableGroupsListFragmentInteractionListener mListener;
     private ProgressBar progressBar;
+    private Context context;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        context = this.getActivity();
     }
 
 
@@ -81,22 +88,49 @@ public class AvailableGroupsListFragment extends Fragment {
     }
 
 
+//    public void getGroupsToExplore(User user) {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("USER_ID", user.getUserID());
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/availablegroups.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverGetGroupsToExploreResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//
+//    }
+
     public void getGroupsToExplore(User user) {
 
-        ContentValues params = new ContentValues();
-        params.put("USER_ID", user.getUserID());
+        String url = "https://gradshub.herokuapp.com/api/User/availablegroups.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("user_id", user.getUserID());
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/availablegroups.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverGetGroupsToExploreResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+//                        System.err.println(response);
+                        serverGetGroupsToExploreResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( this.getActivity().getApplicationContext() ).addToRequestQueue(postRequest);
 
     }
+
 
 
     private void serverGetGroupsToExploreResponse(String output) {

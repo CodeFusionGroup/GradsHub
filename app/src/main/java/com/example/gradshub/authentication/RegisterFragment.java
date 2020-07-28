@@ -1,6 +1,7 @@
 package com.example.gradshub.authentication;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -22,12 +23,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.NetworkRequestQueue;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 
 public class RegisterFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -36,11 +43,14 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
     private String firstName, lastName, email, phoneNumber, academicStatus, password, confirmPassword;
     private Spinner spinner;
     private ProgressBar progressBar;
+    private Context context;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        context = this.getActivity();
     }
 
 
@@ -263,24 +273,55 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
     }
 
 
+//    private void registerUser(User user) {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("USER_FNAME", user.getFirstName());
+//        params.put("USER_LNAME", user.getLastName());
+//        params.put("USER_EMAIL", user.getEmail());
+//        params.put("USER_PHONE_NO", user.getPhoneNumber());
+//        params.put("USER_ACAD_STATUS", user.getAcademicStatus());
+//        params.put("USER_PASSWORD", user.getPassword());
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/register.php",params) {
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverRegisterUserResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//
+//    }
+
     private void registerUser(User user) {
 
-        ContentValues params = new ContentValues();
-        params.put("USER_FNAME", user.getFirstName());
-        params.put("USER_LNAME", user.getLastName());
-        params.put("USER_EMAIL", user.getEmail());
-        params.put("USER_PHONE_NO", user.getPhoneNumber());
-        params.put("USER_ACAD_STATUS", user.getAcademicStatus());
-        params.put("USER_PASSWORD", user.getPassword());
+        String url = "https://gradshub.herokuapp.com/api/User/register.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("f_name", user.getFirstName());
+        params.put("l_name", user.getLastName());
+        params.put("email", user.getEmail());
+        params.put("phone_no", user.getPhoneNumber());
+        params.put("acad_status", user.getAcademicStatus());
+        params.put("password", user.getPassword());
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/register.php",params) {
-            @Override
-            protected void onPostExecute(String output) {
-                serverRegisterUserResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+//                        System.err.println(response);
+                        serverRegisterUserResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( context.getApplicationContext()).addToRequestQueue(postRequest);
 
     }
 

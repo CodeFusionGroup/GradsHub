@@ -28,12 +28,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.main.postcomments.Comment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -141,20 +146,45 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
+//    private void getGroupPosts() {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("GROUP_ID", researchGroup.getGroupID());
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievegrouppost.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverGetGroupPostsResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//
+//    }
     private void getGroupPosts() {
 
-        ContentValues params = new ContentValues();
-        params.put("GROUP_ID", researchGroup.getGroupID());
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/retrieveAll.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("group_id", researchGroup.getGroupID());
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievegrouppost.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverGetGroupPostsResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.err.println(response);
+                        serverGetGroupPostsResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( this.getActivity().getApplicationContext() ).addToRequestQueue(postRequest);
 
     }
 
@@ -234,22 +264,54 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
+//    private void getUserLikedPosts() {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("GROUP_ID", researchGroup.getGroupID());
+//        params.put("USER_ID", user.getUserID());
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievelikesGP.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverGetUserLikedPostsResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//
+//    }
+
     private void getUserLikedPosts() {
 
-        ContentValues params = new ContentValues();
-        params.put("GROUP_ID", researchGroup.getGroupID());
-        params.put("USER_ID", user.getUserID());
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/retrievelikes.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("group_id", researchGroup.getGroupID());
+        params.put("user_id", user.getUserID());
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievelikesGP.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverGetUserLikedPostsResponse(output);
-            }
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.err.println(response);
+                        serverGetUserLikedPostsResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( this.getActivity().getApplicationContext() ).addToRequestQueue(postRequest);
 
-        };
-        asyncHttpPost.execute();
-
+        // Extend timeout
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
 
@@ -284,6 +346,36 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
+//    private void insertGroupLikedPosts() {
+//
+//        StringBuilder likedPostsIDs = new StringBuilder();
+//
+//        for(int i = 0; i < userCurrentlyLikedPosts.size(); i++) {
+//
+//            likedPostsIDs.append(userCurrentlyLikedPosts.get(i));
+//
+//            if (i != userCurrentlyLikedPosts.size()-1) {
+//                likedPostsIDs.append(",");
+//            }
+//        }
+//
+//        ContentValues params = new ContentValues();
+//        params.put("USER_ID", user.getUserID());
+//        params.put("GROUP_ID", researchGroup.getGroupID());
+//        params.put("POST_ID", likedPostsIDs.toString());
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/insertlikesGP.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverInsertGroupLikedPostsResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//
+//    }
+
     private void insertGroupLikedPosts() {
 
         StringBuilder likedPostsIDs = new StringBuilder();
@@ -297,23 +389,31 @@ public class MyGroupsProfileFragment extends Fragment {
             }
         }
 
-        ContentValues params = new ContentValues();
-        params.put("USER_ID", user.getUserID());
-        params.put("GROUP_ID", researchGroup.getGroupID());
-        params.put("POST_ID", likedPostsIDs.toString());
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/insertlikes.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("user_id", user.getUserID());
+        params.put("group_id", researchGroup.getGroupID());
+        params.put("post_id", likedPostsIDs.toString());
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/insertlikesGP.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverInsertGroupLikedPostsResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.err.println(response);
+                        serverInsertGroupLikedPostsResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( this.getActivity().getApplicationContext() ).addToRequestQueue(postRequest);
 
     }
-
 
     private void serverInsertGroupLikedPostsResponse(String output) {
 
