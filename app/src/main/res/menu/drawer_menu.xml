@@ -28,6 +28,11 @@
             android:title="@string/menu_createGroup" />
 
         <item
+            android:id="@+id/scheduleFragment"
+            android:icon="@drawable/ic_stat_name"
+            android:title="Schedule" />
+
+        <item
             android:id="@+id/availableGroupsListFragment"
             android:icon="@drawable/ic_search"
             android:title="@string/menu_exploreGroup" />
