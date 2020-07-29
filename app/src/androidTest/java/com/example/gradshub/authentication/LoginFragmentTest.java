@@ -14,6 +14,7 @@ import com.example.gradshub.R;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -27,42 +28,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertNotNull;
 
-// import android.support.v4.app.Fragment;
-// import android.support.v4.app.FragmentManager;
-// import android.support.v4.app.FragmentTransaction;
 
 public class LoginFragmentTest {
-
-    /*@Rule
-    public FragmentTestRule<?, LoginFragment> fragmentTestRule = FragmentTestRule.create(LoginFragment.class);
-
-    @Test
-    public void LoginFragmentLaunched()
-    {
-        onView(withId(R.id.Launched)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void LoginLaunched() throws Exception {
-
-        onView(withId(R.id.emailET)).check(matches(isDisplayed()));
-        onView(withId(R.id.passwordET)).check(matches(isDisplayed()));
-        onView(withId(R.id.forgotPasswordBtn)).check(matches(isDisplayed()));
-        onView(withId(R.id.registerBtn)).check(matches(isDisplayed()));
-        onView(withId(R.id.noAccountTV)).check(matches(isDisplayed()));
-        onView(withId(R.id.loginBtn)).check(matches(isDisplayed()));
-
-    }
-
-    @Test
-    public void LoginTest()
-    {
-        onView(withId(R.id.emailET)).perform(typeText("maccauley@gmail.com"));
-        onView(withId(R.id.passwordET)).perform(typeText("1234mmmm"));
-        closeSoftKeyboard();
-        onView(withId(R.id.loginBtn)).perform(click());
-        //onView(withId(R.id.homeFragmentView)).check(matches(isDisplayed()));
-    }*/
 
     @Rule
     public ActivityTestRule<TestingActivity> activityActivityTestRule = new ActivityTestRule<TestingActivity>(TestingActivity.class);
@@ -113,7 +80,7 @@ public class LoginFragmentTest {
         assertNotNull(RegisterBT);
     }
 
-    ///*
+    @Ignore
     @Test
     public void AutoTestingLoginFragment()
     {
@@ -142,59 +109,9 @@ public class LoginFragmentTest {
         ViewInteraction view1 = onView(withId(R.id.loginBtn));
         view1.perform(click());
     }
-    //*/
-
-    /*@Test
-    public void AutoTestingTest()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
-
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-
-        View fView = Fragment.getView().findViewById(R.id.emailET);
-        assertNotNull(fView);
-
-        View EmailET = loginFragment.findViewById(R.id.emailET);
-        assertNotNull(EmailET);
-
-        View PasswordET = Fragment.getView().findViewById(R.id.passwordET);
-        assertNotNull(PasswordET);
-
-        //View forgotBT = loginFragment.findViewById(R.id.forgotPasswordBtn);
-        //forgotBT.performClick();
-        ViewInteraction view1 = onView(withId(R.id.forgotPasswordBtn));
-        view1.perform(click());
-
-        View LoginBT = Fragment.getView().findViewById(R.id.loginBtn);
-        assertNotNull(LoginBT);
-        View NoAccountTV = Fragment.getView().findViewById(R.id.noAccountTV);
-        assertNotNull(NoAccountTV);
-        View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
-        assertNotNull(RegisterBT);
-    }*/
-
-    /*@Test
-    public void AutoTestingRegisterTest()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
-
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-
-        ViewInteraction fView = onView(withId(R.id.registerBtn));
-        fView.perform(click());
-    }*/
-
 
     @After
     public void tearDown() throws Exception {
-        loginFragment = null;
-
         loginFragment = null;
     }
 }

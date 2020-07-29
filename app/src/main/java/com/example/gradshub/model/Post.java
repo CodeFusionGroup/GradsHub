@@ -15,6 +15,17 @@ public class Post implements Parcelable {
     private int postCommentsCount = 0;
 
 
+    //Constructors
+    public Post(String postDate, String postSubject, String postDescription) {
+        this.postDate = postDate;
+        this.postSubject = postSubject;
+        this.postDescription = postDescription;
+    }
+
+    public Post() {}
+
+
+    //Getters and setters
     public String getPostID() { return postID; }
 
     public void setPostID(String postID) { this.postID = postID; }
@@ -55,14 +66,6 @@ public class Post implements Parcelable {
 
     public void setPostCommentsCount(int postCommentsCount) { this.postCommentsCount += postCommentsCount; }
 
-
-    public Post(String postDate, String postSubject, String postDescription) {
-        this.postDate = postDate;
-        this.postSubject = postSubject;
-        this.postDescription = postDescription;
-    }
-
-    public Post() {}
 
 
     protected Post(Parcel in) {
