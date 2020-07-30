@@ -53,6 +53,7 @@ public class RegisterFragmentTest {
         mActivity = mActivityTestRule.getActivity();
     }
 
+    //Register screen can succesfully launch
     @Test
     public void RegisterFragmentLaunched()
     {
@@ -65,6 +66,7 @@ public class RegisterFragmentTest {
         assertNotNull(view);
     }
 
+    //Register screen contents successfullly load
     @Test
     public void RegisterFragmentLaunching()
     {
@@ -93,10 +95,9 @@ public class RegisterFragmentTest {
         assertNotNull(view8);
     }
 
+    //Different inputs testing
     @Test
     public void testValidInput(){
-
-        //Unit test
         RegisterFragment Fragment = new RegisterFragment();
 		//All input is valid
         Fragment.setFirstName("Wits");
@@ -106,7 +107,6 @@ public class RegisterFragmentTest {
         Fragment.setPassword("1234Abbssa");
         Fragment.setConfirmPassword("1234Abbssa");
         Fragment.setPhoneNumber("0123456789");
-
         assertTrue(Fragment.isValidInput());
     }
     
@@ -319,6 +319,5 @@ public class RegisterFragmentTest {
     public void tearDown() throws Exception {
         mActivity = null;
 
-        mActivity = null;
     }
 }

@@ -13,7 +13,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.3'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.5.0'
         classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0-alpha05"
 //        classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0-alpha09"
   //      classpath "androidx.navigation:safe-args-gradle-plugin:1.0.0-alpha01"
@@ -28,7 +27,6 @@ plugins {
     id "groovy"
     id "jacoco"
     id "com.gradle.plugin-publish" version "0.10.1"
-    id "com.github.kt3k.coveralls" version "2.5.0"
 }
 
 group 'org.kt3k.gradle.plugin'
@@ -40,7 +38,6 @@ allprojects {
         jcenter()
         google()
         mavenCentral()
-        
     }
 }
 
@@ -49,50 +46,6 @@ jacocoTestReport {
     reports {
         xml.enabled true
         xml.destination = file("build/foo.xml")
-    }
-
-    //afterEvaluate {
-    //    classDirectories = files(classDirectories.files.collect {
-    //        fileTree(dir: it, exclude: [
-    //                '**/enum/**',
-    //                '**/util/**',
-    //       ])
-    //    })
-    //}*/
-}
-
-
-
-coveralls {
-    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
-}
-
-gradlePlugin {
-    plugins {
-        coverallsPlugin {
-            id = 'com.github.kt3k.coveralls'
-            implementationClass = 'org.kt3k.gradle.plugin.CoverallsPlugin'
-        }
-    }
-}
-
-apply plugin: 'com.github.kt3k.coveralls'
-
-tasks.coveralls {
-    dependsOn 'connectedAndroidTest'
-    onlyIf { System.env.'CI' }
-}
-
-pluginBundle {
-    website = 'https://github.com/CodeFusionGroup/GradsHub/'
-    vcsUrl = 'https://github.com/CodeFusionGroup/GradsHub.git'
-    description = 'Send coverage data to coveralls.io'
-    tags = ['coverage', 'coveralls']
-
-    plugins {
-        coverallsPlugin {
-            displayName = 'Coveralls Gradle Plugin'
-        }
     }
 }
 

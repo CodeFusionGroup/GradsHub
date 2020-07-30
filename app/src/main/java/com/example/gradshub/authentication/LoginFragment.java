@@ -1,7 +1,9 @@
 package com.example.gradshub.authentication;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -18,13 +20,22 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.NetworkRequestQueue;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -33,12 +44,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String email, password;
     private EditText emailET, passwordET;
     private User user = new User();
+    private Context context;
 
 
     // called to do initial creation of a fragment.
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        context = this.getActivity();
     }
 
 
@@ -117,20 +131,90 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
 
+//    private void requestLogin(String email, String password) {
+//        ContentValues params = new ContentValues();
+//        params.put("email", email);
+//        params.put("password", password);
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("http://127.0.0.1:8080/api/User/login.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverLoginResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//    }
+
+//    private void requestLogin(String email, String password) {
+//
+////        String url = "http://localhost:8080/api/User/login.php";
+//        String url = "http://10.0.0.21:8080/api/User/login.php";
+//
+////        String url = "https://gradshub.herokuapp.com/login.php";
+//
+//
+//        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//
+//                        System.err.println(response);
+//                        serverLoginResponse(response);
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        error.printStackTrace();
+//                    }
+//                })
+//        {
+//            @Override
+//            protected Map<String, String> getParams()
+//            {
+//                Map<String, String>  params = new HashMap<>();
+//                // the POST parameters:
+//                params.put("email", email);
+//                params.put("password", password);
+//                System.err.println(email);
+//                System.err.println(password);
+//                System.err.println(params);
+//                return params;
+//            }
+//        };
+//
+//        // Access the RequestQueue
+//        NetworkRequestQueue.getInstance( context.getApplicationContext()).addToRequestQueue(postRequest);
+//
+//    }
+
     private void requestLogin(String email, String password) {
-        ContentValues params = new ContentValues();
-        params.put("USER_EMAIL", email);
-        params.put("USER_PASSWORD", password);
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/login.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverLoginResponse(output);
-            }
+        String url = "https://gradshub.herokuapp.com/api/User/login.php";
+        HashMap<String, String>  params = new HashMap<String,String>();
+        // the POST parameters:
+        params.put("email", email);
+        params.put("password", password);
 
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+//                        System.err.println(response);
+                        serverLoginResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( context.getApplicationContext()).addToRequestQueue(postRequest);
     }
 
 

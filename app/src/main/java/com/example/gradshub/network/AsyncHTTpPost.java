@@ -31,7 +31,7 @@ public abstract class AsyncHTTpPost extends AsyncTask<String, String, String> {
             URL url = new URL(address);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Type", "raw");
             connection.setDoOutput(true);
 
             if (parameters.size() > 0) {

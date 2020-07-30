@@ -2,6 +2,7 @@ package com.example.gradshub.main.postcomments;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,12 +17,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
@@ -31,6 +36,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 
@@ -51,6 +57,8 @@ public class GroupPostCommentsFragment extends Fragment {
 
     private ProgressBar progressBar;
 
+    private Context context;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +70,7 @@ public class GroupPostCommentsFragment extends Fragment {
             post = bundle.getParcelable("post_item");
         }
 
+        context = this.getActivity();
     }
 
 
@@ -136,21 +145,45 @@ public class GroupPostCommentsFragment extends Fragment {
     }
 
 
-    private void getGroupPostComments(Post post) {
+//    private void getGroupPostComments(Post post) {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("POST_ID", post.getPostID());
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievecommentsGP.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverGetGroupPostCommentsResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//    }
+private void getGroupPostComments(Post post) {
 
-        ContentValues params = new ContentValues();
-        params.put("POST_ID", post.getPostID());
+    String url = "https://gradshub.herokuapp.com/api/GroupPost/retrievecomments.php";
+    HashMap<String, String> params = new HashMap<String,String>();
+    params.put("post_id", post.getPostID());
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievecommentsGP.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverGetGroupPostCommentsResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
-    }
+    JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    System.err.println(response);
+                    serverGetGroupPostCommentsResponse(response.toString());
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // TODO: Handle error
+                    error.printStackTrace();
+                }
+            });
+    // Access the Global(App) RequestQueue
+    NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
+}
 
 
     private void serverGetGroupPostCommentsResponse(String output) {
@@ -202,25 +235,55 @@ public class GroupPostCommentsFragment extends Fragment {
     }
 
 
+//    private void insertGroupPostComment(User user, ResearchGroup researchGroup, Post post, Comment comment) {
+//
+//        ContentValues params = new ContentValues();
+//        params.put("USER_ID", user.getUserID());
+//        params.put("GROUP_ID", researchGroup.getGroupID());
+//        params.put("POST_ID", post.getPostID());
+//        params.put("POST_COMMENT_DATE", comment.getCommentDate());
+//        params.put("POST_COMMENT", comment.getComment());
+//
+//
+//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/insertcommentGP.php", params) {
+//            @SuppressLint("StaticFieldLeak")
+//            @Override
+//            protected void onPostExecute(String output) {
+//                serverInsertPostCommentResponse(output);
+//            }
+//
+//        };
+//        asyncHttpPost.execute();
+//    }
+
     private void insertGroupPostComment(User user, ResearchGroup researchGroup, Post post, Comment comment) {
 
-        ContentValues params = new ContentValues();
-        params.put("USER_ID", user.getUserID());
-        params.put("GROUP_ID", researchGroup.getGroupID());
-        params.put("POST_ID", post.getPostID());
-        params.put("POST_COMMENT_DATE", comment.getCommentDate());
-        params.put("POST_COMMENT", comment.getComment());
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/insertcomment.php";
+        HashMap<String, String> params = new HashMap<String,String>();
+        params.put("user_id", user.getUserID());
+        params.put("group_id", researchGroup.getGroupID());
+        params.put("post_id", post.getPostID());
+        params.put("post_date", comment.getCommentDate());
+        params.put("post_comment", comment.getComment());
 
 
-        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/insertcommentGP.php", params) {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected void onPostExecute(String output) {
-                serverInsertPostCommentResponse(output);
-            }
-
-        };
-        asyncHttpPost.execute();
+        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.err.println(response);
+                        serverInsertPostCommentResponse(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
     }
 
 
