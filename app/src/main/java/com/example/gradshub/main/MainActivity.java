@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.feedListFragment, R.id.profileFragment,R.id.myGroupsListFragment, R.id.createGroupFragment,
-                R.id.availableGroupsListFragment).setDrawerLayout(drawer).build();
+                R.id.availableGroupsListFragment, R.id.scheduleFragment).setDrawerLayout(drawer).build();
 
 
         // NavController is responsible for replacing the contents of the NavHost with the new destination.

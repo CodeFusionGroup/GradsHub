@@ -118,4 +118,11 @@
         android:label="comments"
         tools:layout="@layout/fragment_group_post_comments" />
 
+
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.example.gradshub.main.conferenceupdates.ScheduleListFragment"
+        android:label="Schedule"
+        tools:layout="@layout/fragment_schedule_item" />
+
 </navigation>

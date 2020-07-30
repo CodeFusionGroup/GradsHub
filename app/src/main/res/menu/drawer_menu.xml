@@ -31,6 +31,11 @@
             android:id="@+id/availableGroupsListFragment"
             android:icon="@drawable/ic_search"
             android:title="@string/menu_exploreGroup" />
+
+        <item
+            android:id="@+id/scheduleFragment"
+            android:icon="@drawable/ic_schedule"
+            android:title="Schedule" />
     </group>
 
 </menu>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xml:card_views="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/confNameTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="Machine Learning"
+            android:textAppearance="?attr/textAppearanceListItem"/>
+
+
+        <TextView
+            android:id="@+id/deadLineInfoTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/confNameTV"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="held on 09 Sep 2020" />
+
+
+        <TextView
+            android:id="@+id/contentDescTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/deadLineInfoTV"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="ML has become influential in many areas of science" />
+
+
+        <ImageButton
+            android:id="@+id/upVoteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contentDescTV"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="@color/colorWhite"
+            android:contentDescription="up vote"
+            android:src="@drawable/ic_up_vote" />
+
+
+        <TextView
+            android:id="@+id/votesCountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@+id/contentDescTV"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@+id/upVoteBtn"
+            android:layout_toRightOf="@+id/upVoteBtn"
+            android:text="100" />
+
+
+        <ImageButton
+            android:id="@+id/downVoteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contentDescTV"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_toEndOf="@+id/votesCountTV"
+            android:layout_toRightOf="@+id/votesCountTV"
+            android:background="@color/colorWhite"
+            android:contentDescription="up vote"
+            android:src="@drawable/ic_down_vote" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
