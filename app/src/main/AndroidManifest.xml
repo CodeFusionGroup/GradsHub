@@ -48,7 +48,7 @@
 
         <activity android:name=".main.postcomments.PostCommentActivity"></activity>
 
-        <activity android:name=".main.mygroups.GroupListlistActivity" ></activity>
+       <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
 
         <activity android:name=".main.home.FeedListActivity"></activity>
 
