@@ -297,8 +297,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 
     private void registerUser(User user) {
         HashMap<String, String> params = new HashMap<String,String>();
-        //String url = "https://gradshub.herokuapp.com/api/User/register.php";
-        String url = "https://lamp.ms.wits.ac.za/~s1682836/registerr.php";
+        String url = "https://gradshub.herokuapp.com/api/User/register.php";
         params.put("f_name", user.getFirstName());
         params.put("l_name", user.getLastName());
         params.put("email", user.getEmail());
