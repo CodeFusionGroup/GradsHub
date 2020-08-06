@@ -20,6 +20,7 @@ import org.junit.Test;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.DrawerMatchers.isClosed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -36,6 +37,91 @@ public class testAppNavigation {
     @Before
     public void setUp() throws Exception{
         loginFragment = activityActivityTestRule.getActivity();
+    }
+
+    public void createGroupTest(){
+        onView(withText("Create Group"))
+                .perform(click());
+
+        //Click when there is no available input
+        onView(withText("DONE"))
+                .perform(click());
+
+        onView(withId(R.id.groupNameET))
+                .perform(typeText("The_Private_Group"));
+        closeSoftKeyboard();
+
+        //Click when there no radio button option selected
+        onView(withText("DONE"))
+                .perform(click());
+
+
+        //View view22 = Fragment.getView().findViewById(R.id.publicRB);
+        //view22.performClick();
+        onView(withId(R.id.privateRB))
+                .perform(click());
+
+        //Click when there no radio button option selected
+        onView(withText("DONE"))
+                .perform(click());
+
+        //Give enough time delay to get server response
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void openDrawer(){
+        //Reopen drawer
+        onView(withId(R.id.drawer_layout))
+                .perform(DrawerActions.open());
+    }
+    public void createPost(){
+
+        onView(withText("My Groups"))
+                .perform(click());
+
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withText("The_Private_Group"))
+                .perform(click());
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withId(R.id.fab)).perform(click());
+
+        //Invalid operation
+        onView(withId(R.id.postBtn)).perform(click());
+
+        onView(withId(R.id.postSubjectET))
+                .perform(typeText("testPost"));
+        closeSoftKeyboard();
+
+        //Invalid operation
+        onView(withId(R.id.postBtn)).perform(click());
+
+        onView(withId(R.id.postDescriptionET))
+                .perform(typeText("www.google.com"));
+        closeSoftKeyboard();
+        //valid operation
+        onView(withId(R.id.postBtn)).perform(click());
+
+
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -63,22 +149,12 @@ public class testAppNavigation {
             e.printStackTrace();
         }
 
-        onView(withId(R.id.drawer_layout))
-                .perform(DrawerActions.open());
-
+        openDrawer();
         //Click on profile option
         onView(withText("Profile"))
                 .perform(click());
 
-        //Reopen drawer
-        onView(withId(R.id.drawer_layout))
-                .perform(DrawerActions.open());
-
-        onView(withText("My Groups"))
-                .perform(click());
-
-        onView(withId(R.id.drawer_layout))
-                .perform(DrawerActions.open());
+        openDrawer();
         //Must Add a create group interaction
         onView(withText("Search Groups"))
                 .perform(click());
@@ -89,14 +165,24 @@ public class testAppNavigation {
             e.printStackTrace();
         }
 
-        onView(withId(R.id.drawer_layout))
-                .perform(DrawerActions.open());
+        openDrawer();
 
         onView(withText("Home"))
                 .perform(click());
 
+        //Create group
+        openDrawer();
+
+        createGroupTest();
+
+        //Reopen drawer
+        openDrawer();
+
+        createPost();
 
     }
+
+
 
 
     @After
