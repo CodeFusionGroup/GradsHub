@@ -227,7 +227,6 @@ public class CreatePostFragment extends Fragment {
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -241,7 +240,6 @@ public class CreatePostFragment extends Fragment {
         }
 
     }
-
 
     // NOTE: following functions still incomplete
 
@@ -272,6 +270,5 @@ public class CreatePostFragment extends Fragment {
         }
 
     }
-
 
 }
