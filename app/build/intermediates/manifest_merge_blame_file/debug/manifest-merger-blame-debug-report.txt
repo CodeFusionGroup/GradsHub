@@ -1,0 +1,110 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.gradshub"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="15"
+8-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml
+9        android:targetSdkVersion="29" />
+9-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:5:5-67
+11-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:5:22-64
+12    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+12-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:6:5-80
+12-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:6:22-77
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:7:5-79
+13-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:7:22-76
+14
+15    <application
+15-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:10:5-56:19
+16        android:allowBackup="true"
+16-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:11:9-35
+17        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+17-->[androidx.core:core:1.1.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/c723467d6cd13fbff2e2e6aa1e13298d/core-1.1.0/AndroidManifest.xml:24:18-86
+18        android:debuggable="true"
+19        android:icon="@mipmap/ic_launcher"
+19-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:12:9-43
+20        android:label="@string/app_name"
+20-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:13:9-41
+21        android:roundIcon="@mipmap/ic_launcher_round"
+21-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:14:9-54
+22        android:supportsRtl="true"
+22-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:15:9-35
+23        android:testOnly="true"
+24        android:theme="@style/AppTheme" >
+24-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:16:9-40
+25        <activity
+25-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:9-24:20
+26            android:name="com.example.gradshub.authentication.AuthenticationActivity"
+26-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:19-72
+27            android:noHistory="true" >
+27-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:73-97
+28            <intent-filter>
+28-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:19:13-23:29
+29                <action android:name="android.intent.action.MAIN" />
+29-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
+29-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
+30
+31                <category android:name="android.intent.category.LAUNCHER" />
+31-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:22:17-77
+31-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:22:27-74
+32            </intent-filter>
+33        </activity>
+34        <activity
+34-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:26:9-30:20
+35            android:name="com.example.gradshub.main.MainActivity"
+35-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:26:19-52
+36            android:label="@string/title_activity_main"
+36-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:28:13-56
+37            android:noHistory="false"
+37-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:27:13-38
+38            android:theme="@style/AppTheme.NoActionBar" >
+38-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:29:13-56
+39        </activity>
+40        <activity android:name="com.example.gradshub.authentication.TestingActivity" />
+40-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:31:9-77
+40-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:31:19-65
+41        <activity android:name="com.example.gradshub.main.availablegroups.AvailableTestingActivity" />
+41-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:33:9-92
+41-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:33:19-80
+42        <activity android:name="com.example.gradshub.authentication.FragmentRegisterActivity" />
+42-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:35:9-86
+42-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:35:19-74
+43        <activity android:name="com.example.gradshub.authentication.ResetActivity" />
+43-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:37:9-75
+43-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:37:19-63
+44        <activity android:name="com.example.gradshub.main.profile.ProfileTestActivity" />
+44-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:39:9-79
+44-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:39:19-67
+45        <activity android:name="com.example.gradshub.main.creategroup.CreateGroupActivity" />
+45-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:41:9-83
+45-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:41:19-71
+46        <activity android:name="com.example.gradshub.main.createpost.CreatePostActivity" />
+46-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:43:9-81
+46-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:43:19-69
+47        <activity android:name="com.example.gradshub.main.availablegroups.GroupListActivity" />
+47-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:45:9-85
+47-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:45:19-73
+48        <activity android:name="com.example.gradshub.main.home.HomeTestActivity" />
+48-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:47:9-73
+48-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:47:19-61
+49        <activity android:name="com.example.gradshub.main.postcomments.PostCommentActivity" />
+49-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:49:9-84
+49-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:49:19-72
+50
+51        <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
+52
+53        <activity android:name="com.example.gradshub.main.home.FeedListActivity" />
+53-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:53:9-73
+53-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:53:19-61
+54        <activity android:name="androidx.fragment.app.FragmentActivity" />
+54-->[com.21buttons:fragment-test-rule-extras:2.0.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/7e0fa4bbba222dda5de547fa94a97caf/jetified-fragment-test-rule-extras-2.0.1/AndroidManifest.xml:12:9-75
+54-->[com.21buttons:fragment-test-rule-extras:2.0.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/7e0fa4bbba222dda5de547fa94a97caf/jetified-fragment-test-rule-extras-2.0.1/AndroidManifest.xml:12:19-72
+55    </application>
+56
+57</manifest>

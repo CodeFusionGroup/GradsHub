@@ -1,9 +1,11 @@
 package com.example.gradshub.main.createpost;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,6 +15,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
+import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +29,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -35,16 +43,25 @@ import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.MultipartRequest;
 import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -253,6 +270,7 @@ public class CreatePostFragment extends Fragment {
 
     }
 
+    // TODO: Only upload pdf to server when the user clicks upload
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -260,15 +278,132 @@ public class CreatePostFragment extends Fragment {
         if(requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK && data != null) {
 
             if(data.getData() != null) {
-                Uri fileUri = data.getData();
-                //pdfView.fromUri(fileUri).defaultPage(0).spacing(10).load();
-                //String filePath;
-                //File file = new File(fileUri.get)
-                fileAttachmentTV.setText(fileUri.getLastPathSegment());
-                fileAttachmentTV.setVisibility(View.VISIBLE);
+                Uri uri = data.getData();
+                String uriString = uri.toString();
+                File file = new File(uriString);
+                String path = file.getAbsolutePath();
+                String displayName = null;
+
+                if (uriString.startsWith("content://")) {
+                    Cursor cursor = null;
+                    try {
+
+                        cursor = this.getActivity().getContentResolver().query(uri, null, null, null, null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                            displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                            Log.d("nameeeee>>>>  ",displayName);
+
+                            //Create a post
+
+                            uploadPDF(displayName,uri);
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                } else if (uriString.startsWith("file://")) {
+                    displayName = file.getName();
+                    Log.d("nameeeee>>>>  ",displayName);
+                }
+
+//                fileAttachmentTV.setText(fileUri.getLastPathSegment());
+//                fileAttachmentTV.setVisibility(View.VISIBLE);
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void uploadPDF(final String pdfName, Uri pdfFile){
+
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
+        InputStream iStream = null;
+
+        try {
+
+            iStream = this.getActivity().getContentResolver().openInputStream(pdfFile);
+            final byte[] inputData = getBytes(iStream);
+
+            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, url,
+                    new Response.Listener<NetworkResponse>() {
+                        @Override
+                        public void onResponse(NetworkResponse response) {
+
+                            serverUploadPDFResponse(new String(response.data));
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // TODO: Handle error
+                    error.printStackTrace();
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    // params.put("tags", "ccccc");  add string parameters
+                    return params;
+                }
+                @Override
+                protected Map<String, DataPart> getByteData() {
+                    Map<String, DataPart> params = new HashMap<>();
+                    params.put("file", new DataPart(pdfName ,inputData));
+                    return params;
+                }
+            };
+
+            multipartRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            // Access the Global(App) RequestQueue
+            NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(multipartRequest);
+
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
+
+
+    private void serverUploadPDFResponse(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+
+            jsonObject.toString().replace("\\\\","");
+
+            if (jsonObject.getString("status").equals("true")) {
+                Log.d("come::: >>>  ","yessssss");
+                ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
+                JSONArray dataArray = jsonObject.getJSONArray("data");
+
+                for (int i = 0; i < dataArray.length(); i++) {
+                    JSONObject dataobj = dataArray.getJSONObject(i);
+//                    url = dataobj.optString("pathToFile");
+//                    tv.setText(url);
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+
+
 
 }
