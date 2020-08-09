@@ -24,6 +24,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.*;
 
@@ -68,100 +69,11 @@ public class CreateGroupFragmentTest {
         assertNotNull(view3);
     }
 
-    //Ignorered tests passing locally, but failing on travis due to travis armi emulator
-
-    /*@Ignore
-    @Test
-    public void AutoLaunch()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
-        assertNotNull(rlContainer);
-        CreateGroupFragment Fragment = new CreateGroupFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        //View view = Fragment.getView().findViewById(R.id.groupNameET);
-        //assertNotNull(view);
-        ViewInteraction view = onView(withId(R.id.groupNameET));
-        view.perform(ViewActions.typeText("Testing PublicG"));
-        closeSoftKeyboard();
-
-        View view1 = Fragment.getView().findViewById(R.id.groupVisibilityTV);
-        assertNotNull(view1);
-
-        View view2 = Fragment.getView().findViewById(R.id.radioGroup);
-        view2.performClick();
-
-        //View view22 = Fragment.getView().findViewById(R.id.publicRB);
-        //view22.performClick();
-        ViewInteraction view22 = onView(withId(R.id.publicRB));
-        view22.perform(click());
-
-        ViewInteraction view3 = onView(withId(R.id.doneBtn));
-        view3.perform(click());
-    }*/
-
-    /*@Test
-    public void CreateGroupFragmentAutoLaunching() throws InterruptedException {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
-        assertNotNull(rlContainer);
-        CreateGroupFragment Fragment = new CreateGroupFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        //View view = Fragment.getView().findViewById(R.id.groupNameET);
-        //assertNotNull(view);
-        ViewInteraction view = onView(withId(R.id.groupNameET));
-        view.perform(ViewActions.typeText("Testing PrivateG"));
-        closeSoftKeyboard();
-        Thread.sleep(1000);
-
-        View view1 = Fragment.getView().findViewById(R.id.groupVisibilityTV);
-        assertNotNull(view1);
-
-        View view2 = Fragment.getView().findViewById(R.id.radioGroup);
-        view2.performClick();
-
-        ViewInteraction view22 = onView(withId(R.id.privateRB));
-        view22.perform(click());
-
-        ViewInteraction view3 = onView(withId(R.id.doneBtn));
-        view3.perform(click());
-    }*/
-
-    //Invalid input
-    /*@Ignore
-    @Test
-    public void inValidInput(){
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
-        assertNotNull(rlContainer);
-        CreateGroupFragment Fragment = new CreateGroupFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        ViewInteraction view3 = onView(withId(R.id.doneBtn));
-
-        //No group name
-        view3.perform(click());
-
-        //Buttons unchecked
-        ViewInteraction view = onView(withId(R.id.groupNameET));
-        view.perform(ViewActions.typeText("Lorem ipsum"));
-        closeSoftKeyboard();
-        view3.perform(click());
-
-        //Long group name
-        view = onView(withId(R.id.groupNameET));
-        view.perform(ViewActions.typeText(" dolor sit amet, consectetur adipiscing elit"));
-        closeSoftKeyboard();
-        view3.perform(click());
-
-    }*/
-
-
 
     @After
     public void tearDown() throws Exception {
         mActivity = null;
 
-        mActivity = null;
     }
 
 }

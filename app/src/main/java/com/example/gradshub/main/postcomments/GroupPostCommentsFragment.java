@@ -202,7 +202,8 @@ private void getGroupPostComments(Post post) {
 
             else if(success.equals("0")) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+                if(isAdded())
+                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
             }
 
             else if(success.equals("1")) {

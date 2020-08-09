@@ -7,6 +7,7 @@ import android.widget.RelativeLayout;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.android21buttons.fragmenttestrule.FragmentTestRule;
@@ -41,7 +42,7 @@ public class LoginFragmentTest {
     }
 
     @Test
-    public void LoginFragmentLaunched()
+    public void testLoginFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);
@@ -54,20 +55,17 @@ public class LoginFragmentTest {
     }
 
     @Test
-    public void LoginfragmentLaunching()
+    public void testLoginfragmentViews()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);
-
         LoginFragment Fragment = new LoginFragment();
         loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
         View fView = Fragment.getView().findViewById(R.id.emailET);
         assertNotNull(fView);
-
         View EmailET = loginFragment.findViewById(R.id.emailET);
         assertNotNull(EmailET);
-
         View PasswordET = Fragment.getView().findViewById(R.id.passwordET);
         assertNotNull(PasswordET);
         View ForgotPasswordBT = Fragment.getView().findViewById(R.id.forgotPasswordBtn);
@@ -79,10 +77,10 @@ public class LoginFragmentTest {
         View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
         assertNotNull(RegisterBT);
     }
-
+    //Ignore this test as it is the same as the test found in main/navigation/testNavigation
     @Ignore
     @Test
-    public void AutoTestingLoginFragment()
+    public void testUserLogin()
     {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);
@@ -92,20 +90,74 @@ public class LoginFragmentTest {
         getInstrumentation().waitForIdleSync();
 
         ViewInteraction view2 = onView(withId(R.id.emailET));
-        view2.perform(ViewActions.typeText("maccayley@gmail.com"));
+        view2.perform(ViewActions.typeText("testuser@gmail.com"));
         ViewInteraction view = onView(withId(R.id.passwordET));
-        view.perform(ViewActions.typeText("1234mmmm"));
+        view.perform(ViewActions.typeText("simple1"));
         closeSoftKeyboard();
-        //spinner = (ProgressBar)viewIinflated.findViewById(R.id.progressBar1);//same case with dialogs
-        //Spinner = (Button) viewIinflated.findViewById(R.id.forgotPasswordBtn);
-        //spinner.setVisibility(View.GONE);
-        //rootView.findViewById(R.id.forgotPasswordBtn).setVisibility(View.GONE);
-        View ForgotPasswordBT = Fragment.getView().findViewById(R.id.forgotPasswordBtn);
-        assertNotNull(ForgotPasswordBT);
-        View NoAccountTV = Fragment.getView().findViewById(R.id.noAccountTV);
-        assertNotNull(NoAccountTV);
-        View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
-        assertNotNull(RegisterBT);
+        ViewInteraction view1 = onView(withId(R.id.loginBtn));
+        view1.perform(click());
+//        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+//Wait for 1 minute to  log in, else the log in fails due to slow network!!!
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    //TODO: Test UI navigation
+   // @Ignore
+    @Test
+    public void testInvalidUser(){
+        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
+        assertNotNull(rlContainer);
+
+        LoginFragment Fragment = new LoginFragment();
+        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+
+        ViewInteraction view2 = onView(withId(R.id.emailET));
+        view2.perform(ViewActions.typeText("testuser1@gmail.com"));
+        ViewInteraction view = onView(withId(R.id.passwordET));
+        view.perform(ViewActions.typeText("simple1"));
+        closeSoftKeyboard();
+        ViewInteraction view1 = onView(withId(R.id.loginBtn));
+        view1.perform(click());
+    }
+
+    @Test
+    public void testNoEmailLogin(){
+        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
+        assertNotNull(rlContainer);
+
+        LoginFragment Fragment = new LoginFragment();
+        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+
+        ViewInteraction view2 = onView(withId(R.id.emailET));
+        view2.perform(ViewActions.typeText(""));
+        ViewInteraction view = onView(withId(R.id.passwordET));
+        view.perform(ViewActions.typeText("simple1"));
+        closeSoftKeyboard();
+        ViewInteraction view1 = onView(withId(R.id.loginBtn));
+        view1.perform(click());
+    }
+
+    @Test
+    public void testNoPassLogin(){
+        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
+        assertNotNull(rlContainer);
+
+        LoginFragment Fragment = new LoginFragment();
+        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        getInstrumentation().waitForIdleSync();
+
+        ViewInteraction view2 = onView(withId(R.id.emailET));
+        view2.perform(ViewActions.typeText("testuser1@gmail.com"));
+        ViewInteraction view = onView(withId(R.id.passwordET));
+        view.perform(ViewActions.typeText(""));
+        closeSoftKeyboard();
         ViewInteraction view1 = onView(withId(R.id.loginBtn));
         view1.perform(click());
     }

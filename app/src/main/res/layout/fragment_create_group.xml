@@ -7,108 +7,113 @@
     android:id="@+id/create_group"
     tools:context=".main.creategroup.CreateGroupFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/groupNameContainer"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:counterEnabled="true"
-        app:counterMaxLength="50"
-        app:errorEnabled="true"
-        app:errorTextAppearance="@color/colorRed"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/groupNameET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/enter_group_name" />
-        <!--android:maxLength="50"-->
-    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/groupNameContainer"
+            android:layout_width="390dp"
+            android:layout_height="61dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="50"
+            app:errorEnabled="true"
+            app:errorTextAppearance="@color/colorRed"
+            app:layout_constraintBottom_toBottomOf="@+id/progress_circular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/groupNameET"
+                android:layout_width="398dp"
+                android:layout_height="36dp"
+                android:hint="@string/enter_group_name" />
+            <!--android:maxLength="50"-->
+        </com.google.android.material.textfield.TextInputLayout>
 
 
-    <TextView
-        android:id="@+id/groupVisibilityTV"
-        android:layout_width="200dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="81dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
-        android:paddingStart="32dp"
-        android:paddingLeft="32dp"
-        android:text="@string/select_group_visibility"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/radioGroup"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupNameContainer"
-        app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/groupVisibilityTV"
+            android:layout_width="237dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="81dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:paddingStart="32dp"
+            android:paddingLeft="32dp"
+            android:text="@string/select_group_visibility"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintBottom_toTopOf="@+id/doneBtn"
+            app:layout_constraintEnd_toStartOf="@+id/radioGroup"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/groupNameContainer"
+            app:layout_constraintVertical_bias="0.0" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="58dp"
-        android:layout_marginTop="81dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupNameContainer"
-        app:layout_constraintVertical_bias="0.0">
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="150dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="81dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/groupVisibilityTV"
+            app:layout_constraintTop_toBottomOf="@+id/groupNameContainer"
+            app:layout_constraintVertical_bias="0.0">
 
-        <RadioButton
-            android:id="@+id/publicRB"
+            <RadioButton
+                android:id="@+id/publicRB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/public_radio_button" />
+
+            <RadioButton
+                android:id="@+id/privateRB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/private_radio_button" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/doneBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/public_radio_button" />
+            android:layout_marginTop="81dp"
+            android:layout_marginBottom="342dp"
+            android:background="@drawable/register_rounded_button"
+            android:gravity="center"
+            android:text="@string/done_button"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+            app:layout_constraintVertical_bias="0.18" />
 
-        <RadioButton
-            android:id="@+id/privateRB"
+        <ProgressBar
+            android:id="@+id/progress_circular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/private_radio_button" />
-    </RadioGroup>
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.398" />
 
-    <Button
-        android:id="@+id/doneBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="161dp"
-        android:layout_marginLeft="161dp"
-        android:layout_marginTop="81dp"
-        android:layout_marginEnd="162dp"
-        android:layout_marginRight="162dp"
-        android:layout_marginBottom="342dp"
-        android:background="@drawable/register_rounded_button"
-        android:textColor="@color/colorWhite"
-        android:gravity="center"
-        android:text="@string/done_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
-    <ProgressBar
-        android:id="@+id/progress_circular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.398" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

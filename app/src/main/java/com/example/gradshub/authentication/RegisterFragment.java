@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -295,9 +296,8 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 //    }
 
     private void registerUser(User user) {
-
-        String url = "https://gradshub.herokuapp.com/api/User/register.php";
         HashMap<String, String> params = new HashMap<String,String>();
+        String url = "https://gradshub.herokuapp.com/api/User/register.php";
         params.put("f_name", user.getFirstName());
         params.put("l_name", user.getLastName());
         params.put("email", user.getEmail());
@@ -348,9 +348,12 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
                 }
 
                 else if(success.equals("-1")) {
-                    progressBar.setVisibility(View.GONE);
-                    // Toast msg: Email already exists!, Please use another email.
-                    Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show();
+                    //Ensures the fragment is added.
+                        if(isAdded()) {
+                            progressBar.setVisibility(View.GONE);
+                            // Toast msg: Email already exists!, Please use another email.
+                            Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show();
+                        }
                 }
             }
 

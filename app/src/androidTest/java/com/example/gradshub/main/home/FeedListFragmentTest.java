@@ -3,6 +3,9 @@ package com.example.gradshub.main.home;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.navigation.testing.TestNavHostController;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.gradshub.R;
@@ -13,6 +16,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.*;
 
@@ -51,6 +58,18 @@ public class FeedListFragmentTest {
 
         View view1 = Fragment.getView().findViewById(R.id.progress_circular);
         assertNotNull(view1);
+    }
+
+    @Test
+    public void testNavigateToS(){
+        TestNavHostController navController = new TestNavHostController(
+                ApplicationProvider.getApplicationContext());
+        navController.setGraph(R.navigation.main_navigation);
+        FragmentScenario<FeedListFragment> fragment = FragmentScenario.launchInContainer(FeedListFragment.class);
+
+//        onView(withId(R.id.feedList))
+  //              .check(matches(isDisplayed()));
+
     }
 
     @After

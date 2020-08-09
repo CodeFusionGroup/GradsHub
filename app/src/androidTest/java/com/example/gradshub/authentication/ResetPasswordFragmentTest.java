@@ -27,34 +27,6 @@ import static org.junit.Assert.*;
 
 public class ResetPasswordFragmentTest {
 
-    /*@Rule
-    public FragmentTestRule<?,ResetPasswordFragment> fragmentFragmentTestRule = FragmentTestRule.create(ResetPasswordFragment.class);
-
-    @Test
-    public void Launching()
-    {
-        onView(withId(R.id.PassWordReset)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void IsLaunched()
-    {
-        onView(withId(R.id.resetPasswordTV)).check(matches(isDisplayed()));
-        onView(withId(R.id.newPasswordET)).check(matches(isDisplayed()));
-        onView(withId(R.id.confirmNewPasswordTV)).check(matches(isDisplayed()));
-        onView(withId(R.id.confirmNewPasswordET)).check(matches(isDisplayed()));
-        onView(withId(R.id.resetPasswordBtn)).check(matches(isDisplayed()));
-    }*/
-
-   /* @Test
-    public void UnitTesting()
-    {
-        //onView(withId(R.id.resetPasswordTV)).perform(TypeTextAction(""));
-        onView(withId(R.id.newPasswordET)).perform(typeText("12345mmmmm"));
-        //onView(withId(R.id.confirmNewPasswordTV)).check(matches(isDisplayed()));
-        onView(withId(R.id.confirmNewPasswordET)).perform(typeText("12345mmmmm"));
-        onView(withId(R.id.resetPasswordBtn)).perform(click());
-    }*/
     @Rule
     public ActivityTestRule<ResetActivity> activityTestRule = new ActivityTestRule<ResetActivity>(ResetActivity.class);
 

@@ -252,15 +252,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         user.setUserID(userId);
 
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(requireActivity(), "Successfully logged in.", Toast.LENGTH_SHORT).show();
-                        startMainActivity();
+                        if(isAdded()) {
+                            Toast.makeText(requireActivity(), "Successfully logged in.", Toast.LENGTH_SHORT).show();
+                            startMainActivity();
+                        }
                         break;
 
                     // login unsuccessful
                     case "0":
                     case "-1":
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+                        if(isAdded())
+                            Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
