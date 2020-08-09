@@ -16,7 +16,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/confNameTV"
+            android:id="@+id/titleTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
@@ -29,36 +29,62 @@
 
 
         <TextView
-            android:id="@+id/deadLineInfoTV"
+            android:id="@+id/deadlineTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/confNameTV"
+            android:layout_below="@+id/titleTV"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="held on 09 Sep 2020" />
+            android:text="deadline: 2020-07-31 23:59:59" />
 
 
         <TextView
-            android:id="@+id/contentDescTV"
+            android:id="@+id/timezoneTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/deadLineInfoTV"
+            android:layout_below="@+id/deadlineTV"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="ML has become influential in many areas of science" />
+            android:text="timezone: UTC-11" />
+
+
+        <TextView
+            android:id="@+id/dateTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timezoneTV"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="date: November 25-28, 2020" />
+
+
+        <TextView
+            android:id="@+id/placeTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dateTV"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="place: Fukuoka, Japan" />
 
 
         <ImageButton
             android:id="@+id/upVoteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/contentDescTV"
+            android:layout_below="@+id/placeTV"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginTop="4dp"
@@ -72,7 +98,7 @@
             android:id="@+id/votesCountTV"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:layout_below="@+id/contentDescTV"
+            android:layout_below="@+id/placeTV"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="4dp"
@@ -85,7 +111,7 @@
             android:id="@+id/downVoteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/contentDescTV"
+            android:layout_below="@+id/placeTV"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginTop="4dp"

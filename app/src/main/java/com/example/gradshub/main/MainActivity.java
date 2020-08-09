@@ -1,18 +1,23 @@
 package com.example.gradshub.main;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.gradshub.R;
 import com.example.gradshub.authentication.AuthenticationActivity;
 import com.example.gradshub.main.availablegroups.AvailableGroupsListFragment;
+import com.example.gradshub.main.conferenceupdates.ScheduleListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
+import com.example.gradshub.model.Schedule;
 import com.example.gradshub.model.User;
 import com.google.android.material.navigation.NavigationView;
 import androidx.core.view.MenuCompat;
@@ -24,10 +29,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 
 public class MainActivity extends AppCompatActivity implements MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
         AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
-        MyGroupsProfileFragment.OnPostsListFragmentInteractionListener {
+        MyGroupsProfileFragment.OnPostsListFragmentInteractionListener,
+        ScheduleListFragment.OnScheduleListFragmentInteractionListener {
 
 
     public User user;
@@ -137,5 +146,23 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         // not implemented
     }
 
+
+    @Override
+    public void onScheduleListFragmentInteraction(Schedule item) {
+
+        if ( !item.getLink().startsWith("https://") && !item.getLink().startsWith("http://")) {
+            String link = "http://" + item.getLink();
+            Uri uri = Uri.parse(link);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(Intent.createChooser(intent, "dialogTitle"));
+        }
+        else {
+            Uri uri = Uri.parse(item.getLink());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(Intent.createChooser(intent, "dialogTitle"));
+        }
+
+        Toast.makeText(this, "selected: "+ item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
 
 }
