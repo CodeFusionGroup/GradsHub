@@ -81,6 +81,11 @@ public class CreatePostFragment extends Fragment {
 
     private Context context;
 
+    // Used to upload pdf file
+    private String displayName;
+    private Uri uri;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,8 +124,22 @@ public class CreatePostFragment extends Fragment {
                 MainActivity mainActivity = (MainActivity) requireActivity();
                 ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
 
-                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
+//                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 progressBar.setVisibility(View.VISIBLE);
+
+                // Upload the pdf
+                if(!displayName.isEmpty() && uri != null){
+
+                    // Group post information for uploading a pdf
+                    HashMap<String, String> params = new HashMap<String,String>();
+                    params.put("group_id", researchGroup.getGroupID());
+                    params.put("user_id", mainActivity.user.getUserID());
+                    params.put("post_title", postSubject);
+                    params.put("post_date", postDate);
+//                    params.put("post_url", post.getPostDescription());
+
+                    uploadPDF(displayName,uri,params);
+                }
             }
 
         });
@@ -278,11 +297,11 @@ public class CreatePostFragment extends Fragment {
         if(requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK && data != null) {
 
             if(data.getData() != null) {
-                Uri uri = data.getData();
+                uri = data.getData();
                 String uriString = uri.toString();
                 File file = new File(uriString);
                 String path = file.getAbsolutePath();
-                String displayName = null;
+                displayName = null;
 
                 if (uriString.startsWith("content://")) {
                     Cursor cursor = null;
@@ -293,9 +312,9 @@ public class CreatePostFragment extends Fragment {
                             displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                             Log.d("nameeeee>>>>  ",displayName);
 
-                            //Create a post
+                            // Upload the pdf
+//                            uploadPDF(displayName,uri);
 
-                            uploadPDF(displayName,uri);
                         }
                     } finally {
                         cursor.close();
@@ -312,10 +331,13 @@ public class CreatePostFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void uploadPDF(final String pdfName, Uri pdfFile){
+    private void uploadPDF(final String pdfName, Uri pdfFile,Map<String, String> passedParams){
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
+//        String url = "http://10.0.0.21:8080/api/GroupPost/uploadfile.php";
         InputStream iStream = null;
+
+        System.err.println("PDF file data:"+pdfFile);
 
         try {
 
@@ -339,7 +361,7 @@ public class CreatePostFragment extends Fragment {
             }){
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
+                    Map<String, String> params = passedParams;
                     // params.put("tags", "ccccc");  add string parameters
                     return params;
                 }
@@ -369,6 +391,7 @@ public class CreatePostFragment extends Fragment {
 
 
     private void serverUploadPDFResponse(String output) {
+        System.err.println(output);
         try {
             JSONObject jsonObject = new JSONObject(output);
 

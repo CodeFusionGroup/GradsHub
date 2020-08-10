@@ -181,7 +181,7 @@ public class MultipartRequest extends Request<NetworkResponse> {
 
 
     public class DataPart {
-        private String fileName;
+        private String file;
         private byte[] content;
         private String type;
 
@@ -189,12 +189,12 @@ public class MultipartRequest extends Request<NetworkResponse> {
         }
 
         public DataPart(String name, byte[] data) {
-            fileName = name;
+            file = name;
             content = data;
         }
 
         String getFileName() {
-            return fileName;
+            return file;
         }
 
         byte[] getContent() {
