@@ -52,13 +52,13 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/postDescriptionContainer"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_width="380dp"
+        android:layout_height="76dp"
         android:layout_below="@id/descriptionTV"
-        android:layout_marginTop="2dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp" >
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/postDescriptionET"
@@ -78,18 +78,21 @@
 
     <Button
         android:id="@+id/postBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="155dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/postDescriptionContainer"
-        android:background="@drawable/register_rounded_button"
-        android:layout_alignParentLeft="true"
-        android:textColor="@color/colorWhite"
+        android:layout_below="@+id/postDescriptionContainer"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="32dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:text="POST" />
-
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="129dp"
+        android:layout_marginLeft="129dp"
+        android:layout_marginTop="81dp"
+        android:layout_marginEnd="127dp"
+        android:layout_marginRight="127dp"
+        android:background="@drawable/register_rounded_button"
+        android:text="POST"
+        android:textColor="@color/colorWhite" />
 
     <ProgressBar
         android:id="@+id/progress_circular"
