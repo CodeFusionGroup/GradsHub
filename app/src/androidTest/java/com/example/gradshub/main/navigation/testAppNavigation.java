@@ -1,6 +1,5 @@
 package com.example.gradshub.main.navigation;
 
-import android.view.Gravity;
 import android.widget.RelativeLayout;
 import androidx.test.espresso.contrib.DrawerActions;
 
@@ -12,20 +11,22 @@ import com.example.gradshub.R;
 import com.example.gradshub.authentication.LoginFragment;
 import com.example.gradshub.authentication.TestingActivity;
 
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.DrawerMatchers.isClosed;
+import static androidx.test.espresso.core.internal.deps.guava.base.Preconditions.checkNotNull;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static org.hamcrest.EasyMock2Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 
 public class testAppNavigation {
@@ -39,7 +40,7 @@ public class testAppNavigation {
         loginFragment = activityActivityTestRule.getActivity();
     }
 
-    public void createGroupTest(){
+    private void createGroupTest(){
         onView(withText("Create Group"))
                 .perform(click());
 
@@ -74,12 +75,13 @@ public class testAppNavigation {
 
     }
 
-    public void openDrawer(){
+    private void openDrawer(){
         //Reopen drawer
         onView(withId(R.id.drawer_layout))
                 .perform(DrawerActions.open());
     }
-    public void createPost(){
+
+    private void createPost(){
 
         onView(withText("My Groups"))
                 .perform(click());
@@ -115,14 +117,37 @@ public class testAppNavigation {
         closeSoftKeyboard();
         //valid operation
         onView(withId(R.id.postBtn)).perform(click());
-
+        //wait for server response
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+/*
+        onData(withItemContent("This post is for tests"))
+                .onChildView(withText("COMMENTS")).perform(click());
 
         try {
             Thread.sleep(2500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+  */
     }
+
+
+    //Matcher helper for the testTaskScheduler below
+    private Matcher<Object> withItemContent(String s) {
+        checkNotNull(s);
+        return withItemContent(equalTo(s));
+    }
+    //TODO: Update this test, after it has been fully implemented
+    private void testTaskScheduler(){
+        onView(withText("Schedule")).perform(click());
+        //onData(withItemContent("3DV")).perform(click());
+    }
+
+
 
     @Test
     public void testUserActivities()
@@ -137,6 +162,7 @@ public class testAppNavigation {
         ViewInteraction view2 = onView(withId(R.id.emailET));
         view2.perform(ViewActions.typeText("testuser@gmail.com"));
         ViewInteraction view = onView(withId(R.id.passwordET));
+
         view.perform(ViewActions.typeText("simple1"));
         closeSoftKeyboard();
         ViewInteraction view1 = onView(withId(R.id.loginBtn));
@@ -179,6 +205,11 @@ public class testAppNavigation {
         openDrawer();
 
         createPost();
+
+        openDrawer();
+
+        testTaskScheduler();
+
 
     }
 
