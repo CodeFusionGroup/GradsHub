@@ -172,27 +172,6 @@ public class CreatePostFragment extends Fragment {
     }
 
 
-//    private void createGroupPost(Post post, User user, ResearchGroup researchGroup) {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("GROUP_ID", researchGroup.getGroupID());
-//        params.put("USER_ID", user.getUserID());
-//        params.put("POST_DATE", post.getPostDate());
-//        params.put("POST_TITLE", post.getPostSubject());
-//        params.put("POST_URL", post.getPostDescription());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/creategrouppost.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverCreateGroupPostResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//
-//    }
-
     private void createGroupPost(Post post, User user, ResearchGroup researchGroup) {
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/create.php";
@@ -267,6 +246,7 @@ public class CreatePostFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+            // Attachment icon
             case R.id.action_attach_file:
                 openFile();
                 return true;
@@ -276,8 +256,6 @@ public class CreatePostFragment extends Fragment {
         }
 
     }
-
-    // NOTE: following functions still incomplete
 
     private void openFile() {
 
@@ -289,7 +267,6 @@ public class CreatePostFragment extends Fragment {
 
     }
 
-    // TODO: Only upload pdf to server when the user clicks upload
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -303,6 +280,7 @@ public class CreatePostFragment extends Fragment {
                 String path = file.getAbsolutePath();
                 displayName = null;
 
+                // Get the name of the file
                 if (uriString.startsWith("content://")) {
                     Cursor cursor = null;
                     try {
@@ -311,10 +289,8 @@ public class CreatePostFragment extends Fragment {
                         if (cursor != null && cursor.moveToFirst()) {
                             displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                             Log.d("nameeeee>>>>  ",displayName);
-
                             // Upload the pdf
 //                            uploadPDF(displayName,uri);
-
                         }
                     } finally {
                         cursor.close();
@@ -323,7 +299,6 @@ public class CreatePostFragment extends Fragment {
                     displayName = file.getName();
                     Log.d("nameeeee>>>>  ",displayName);
                 }
-
 //                fileAttachmentTV.setText(fileUri.getLastPathSegment());
 //                fileAttachmentTV.setVisibility(View.VISIBLE);
             }
@@ -333,8 +308,8 @@ public class CreatePostFragment extends Fragment {
 
     private void uploadPDF(final String pdfName, Uri pdfFile,Map<String, String> passedParams){
 
-        String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
-//        String url = "http://10.0.0.21:8080/api/GroupPost/uploadfile.php";
+//        String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
+        String url = "http://192.168.0.101:8080/api/GroupPost/uploadfile.php";
         InputStream iStream = null;
 
         System.err.println("PDF file data:"+pdfFile);
@@ -389,25 +364,39 @@ public class CreatePostFragment extends Fragment {
 
     }
 
-
     private void serverUploadPDFResponse(String output) {
         System.err.println(output);
         try {
             JSONObject jsonObject = new JSONObject(output);
-
             jsonObject.toString().replace("\\\\","");
+            String success = jsonObject.getString("success");
+            String message = jsonObject.getString("message");
 
-            if (jsonObject.getString("status").equals("true")) {
-                Log.d("come::: >>>  ","yessssss");
-                ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
-                JSONArray dataArray = jsonObject.getJSONArray("data");
-
-                for (int i = 0; i < dataArray.length(); i++) {
-                    JSONObject dataobj = dataArray.getJSONObject(i);
-//                    url = dataobj.optString("pathToFile");
-//                    tv.setText(url);
-                }
+            switch (success){
+                case "-1": // Toast message File uploaded too big
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    break;
+                case "1": // Toast message: Successfully uploaded file
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+                    navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
+                    break;
             }
+
+
+//            if (jsonObject.getString("status").equals("true")) {
+//                Log.d("come::: >>>  ","yessssss");
+//                ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
+//                JSONArray dataArray = jsonObject.getJSONArray("data");
+//
+//                for (int i = 0; i < dataArray.length(); i++) {
+//                    JSONObject dataobj = dataArray.getJSONObject(i);
+////                    url = dataobj.optString("pathToFile");
+////                    tv.setText(url);
+//                }
+//            }
 
         } catch (JSONException e) {
             e.printStackTrace();

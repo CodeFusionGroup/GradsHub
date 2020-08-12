@@ -660,6 +660,10 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/anim/slide_out_right.xml"
     },
     {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-hdpi_applogo.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/mipmap-hdpi/applogo.png"
+    },
+    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-mdpi_ic_search.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-mdpi/ic_search.png"
     },

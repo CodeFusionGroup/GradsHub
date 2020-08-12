@@ -178,7 +178,9 @@ public class MultipartRequest extends Request<NetworkResponse> {
         dataOutputStream.writeBytes(lineEnd);
     }
 
-
+    /**
+     * Simple data container use for passing byte file
+     */
 
     public class DataPart {
         private String file;
