@@ -127,7 +127,8 @@ public class CreatePostFragment extends Fragment {
 //                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 progressBar.setVisibility(View.VISIBLE);
 
-                // Upload the pdf
+                // TODO: Implement better logic for attachment is URL/Document
+                // Post attachment is a pdf document
                 if(!displayName.isEmpty() && uri != null){
 
                     // Group post information for uploading a pdf
@@ -136,14 +137,15 @@ public class CreatePostFragment extends Fragment {
                     params.put("user_id", mainActivity.user.getUserID());
                     params.put("post_title", postSubject);
                     params.put("post_date", postDate);
-//                    params.put("post_url", post.getPostDescription());
 
                     uploadPDF(displayName,uri,params);
+
+                }else{
+                    // Post attachment is a URL
+                    createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 }
             }
-
         });
-
     }
 
 
@@ -288,17 +290,19 @@ public class CreatePostFragment extends Fragment {
                         cursor = this.getActivity().getContentResolver().query(uri, null, null, null, null);
                         if (cursor != null && cursor.moveToFirst()) {
                             displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                            Log.d("nameeeee>>>>  ",displayName);
-                            // Upload the pdf
-//                            uploadPDF(displayName,uri);
+                            Log.d("File name>>>>  ",displayName);
                         }
                     } finally {
                         cursor.close();
                     }
                 } else if (uriString.startsWith("file://")) {
                     displayName = file.getName();
-                    Log.d("nameeeee>>>>  ",displayName);
+                    Log.d("File name>>>>  ",displayName);
                 }
+                //  TODO: Display pdf icon to show user that the document has successfully been uploaded
+                Toast.makeText(requireActivity(), "File attached", Toast.LENGTH_SHORT).show();
+
+                // Old code
 //                fileAttachmentTV.setText(fileUri.getLastPathSegment());
 //                fileAttachmentTV.setVisibility(View.VISIBLE);
             }
@@ -352,6 +356,7 @@ public class CreatePostFragment extends Fragment {
                     0,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
             // Access the Global(App) RequestQueue
             NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(multipartRequest);
 
@@ -360,8 +365,6 @@ public class CreatePostFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void serverUploadPDFResponse(String output) {
