@@ -312,8 +312,8 @@ public class CreatePostFragment extends Fragment {
 
     private void uploadPDF(final String pdfName, Uri pdfFile,Map<String, String> passedParams){
 
-//        String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
-        String url = "http://192.168.0.101:8080/api/GroupPost/uploadfile.php";
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
+
         InputStream iStream = null;
 
         System.err.println("PDF file data:"+pdfFile);
