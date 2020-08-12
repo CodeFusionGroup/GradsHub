@@ -1,9 +1,11 @@
 package com.example.gradshub.main.createpost;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,6 +15,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
+import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +29,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -35,16 +43,25 @@ import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
 import com.example.gradshub.network.AsyncHTTpPost;
+import com.example.gradshub.network.MultipartRequest;
 import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -63,6 +80,11 @@ public class CreatePostFragment extends Fragment {
     private View view;
 
     private Context context;
+
+    // Used to upload pdf file
+    private String displayName;
+    private Uri uri;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,12 +124,28 @@ public class CreatePostFragment extends Fragment {
                 MainActivity mainActivity = (MainActivity) requireActivity();
                 ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
 
-                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
+//                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 progressBar.setVisibility(View.VISIBLE);
+
+                // TODO: Implement better logic for attachment is URL/Document
+                // Post attachment is a pdf document
+                if(!displayName.isEmpty() && uri != null){
+
+                    // Group post information for uploading a pdf
+                    HashMap<String, String> params = new HashMap<String,String>();
+                    params.put("group_id", researchGroup.getGroupID());
+                    params.put("user_id", mainActivity.user.getUserID());
+                    params.put("post_title", postSubject);
+                    params.put("post_date", postDate);
+
+                    uploadPDF(displayName,uri,params);
+
+                }else{
+                    // Post attachment is a URL
+                    createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
+                }
             }
-
         });
-
     }
 
 
@@ -135,27 +173,6 @@ public class CreatePostFragment extends Fragment {
         return true;
     }
 
-
-//    private void createGroupPost(Post post, User user, ResearchGroup researchGroup) {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("GROUP_ID", researchGroup.getGroupID());
-//        params.put("USER_ID", user.getUserID());
-//        params.put("POST_DATE", post.getPostDate());
-//        params.put("POST_TITLE", post.getPostSubject());
-//        params.put("POST_URL", post.getPostDescription());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/creategrouppost.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverCreateGroupPostResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//
-//    }
 
     private void createGroupPost(Post post, User user, ResearchGroup researchGroup) {
 
@@ -231,6 +248,7 @@ public class CreatePostFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+            // Attachment icon
             case R.id.action_attach_file:
                 openFile();
                 return true;
@@ -240,8 +258,6 @@ public class CreatePostFragment extends Fragment {
         }
 
     }
-
-    // NOTE: following functions still incomplete
 
     private void openFile() {
 
@@ -260,15 +276,149 @@ public class CreatePostFragment extends Fragment {
         if(requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK && data != null) {
 
             if(data.getData() != null) {
-                Uri fileUri = data.getData();
-                //pdfView.fromUri(fileUri).defaultPage(0).spacing(10).load();
-                //String filePath;
-                //File file = new File(fileUri.get)
-                fileAttachmentTV.setText(fileUri.getLastPathSegment());
-                fileAttachmentTV.setVisibility(View.VISIBLE);
+                uri = data.getData();
+                String uriString = uri.toString();
+                File file = new File(uriString);
+                String path = file.getAbsolutePath();
+                displayName = null;
+
+                // Get the name of the file
+                if (uriString.startsWith("content://")) {
+                    Cursor cursor = null;
+                    try {
+
+                        cursor = this.getActivity().getContentResolver().query(uri, null, null, null, null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                            displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                            Log.d("File name>>>>  ",displayName);
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                } else if (uriString.startsWith("file://")) {
+                    displayName = file.getName();
+                    Log.d("File name>>>>  ",displayName);
+                }
+                //  TODO: Display pdf icon to show user that the document has successfully been uploaded
+                Toast.makeText(requireActivity(), "File attached", Toast.LENGTH_SHORT).show();
+
+                // Old code
+//                fileAttachmentTV.setText(fileUri.getLastPathSegment());
+//                fileAttachmentTV.setVisibility(View.VISIBLE);
             }
         }
-
+        super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private void uploadPDF(final String pdfName, Uri pdfFile,Map<String, String> passedParams){
+
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
+
+        InputStream iStream = null;
+
+        System.err.println("PDF file data:"+pdfFile);
+
+        try {
+
+            iStream = this.getActivity().getContentResolver().openInputStream(pdfFile);
+            final byte[] inputData = getBytes(iStream);
+
+            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, url,
+                    new Response.Listener<NetworkResponse>() {
+                        @Override
+                        public void onResponse(NetworkResponse response) {
+
+                            serverUploadPDFResponse(new String(response.data));
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // TODO: Handle error
+                    error.printStackTrace();
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = passedParams;
+                    // params.put("tags", "ccccc");  add string parameters
+                    return params;
+                }
+                @Override
+                protected Map<String, DataPart> getByteData() {
+                    Map<String, DataPart> params = new HashMap<>();
+                    params.put("file", new DataPart(pdfName ,inputData));
+                    return params;
+                }
+            };
+
+            multipartRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            // Access the Global(App) RequestQueue
+            NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(multipartRequest);
+
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void serverUploadPDFResponse(String output) {
+        System.err.println(output);
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            jsonObject.toString().replace("\\\\","");
+            String success = jsonObject.getString("success");
+            String message = jsonObject.getString("message");
+
+            switch (success){
+                case "-1": // Toast message File uploaded too big
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    break;
+                case "1": // Toast message: Successfully uploaded file
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+                    navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
+                    break;
+            }
+
+
+//            if (jsonObject.getString("status").equals("true")) {
+//                Log.d("come::: >>>  ","yessssss");
+//                ArrayList<HashMap<String, String>> arraylist = new ArrayList<HashMap<String, String>>();
+//                JSONArray dataArray = jsonObject.getJSONArray("data");
+//
+//                for (int i = 0; i < dataArray.length(); i++) {
+//                    JSONObject dataobj = dataArray.getJSONObject(i);
+////                    url = dataobj.optString("pathToFile");
+////                    tv.setText(url);
+//                }
+//            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+
+
 
 }
