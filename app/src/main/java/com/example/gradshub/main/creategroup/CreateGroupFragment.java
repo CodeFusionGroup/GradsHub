@@ -1,8 +1,5 @@
 package com.example.gradshub.main.creategroup;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +21,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
 import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.ResearchGroup;
-import com.example.gradshub.network.AsyncHTTpPost;
 import com.example.gradshub.network.NetworkRequestQueue;
 
 import org.json.JSONException;
@@ -35,19 +31,15 @@ import java.util.HashMap;
 
 public class CreateGroupFragment extends Fragment implements View.OnClickListener {
 
+    private ProgressBar progressBar;
     private RadioButton publicRadioBtn, privateRadioBtn;
     private EditText groupNameET;
-    private String groupName, groupVisibility, groupInviteCode=null;
-    private ProgressBar progressBar;
-    private Context context;
+
+    private String groupName, groupVisibility, groupInviteCode = null;
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-        context = this.getActivity();
-    }
+    public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +49,7 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
+
         progressBar = view.findViewById(R.id.progress_circular);
         groupNameET = view.findViewById(R.id.groupNameET);
         publicRadioBtn = view.findViewById(R.id.publicRB);
@@ -66,12 +59,15 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
         publicRadioBtn.setOnClickListener(this);
         privateRadioBtn.setOnClickListener(this);
         doneBtn.setOnClickListener(this);
+
     }
 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+
+        switch ( v.getId() ) {
+
             case R.id.publicRB:
                 groupVisibility = publicRadioBtn.getText().toString();
                 break;
@@ -81,37 +77,44 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
                 break;
 
             case R.id.doneBtn:
+
                 MainActivity mainActivity = (MainActivity) requireActivity();
                 String groupAdmin = mainActivity.user.getEmail();
                 groupName = groupNameET.getText().toString().trim();
-                if (isValidInput()) {
-                    if(privateRadioBtn.isChecked()) {
+
+                if ( isValidInput() ) {
+                    if( privateRadioBtn.isChecked() ) {
                         groupInviteCode = GenerateInviteCode.generateString();
                     }
-                    createResearchGroup(new ResearchGroup(groupAdmin, groupName, groupVisibility, groupInviteCode));
+                    createResearchGroup( new ResearchGroup( groupAdmin, groupName, groupVisibility, groupInviteCode ) );
                     progressBar.setVisibility(View.VISIBLE);
                 }
+
                 break;
         }
+
     }
 
 
     private boolean isValidInput() {
-        if (groupName.isEmpty()) {
+
+        if ( groupName.isEmpty() ) {
             groupNameET.setError("Not a valid group name!");
             groupNameET.requestFocus();
             return false;
         }
-        // don't allow for too long group names.
+
+        // don't allow group names that are too long.
         int maxCharLength = 50;
-        if (groupName.length() > maxCharLength) {
+        if ( groupName.length() > maxCharLength ) {
             groupNameET.setError("Exceeded the maximum number of characters allowed!");
             groupNameET.requestFocus();
             return false;
         }
+
         // check if the group visibility is selected.
-        if (!publicRadioBtn.isChecked() && !privateRadioBtn.isChecked()) {
-            Toast.makeText(requireContext(), "please indicate the group visibility!", Toast.LENGTH_SHORT).show();
+        if ( !publicRadioBtn.isChecked() && !privateRadioBtn.isChecked() ) {
+            Toast.makeText(requireActivity(), "please indicate the group visibility!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -119,91 +122,68 @@ public class CreateGroupFragment extends Fragment implements View.OnClickListene
     }
 
 
-//    private void createResearchGroup(ResearchGroup researchGroup) {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("USER_EMAIL", researchGroup.getGroupAdmin());
-//        params.put("GROUP_NAME", researchGroup.getGroupName());
-//        params.put("GROUP_VISIBILITY", researchGroup.getGroupVisibility());
-//        params.put("GROUP_CODE", researchGroup.getGroupInviteCode());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/creategroup.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverCreateResearchGroupResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//
-//    }
-
     private void createResearchGroup(ResearchGroup researchGroup) {
 
         String url = "https://gradshub.herokuapp.com/api/Group/create.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("email", researchGroup.getGroupAdmin());
         params.put("name", researchGroup.getGroupName());
         params.put("visibility", researchGroup.getGroupVisibility());
         params.put("code", researchGroup.getGroupInviteCode());
-        System.err.println(params);
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverCreateResearchGroupResponse(response.toString());
+                        serverCreateResearchGroupResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
 
     }
 
 
-    private void serverCreateResearchGroupResponse(String output) {
+    private void serverCreateResearchGroupResponse(JSONObject response) {
 
         try {
 
-            if(output.equals("")) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            String statusCode = response.getString("success");
+            String message = response.getString("message");
 
-                JSONObject jo = new JSONObject(output);
-                String success = jo.getString("success");
-                String message =jo.getString("message");
+            switch (statusCode) {
 
-                switch (success) {
-                    case "1": // Toast message: New group created.
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
-                        // switch to my groups fragment to see the updated list of your groups.
-                        NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
-                        navController.navigate(R.id.action_createGroupFragment_to_myGroupsListFragment);
-                        break;
+                // New group created.
+                case "1":
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    // switch to my groups fragment to see the updated list of your groups.
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+                    navController.navigate(R.id.action_createGroupFragment_to_myGroupsListFragment);
+                    break;
 
-                    case "0": // Toast message: didn't send the required values (not necessarily communicated back to user for this case)
-                    case "-1": // Toast message: group name taken, please choose another one.
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
-                        break;
-                }
+                case "0": // Toast message: didn't send the required values (not necessarily communicated back to user for this case)
+                case "-1": // Toast message: group name taken, please choose another one.
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    break;
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
     }
 
 }

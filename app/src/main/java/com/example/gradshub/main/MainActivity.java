@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.example.gradshub.R;
 import com.example.gradshub.authentication.AuthenticationActivity;
 import com.example.gradshub.main.availablegroups.AvailableGroupsListFragment;
-import com.example.gradshub.main.conferenceupdates.ScheduleListFragment;
+import com.example.gradshub.main.eventsSchedule.ScheduleListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsListFragment;
 import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.example.gradshub.model.Post;
@@ -29,9 +29,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 
 public class MainActivity extends AppCompatActivity implements MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
         AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
@@ -39,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         ScheduleListFragment.OnScheduleListFragmentInteractionListener {
 
 
-    public User user;
+    public User user; // used in other fragments, so has public access.
     private AppBarConfiguration mAppBarConfiguration;
 
 
@@ -61,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 R.id.feedListFragment, R.id.profileFragment,R.id.myGroupsListFragment, R.id.createGroupFragment,
                 R.id.availableGroupsListFragment, R.id.scheduleFragment).setDrawerLayout(drawer).build();
 
-
         // NavController is responsible for replacing the contents of the NavHost with the new destination.
         // (layout content_main contains the navigation host fragment for MainActivity)
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
@@ -69,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         // updates the UI with the contents of the current destination.
         NavigationUI.setupWithNavController(navigationView, navController);
-
 
         View headerView = navigationView.getHeaderView(0);
         TextView fullNameTV = headerView.findViewById(R.id.userFullNameTV);
@@ -93,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.action_logout:
 
@@ -106,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
             default:
                 return super.onOptionsItemSelected(item);
         }
+
     }
 
 

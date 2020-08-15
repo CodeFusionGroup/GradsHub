@@ -1,7 +1,5 @@
 package com.example.gradshub.main.mygroups;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +10,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,7 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,11 +29,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.gradshub.R;
-import com.example.gradshub.main.postcomments.Comment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
-import com.example.gradshub.network.AsyncHTTpPost;
 import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -45,23 +39,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 
 public class MyGroupsProfileFragment extends Fragment {
 
+    private ProgressBar progressBar;
+    private View view;
+
+    private RecyclerView recyclerView;
+    private GroupPostsListRecyclerViewAdapter adapter;
 
     private static ResearchGroup researchGroup;
     private static User user;
 
     private static ArrayList<String> userAlreadyLikedPosts = new ArrayList<>(); // values are post IDs
     private static ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>(); // values are post IDs
-    private static List<Post> items = new ArrayList<>();
+    private List<Post> groupPosts = new ArrayList<>();
 
     // listener that keeps track of which post is liked in the particular group
     private GroupPostsListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener;
@@ -69,12 +65,6 @@ public class MyGroupsProfileFragment extends Fragment {
     private GroupPostsListRecyclerViewAdapter.OnPostItemCommentListener onPostItemCommentListener;
     // listener that keeps track of which post has the user clicked on
     private MyGroupsProfileFragment.OnPostsListFragmentInteractionListener mListener;
-
-    private View view;
-    private RecyclerView recyclerView;
-    private GroupPostsListRecyclerViewAdapter adapter;
-
-    private ProgressBar progressBar;
 
 
     @Override
@@ -99,7 +89,7 @@ public class MyGroupsProfileFragment extends Fragment {
             Context context = view.getContext();
             recyclerView = view.findViewById(R.id.postsList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new GroupPostsListRecyclerViewAdapter(items, mListener, onPostItemLikedListener, onPostItemCommentListener);
+            adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener);
             recyclerView.setAdapter(adapter);
         }
 
@@ -124,9 +114,7 @@ public class MyGroupsProfileFragment extends Fragment {
         getGroupPosts();
         progressBar.setVisibility(View.VISIBLE);
 
-        onPostItemLikedListener = item -> {
-            userCurrentlyLikedPosts.add(item.getPostID());
-        };
+        onPostItemLikedListener = item -> userCurrentlyLikedPosts.add(item.getPostID());
 
         onPostItemCommentListener = item -> {
 
@@ -146,114 +134,91 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
-//    private void getGroupPosts() {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("GROUP_ID", researchGroup.getGroupID());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievegrouppost.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverGetGroupPostsResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//
-//    }
     private void getGroupPosts() {
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/retrieveAll.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("group_id", researchGroup.getGroupID());
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverGetGroupPostsResponse(response.toString());
+                        serverGetGroupPostsResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( this.getActivity().getApplicationContext() ).addToRequestQueue(postRequest);
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
 
     }
 
 
-    private void serverGetGroupPostsResponse(String output) {
+    private void serverGetGroupPostsResponse(JSONObject response) {
 
         try {
 
-            JSONObject jo = new JSONObject(output);
-            String success = jo.getString("success");
+            groupPosts.clear(); // clear to avoid duplicates
+            String statusCode = response.getString("success");
 
-            if (output.equals("")) {
+            // this group has no posts yet.
+            if (statusCode.equals("0")) {
                 if (view instanceof RelativeLayout) {
                     progressBar.setVisibility(View.GONE);
                 }
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
             }
 
+            // this group has posts, get the posts
             else {
 
-                items.clear();
+                JSONArray groupPostsJA = response.getJSONArray("message");
 
-                if (success.equals("0")) {
-                    if (view instanceof RelativeLayout) {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                    // Toast msg: this group has no posts yet.
-                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+                for(int i = 0 ; i < groupPostsJA.length(); i++) {
+
+                    JSONObject groupPostJO = (JSONObject)groupPostsJA.get(i);
+
+                    String firstName = groupPostJO.getString("USER_FNAME");
+                    String lastName = groupPostJO.getString("USER_LNAME");
+                    String postCreator = firstName + " "+ lastName;
+                    String postSubject = groupPostJO.getString("POST_TITLE");
+                    String postDate = groupPostJO.getString("POST_DATE");
+                    String postDescription = groupPostJO.getString("POST_ATTACHMENT_URL");
+                    String postID = groupPostJO.getString("GROUP_POST_ID");
+                    int noLikes = Integer.parseInt(groupPostJO.getString("NO_OF_LIKES"));
+                    int noComments = Integer.parseInt(groupPostJO.getString("NO_OF_COMMENTS"));
+
+                    Post post = new Post();
+                    post.setPostID(postID);
+                    post.setPostDate(postDate);
+                    post.setPostCreator(postCreator);
+                    post.setPostSubject(postSubject);
+                    post.setPostDescription(postDescription);
+                    post.setPostLikesCount(noLikes);
+                    post.setPostCommentsCount(noComments);
+
+                    groupPosts.add(post);
+
                 }
 
-                else {
-
-                    JSONArray ja = jo.getJSONArray("message");
-
-                    for(int i = 0 ; i < ja.length(); i++) {
-                        JSONObject jasonObject = (JSONObject)ja.get(i);
-
-                        String firstName = jasonObject.getString("USER_FNAME");
-                        String lastName = jasonObject.getString("USER_LNAME");
-                        String postCreator = firstName + " "+ lastName;
-                        String postSubject = jasonObject.getString("POST_TITLE");
-                        String postDate = jasonObject.getString("POST_DATE");
-                        String postDescription = jasonObject.getString("POST_ATTACHMENT_URL");
-                        String postID = jasonObject.getString("GROUP_POST_ID");
-                        int noLikes = Integer.parseInt(jasonObject.getString("NO_OF_LIKES"));
-                        int noComments = Integer.parseInt(jasonObject.getString("NO_OF_COMMENTS"));
-
-                        Post post = new Post();
-                        post.setPostID(postID);
-                        post.setPostDate(postDate);
-                        post.setPostCreator(postCreator);
-                        post.setPostSubject(postSubject);
-                        post.setPostDescription(postDescription);
-                        post.setPostLikesCount(noLikes);
-                        post.setPostCommentsCount(noComments);
-
-                        items.add(post);
-
-                    }
-
-                    if (view instanceof RelativeLayout) {
-                        progressBar.setVisibility(View.GONE);
-                        Context context = view.getContext();
-                        recyclerView = view.findViewById(R.id.postsList);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                        adapter = new GroupPostsListRecyclerViewAdapter(items, mListener, onPostItemLikedListener, onPostItemCommentListener);
-                        recyclerView.setAdapter(adapter);
-                    }
-
+                if (view instanceof RelativeLayout) {
+                    progressBar.setVisibility(View.GONE);
+                    Context context = view.getContext();
+                    recyclerView = view.findViewById(R.id.postsList);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener);
+                    recyclerView.setAdapter(adapter);
                 }
 
             }
@@ -264,73 +229,53 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
-//    private void getUserLikedPosts() {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("GROUP_ID", researchGroup.getGroupID());
-//        params.put("USER_ID", user.getUserID());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievelikesGP.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverGetUserLikedPostsResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//
-//    }
-
     private void getUserLikedPosts() {
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/retrievelikes.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("group_id", researchGroup.getGroupID());
         params.put("user_id", user.getUserID());
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverGetUserLikedPostsResponse(response.toString());
+                        serverGetUserLikedPostsResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( this.getActivity().getApplicationContext() ).addToRequestQueue(postRequest);
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
 
         // Extend timeout
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
                 DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
     }
 
 
-    private void serverGetUserLikedPostsResponse(String output) {
+    private void serverGetUserLikedPostsResponse(JSONObject response) {
 
         try {
 
-            JSONObject jo = new JSONObject(output);
-            String success = jo.getString("success");
-            userAlreadyLikedPosts.clear();
-
-            if (output.equals("")) {
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
-            }
+            userAlreadyLikedPosts.clear(); // clear to avoid duplicates
+            String statusCode = response.getString("success");
 
             // user has previously liked posts in this group
-            else if (success.equals("1")) {
+            if (statusCode.equals("1")) {
 
-                JSONArray ja = jo.getJSONArray("message");
+                JSONArray ja = response.getJSONArray("message");
 
                 for(int i = 0 ; i < ja.length(); i++) {
                     JSONObject jasonObject = (JSONObject)ja.get(i);
@@ -346,36 +291,6 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
-//    private void insertGroupLikedPosts() {
-//
-//        StringBuilder likedPostsIDs = new StringBuilder();
-//
-//        for(int i = 0; i < userCurrentlyLikedPosts.size(); i++) {
-//
-//            likedPostsIDs.append(userCurrentlyLikedPosts.get(i));
-//
-//            if (i != userCurrentlyLikedPosts.size()-1) {
-//                likedPostsIDs.append(",");
-//            }
-//        }
-//
-//        ContentValues params = new ContentValues();
-//        params.put("USER_ID", user.getUserID());
-//        params.put("GROUP_ID", researchGroup.getGroupID());
-//        params.put("POST_ID", likedPostsIDs.toString());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/insertlikesGP.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverInsertGroupLikedPostsResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//
-//    }
-
     private void insertGroupLikedPosts() {
 
         StringBuilder likedPostsIDs = new StringBuilder();
@@ -390,43 +305,38 @@ public class MyGroupsProfileFragment extends Fragment {
         }
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/insertlikes.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("user_id", user.getUserID());
         params.put("group_id", researchGroup.getGroupID());
         params.put("post_id", likedPostsIDs.toString());
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverInsertGroupLikedPostsResponse(response.toString());
+                        //serverInsertGroupLikedPostsResponse(response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( this.getActivity().getApplicationContext() ).addToRequestQueue(postRequest);
-
-    }
-
-    private void serverInsertGroupLikedPostsResponse(String output) {
-
-        if (output.equals("")) {
-            Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
-        }
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
 
     }
 
 
-    public static ResearchGroup getGroup() {
-        return researchGroup;
-    }
+    private void serverInsertGroupLikedPostsResponse(String output) { }
+
+
+    public static ResearchGroup getGroup() { return researchGroup; }
 
 
     public static User getUser() { return user; }
@@ -461,8 +371,11 @@ public class MyGroupsProfileFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+
+        switch ( item.getItemId() ) {
+
             case R.id.action_share:
+
                 // share invite code if the user is the one who created the group (group admin)
                 if ( researchGroup.getGroupAdmin().equals(user.getEmail()) &&
                         researchGroup.getGroupVisibility().toLowerCase().equals("private") ) {
@@ -506,6 +419,7 @@ public class MyGroupsProfileFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.gradshub.main.conferenceupdates;
+package com.example.gradshub.main.eventsSchedule;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gradshub.R;
-import com.example.gradshub.main.conferenceupdates.ScheduleListFragment.OnScheduleListFragmentInteractionListener;
+import com.example.gradshub.main.eventsSchedule.ScheduleListFragment.OnScheduleListFragmentInteractionListener;
 import com.example.gradshub.model.Schedule;
 
 import java.util.ArrayList;

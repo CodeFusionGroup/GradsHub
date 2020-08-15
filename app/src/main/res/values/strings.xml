@@ -2,22 +2,22 @@
     <string name="app_name">GradsHub</string>
 
     <!-- THE FOLLOWING BELONG TO THE AUTHENTICATION ACTIVITY -->
-    <!-- attributes for fragment_user_login -->
-    <string name="email_hint">email</string>
-    <string name="password_hint">password</string>
+    <!-- attributes for fragment_login -->
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
     <string name="login_button">login</string>
     <string name="forgot_password_button">forgot password?</string>
     <string name="no_account_tv">no account? click below</string>
     <string name="register_button">register</string>
 
-    <!-- attributes for fragment_user_register -->
-    <string name="firstName_hint">firstName</string>
-    <string name="lastName_hint">lastName</string>
-    <string name="register_email_hint">email</string>
-    <string name="phone_number_hint">phone number</string>
+    <!-- attributes for fragment_register -->
+    <string name="firstName_hint">First Name</string>
+    <string name="lastName_hint">Last Name</string>
+    <string name="register_email_hint">Email</string>
+    <string name="phone_number_hint">Phone Number</string>
     <string name="academic_status_tv">Academic Status:</string>
-    <string name="register_password_hint">password</string>
-    <string name="register_confirm_password_hint">re-enter password</string>
+    <string name="register_password_hint">Password</string>
+    <string name="register_confirm_password_hint"> Re-enter password</string>
     <string name="submit_button">submit</string>
 
     <string-array name="ACADEMIC_STATUS">
@@ -31,9 +31,9 @@
 
     <!-- attributes for fragment_reset_password-->
     <string name="new_password_tv">Enter new password</string>
-    <string name="new_password_hint">password</string>
+    <string name="new_password_hint">Password</string>
     <string name="confirm_password_tv">Confirm password</string>
-    <string name="confirm_password_hint">re-enter password</string>
+    <string name="confirm_password_hint">Re-enter password</string>
     <string name="reset_password_button">reset password</string>
 
 
@@ -82,7 +82,5 @@
     <string name="subject">Subject</string>
     <string name="description">Description</string>
     <string name="post_hint">add link and/or attach a pdf file</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

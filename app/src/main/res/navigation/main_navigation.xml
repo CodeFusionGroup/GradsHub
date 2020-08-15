@@ -121,7 +121,7 @@
 
     <fragment
         android:id="@+id/scheduleFragment"
-        android:name="com.example.gradshub.main.conferenceupdates.ScheduleListFragment"
+        android:name="com.example.gradshub.main.eventsSchedule.ScheduleListFragment"
         android:label="Schedule"
         tools:layout="@layout/fragment_schedule_item_list" />
 

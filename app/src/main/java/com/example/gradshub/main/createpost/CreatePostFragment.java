@@ -1,9 +1,5 @@
 package com.example.gradshub.main.createpost;
 
-import android.annotation.SuppressLint;
-import android.app.DownloadManager;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,7 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import android.provider.OpenableColumns;
@@ -42,12 +37,10 @@ import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
-import com.example.gradshub.network.AsyncHTTpPost;
 import com.example.gradshub.network.MultipartRequest;
 import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,11 +49,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
@@ -68,19 +60,14 @@ import static android.app.Activity.RESULT_OK;
 
 public class CreatePostFragment extends Fragment {
 
-
+    private ProgressBar progressBar;
     private EditText postSubjectET;
     private TextInputEditText postDescriptionET;
-    private String postSubject, postDescription;
-    private ProgressBar progressBar;
-
     private TextView fileAttachmentTV;
-    private static final int PICK_FILE_RESULT_CODE = 1;
-
     private View view;
 
-    private Context context;
-
+    private String postSubject, postDescription;
+    private static final int PICK_FILE_RESULT_CODE = 1;
     // Used to upload pdf file
     private String displayName;
     private Uri uri;
@@ -90,7 +77,6 @@ public class CreatePostFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        context = this.getActivity();
     }
 
 
@@ -108,20 +94,17 @@ public class CreatePostFragment extends Fragment {
         fileAttachmentTV = view.findViewById(R.id.fileAttachmentTV);
         postSubjectET = view.findViewById(R.id.postSubjectET);
         postDescriptionET = view.findViewById(R.id.postDescriptionET);
-
         Button postBtn = view.findViewById(R.id.postBtn);
+
         postBtn.setOnClickListener(v -> {
 
             postSubject = postSubjectET.getText().toString().trim();
             postDescription = postDescriptionET.getText().toString().trim();
 
-            if (isValidInput()) {
-
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = new Date();
-                String postDate = df.format(date);
+            if ( isValidInput() ) {
 
                 MainActivity mainActivity = (MainActivity) requireActivity();
+                String postDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
                 ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
 
 //                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
@@ -129,10 +112,10 @@ public class CreatePostFragment extends Fragment {
 
                 // TODO: Implement better logic for attachment is URL/Document
                 // Post attachment is a pdf document
-                if(!displayName.isEmpty() && uri != null){
+                if(!displayName.isEmpty() && uri != null) {
 
                     // Group post information for uploading a pdf
-                    HashMap<String, String> params = new HashMap<String,String>();
+                    HashMap<String, String> params = new HashMap<>();
                     params.put("group_id", researchGroup.getGroupID());
                     params.put("user_id", mainActivity.user.getUserID());
                     params.put("post_title", postSubject);
@@ -140,12 +123,14 @@ public class CreatePostFragment extends Fragment {
 
                     uploadPDF(displayName,uri,params);
 
-                }else{
+                } else {
                     // Post attachment is a URL
                     createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 }
             }
+
         });
+
     }
 
 
@@ -177,57 +162,52 @@ public class CreatePostFragment extends Fragment {
     private void createGroupPost(Post post, User user, ResearchGroup researchGroup) {
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/create.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("group_id", researchGroup.getGroupID());
         params.put("user_id", user.getUserID());
         params.put("post_date", post.getPostDate());
         params.put("post_title", post.getPostSubject());
         params.put("post_url", post.getPostDescription());
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverCreateGroupPostResponse(response.toString());
+                        serverCreateGroupPostResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-                        error.printStackTrace();
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        //error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
 
     }
 
 
-    private void serverCreateGroupPostResponse(String output) {
+    private void serverCreateGroupPostResponse(JSONObject response) {
 
         try {
 
-            if(output.equals("")) {
+            String statusCode = response.getString("success");
+            String message = response.getString("message");
+
+            // NOTE: there are currently no constraints on group properties like group names being the same or something
+            // successfully created a post
+            if (statusCode.equals("1")) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
-            }
-
-            else {
-
-                JSONObject jo = new JSONObject(output);
-                String success = jo.getString("success");
-                String message =jo.getString("message");
-
-                if (success.equals("1")) {
-                    progressBar.setVisibility(View.GONE);
-                    // Toast message: successfully created a post
-                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
-
-                    NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
-                    navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
-                }
+                Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                // navigate to the profile of this group to see the post that was created
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+                navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
             }
 
         } catch (JSONException e) {
@@ -241,8 +221,8 @@ public class CreatePostFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.create_post_menu, menu);
         super.onCreateOptionsMenu(menu, menuInflater);
-
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -250,7 +230,7 @@ public class CreatePostFragment extends Fragment {
         switch (item.getItemId()) {
             // Attachment icon
             case R.id.action_attach_file:
-                openFile();
+                selectPdfFile();
                 return true;
 
             default:
@@ -259,7 +239,9 @@ public class CreatePostFragment extends Fragment {
 
     }
 
-    private void openFile() {
+    // TODO: still to complete below functions for pdf upload and download functionality
+
+    private void selectPdfFile() {
 
         Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
         chooseFile.setType("application/pdf");
@@ -273,9 +255,10 @@ public class CreatePostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK && data != null) {
+        if( requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK && data != null ) {
 
-            if(data.getData() != null) {
+            if( data.getData() != null ) {
+
                 uri = data.getData();
                 String uriString = uri.toString();
                 File file = new File(uriString);
@@ -284,21 +267,25 @@ public class CreatePostFragment extends Fragment {
 
                 // Get the name of the file
                 if (uriString.startsWith("content://")) {
+
                     Cursor cursor = null;
                     try {
-
-                        cursor = this.getActivity().getContentResolver().query(uri, null, null, null, null);
+                        cursor = requireActivity().getContentResolver().query(uri, null, null, null, null);
                         if (cursor != null && cursor.moveToFirst()) {
                             displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                             Log.d("File name>>>>  ",displayName);
                         }
+
                     } finally {
-                        cursor.close();
+                        if (cursor != null)
+                            cursor.close();
                     }
+
                 } else if (uriString.startsWith("file://")) {
                     displayName = file.getName();
                     Log.d("File name>>>>  ",displayName);
                 }
+
                 //  TODO: Display pdf icon to show user that the document has successfully been uploaded
                 Toast.makeText(requireActivity(), "File attached", Toast.LENGTH_SHORT).show();
 
@@ -306,11 +293,14 @@ public class CreatePostFragment extends Fragment {
 //                fileAttachmentTV.setText(fileUri.getLastPathSegment());
 //                fileAttachmentTV.setVisibility(View.VISIBLE);
             }
+
         }
+
         super.onActivityResult(requestCode, resultCode, data);
+
     }
 
-    private void uploadPDF(final String pdfName, Uri pdfFile,Map<String, String> passedParams){
+    private void uploadPDF(final String pdfName, Uri pdfFile,Map<String, String> passedParams) {
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/uploadfile.php";
 
@@ -320,10 +310,11 @@ public class CreatePostFragment extends Fragment {
 
         try {
 
-            iStream = this.getActivity().getContentResolver().openInputStream(pdfFile);
+            iStream = requireActivity().getContentResolver().openInputStream(pdfFile);
+            assert iStream != null;
             final byte[] inputData = getBytes(iStream);
 
-            MultipartRequest multipartRequest = new MultipartRequest(Request.Method.POST, url,
+            MultipartRequest multipartRequest = new MultipartRequest( Request.Method.POST, url,
                     new Response.Listener<NetworkResponse>() {
                         @Override
                         public void onResponse(NetworkResponse response) {
@@ -337,19 +328,23 @@ public class CreatePostFragment extends Fragment {
                     // TODO: Handle error
                     error.printStackTrace();
                 }
-            }){
+            } )
+
+            {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = passedParams;
                     // params.put("tags", "ccccc");  add string parameters
                     return params;
                 }
+
                 @Override
                 protected Map<String, DataPart> getByteData() {
                     Map<String, DataPart> params = new HashMap<>();
                     params.put("file", new DataPart(pdfName ,inputData));
                     return params;
                 }
+
             };
 
             multipartRequest.setRetryPolicy(new DefaultRetryPolicy(
@@ -358,13 +353,15 @@ public class CreatePostFragment extends Fragment {
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
             // Access the Global(App) RequestQueue
-            NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(multipartRequest);
+            NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(multipartRequest);
 
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void serverUploadPDFResponse(String output) {
@@ -375,7 +372,7 @@ public class CreatePostFragment extends Fragment {
             String success = jsonObject.getString("success");
             String message = jsonObject.getString("message");
 
-            switch (success){
+            switch (success) {
                 case "-1": // Toast message File uploaded too big
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
@@ -404,7 +401,9 @@ public class CreatePostFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
     }
+
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
@@ -417,8 +416,6 @@ public class CreatePostFragment extends Fragment {
         }
         return byteBuffer.toByteArray();
     }
-
-
 
 
 }

@@ -1,7 +1,5 @@
 package com.example.gradshub.main.mygroups;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,7 +27,6 @@ import com.example.gradshub.R;
 import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
-import com.example.gradshub.network.AsyncHTTpPost;
 import com.example.gradshub.network.NetworkRequestQueue;
 
 import org.json.JSONArray;
@@ -43,20 +40,19 @@ import java.util.List;
 
 public class MyGroupsListFragment extends Fragment {
 
-    private static List<ResearchGroup> items = new ArrayList<>();
+    private ProgressBar progressBar;
     private View view;
+
+    private List<ResearchGroup> researchGroups = new ArrayList<>();
     private RecyclerView recyclerView;
     private MyGroupsListRecyclerViewAdapter adapter;
     private MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener mListener;
-    private ProgressBar progressBar;
-    private Context context;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        context = this.getActivity();
     }
 
 
@@ -68,7 +64,7 @@ public class MyGroupsListFragment extends Fragment {
             Context context = view.getContext();
             recyclerView = view.findViewById(R.id.myGroupsList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new MyGroupsListRecyclerViewAdapter(items, mListener);
+            adapter = new MyGroupsListRecyclerViewAdapter(researchGroups, mListener);
             recyclerView.setAdapter(adapter);
         }
 
@@ -78,165 +74,109 @@ public class MyGroupsListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
         progressBar = view.findViewById(R.id.progress_circular);
         MainActivity mainActivity = (MainActivity) requireActivity();
         getUserGroups(mainActivity.user);
         progressBar.setVisibility(View.VISIBLE);
+
     }
 
-
-//    private void getUserGroups(User user) {
-//        ContentValues params = new ContentValues();
-//        params.put("USER_EMAIL", user.getEmail());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/listgroup.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverGetUserGroupsResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//    }
 
     private void getUserGroups(User user) {
 
         String url = "https://gradshub.herokuapp.com/api/User/listgroups.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("user_email", user.getEmail());
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverGetUserGroupsResponse(response.toString());
+                        serverGetUserGroupsResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
     }
 
 
-    private void serverGetUserGroupsResponse(String output) {
+    private void serverGetUserGroupsResponse(JSONObject response) {
 
         try {
 
-            if(output.equals("")) {
-                if (view instanceof RelativeLayout) {
-                    progressBar.setVisibility(View.GONE);
-                }
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
-            }else{
+            researchGroups.clear(); // clear to avoid duplicates
+            String statusCode = response.getString("success");
 
-                JSONObject jsonObject = new JSONObject(output);
-                String success = jsonObject.getString("success");
+            switch(statusCode) {
 
-                switch(success){
-                    case "1": // user has joined groups, get the list of research groups this user belongs to.
-                        items.clear();
+                // user has joined groups, get the list of research groups this user belongs to.
+                case "1":
 
-                        JSONArray ja = jsonObject.getJSONArray("message");
+                    JSONArray researchGroupsJA = response.getJSONArray("message");
 
-                        for(int i = 0 ; i < ja.length(); i++) {
-                            JSONObject jo = (JSONObject)ja.get(i);
-                            String groupID = jo.getString("GROUP_ID");
-                            String groupName = jo.getString("GROUP_NAME");
-                            String groupAdmin = jo.getString("GROUP_ADMIN");
-                            String groupVisibility = jo.getString("GROUP_VISIBILITY");
-                            String groupInviteCode = jo.getString("GROUP_CODE");
+                    for(int i = 0 ; i < researchGroupsJA.length(); i++) {
 
-                            ResearchGroup researchGroup = new ResearchGroup();
-                            researchGroup.setGroupID(groupID);
-                            researchGroup.setGroupName(groupName);
-                            researchGroup.setGroupAdmin(groupAdmin);
-                            researchGroup.setGroupVisibility(groupVisibility);
-                            researchGroup.setGroupInviteCode(groupInviteCode);
+                        JSONObject researchGroupsJO = (JSONObject)researchGroupsJA.get(i);
 
-                            items.add(researchGroup);
-                        }
+                        String groupID = researchGroupsJO.getString("GROUP_ID");
+                        String groupName = researchGroupsJO.getString("GROUP_NAME");
+                        String groupAdmin = researchGroupsJO.getString("GROUP_ADMIN");
+                        String groupVisibility = researchGroupsJO.getString("GROUP_VISIBILITY");
+                        String groupInviteCode = researchGroupsJO.getString("GROUP_CODE");
 
-                        if (view instanceof RelativeLayout) {
-                            progressBar.setVisibility(View.GONE);
-                            Context context = view.getContext();
-                            recyclerView = view.findViewById(R.id.myGroupsList);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                            adapter = new MyGroupsListRecyclerViewAdapter(items, mListener);
-                            recyclerView.setAdapter(adapter);
-                        }
+                        ResearchGroup researchGroup = new ResearchGroup();
+                        researchGroup.setGroupID(groupID);
+                        researchGroup.setGroupName(groupName);
+                        researchGroup.setGroupAdmin(groupAdmin);
+                        researchGroup.setGroupVisibility(groupVisibility);
+                        researchGroup.setGroupInviteCode(groupInviteCode);
 
-                        break;
-                    case "0": // if the user has not joined any groups, a status code and its message is returned
-                        if (view instanceof RelativeLayout) {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                        // Toast message: you have not joined any groups.
-                        Toast.makeText(requireActivity(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-                        break;
-                    case "-1": // Toast message: email doesn't exist, please try again.
-                }
+                        researchGroups.add(researchGroup);
+                    }
 
+                    if (view instanceof RelativeLayout) {
+                        progressBar.setVisibility(View.GONE);
+                        Context context = view.getContext();
+                        recyclerView = view.findViewById(R.id.myGroupsList);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        adapter = new MyGroupsListRecyclerViewAdapter(researchGroups, mListener);
+                        recyclerView.setAdapter(adapter);
+                    }
 
-//                JSONArray ja = new JSONArray(output);
-//                JSONObject jsonObject = (JSONObject)ja.get(0);
-//
-//                // if the user has not joined any groups, a status code and its message is returned
-//                if(jsonObject.has("success")) {
-//                    if (view instanceof RelativeLayout) {
-//                        progressBar.setVisibility(View.GONE);
-//                    }
-//                    JSONObject joMessage = (JSONObject)ja.get(1);
-//                    // Toast message: you have not joined any groups.
-//                    Toast.makeText(requireActivity(), joMessage.getString("message"), Toast.LENGTH_SHORT).show();
-//                }
+                    break;
 
-                // if the user has joined groups, get the list of research groups this user belongs to.
-//                else {
-//                    items.clear();// clear the items so that we don't have duplicate entries in our recycle view
-//                    for(int i = 0 ; i < ja.length(); i++) {
-//                        JSONObject jo = (JSONObject)ja.get(i);
-//                        String groupID = jo.getString("GROUP_ID");
-//                        String groupName = jo.getString("GROUP_NAME");
-//                        String groupAdmin = jo.getString("GROUP_ADMIN");
-//                        String groupVisibility = jo.getString("GROUP_VISIBILITY");
-//                        String groupInviteCode = jo.getString("GROUP_CODE");
-//
-//                        ResearchGroup researchGroup = new ResearchGroup();
-//                        researchGroup.setGroupID(groupID);
-//                        researchGroup.setGroupName(groupName);
-//                        researchGroup.setGroupAdmin(groupAdmin);
-//                        researchGroup.setGroupVisibility(groupVisibility);
-//                        researchGroup.setGroupInviteCode(groupInviteCode);
-//
-//                        items.add(researchGroup);
-//                    }
-//
-//                    if (view instanceof RelativeLayout) {
-//                        progressBar.setVisibility(View.GONE);
-//                        Context context = view.getContext();
-//                        recyclerView = view.findViewById(R.id.myGroupsList);
-//                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//                        adapter = new MyGroupsListRecyclerViewAdapter(items, mListener);
-//                        recyclerView.setAdapter(adapter);
-//                    }
-//                }
+                // if the user has not joined any groups
+                case "0":
+                    if (view instanceof RelativeLayout) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
+                    break;
+
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
     }
 
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater menuInflater) {
+
         menuInflater.inflate(R.menu.my_groups_menu, menu);
         super.onCreateOptionsMenu(menu, menuInflater);
 
@@ -254,11 +194,13 @@ public class MyGroupsListFragment extends Fragment {
                 return false;
             }
         });
+
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.action_search:
 

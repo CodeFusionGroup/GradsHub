@@ -1,7 +1,5 @@
 package com.example.gradshub.main.availablegroups;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -27,7 +25,6 @@ import com.example.gradshub.R;
 import com.example.gradshub.main.MainActivity;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
-import com.example.gradshub.network.AsyncHTTpPost;
 import com.example.gradshub.network.NetworkRequestQueue;
 
 import org.json.JSONException;
@@ -38,21 +35,22 @@ import java.util.HashMap;
 
 public class AvailableGroupProfileFragment extends Fragment {
 
+    private ProgressBar progressBar;
+
     private ResearchGroup researchGroup;
     private MainActivity mainActivity;
-    private ProgressBar progressBar;
-    private Context context;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mainActivity = (MainActivity) requireActivity();
         Bundle bundle = this.getArguments();
         if(bundle != null) {
             researchGroup = bundle.getParcelable("group_item");
         }
-        context = this.getActivity();
+
     }
 
 
@@ -80,11 +78,13 @@ public class AvailableGroupProfileFragment extends Fragment {
                 .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         // entering nothing is the same as entering an invalid invite code.
                         String inviteCode = inviteCodeET.getText().toString().trim();
                         requestToJoinGroup(mainActivity.user, researchGroup, inviteCode);
                         progressBar.setVisibility(View.VISIBLE);
                     }
+
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
@@ -95,9 +95,11 @@ public class AvailableGroupProfileFragment extends Fragment {
 
         final AlertDialog alertDialog = builder.create();
 
+
         joinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(researchGroup.getGroupVisibility().toLowerCase().equals("private")) {
                     alertDialog.show();
                 }
@@ -111,85 +113,60 @@ public class AvailableGroupProfileFragment extends Fragment {
     }
 
 
-//    private void requestToJoinGroup(User user, ResearchGroup researchGroup, String inviteCode) {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("USER_ID",user.getUserID());
-//        params.put("GROUP_ID", researchGroup.getGroupID());
-//        params.put("GROUP_VISIBILITY", researchGroup.getGroupVisibility());
-//        params.put("GROUP_CODE", inviteCode);
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/joingroup.php",params) {
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverRequestToJoinGroupResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//    }
-
     private void requestToJoinGroup(User user, ResearchGroup researchGroup, String inviteCode) {
 
         String url = "https://gradshub.herokuapp.com/api/User/joingroup.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("user_id",user.getUserID());
         params.put("group_id", researchGroup.getGroupID());
         params.put("group_visibility", researchGroup.getGroupVisibility());
         params.put("group_code", inviteCode);
-        System.err.println(params);
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverRequestToJoinGroupResponse(response.toString());
+                        serverRequestToJoinGroupResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( context.getApplicationContext()).addToRequestQueue(postRequest);
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext()).addToRequestQueue(jsonObjectRequest);
     }
 
 
-    private void serverRequestToJoinGroupResponse(String output) {
+    private void serverRequestToJoinGroupResponse(JSONObject response) {
 
         try {
 
-            if(output.equals("")) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            String statusCode = response.getString("success");
+            String message = response.getString("message");
 
-                JSONObject jo = new JSONObject(output);
-                String success = jo.getString("success");
+            switch (statusCode) {
 
                 // successfully joined group
-                if(success.equals("1")) {
+                case "1":
                     progressBar.setVisibility(View.GONE);
-                    // make another call to getGroupsToExplore() to reflect the updated list of available groups for the current user
-//                    AvailableGroupsListFragment availableGroupsFragment = AvailableGroupsListFragment.getInstance();
-//                    availableGroupsFragment.getGroupsToExplore(mainActivity.user);
-
-                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
                     NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
                     navController.navigate(R.id.action_availableGroupProfileFragment_to_myGroupsListFragment);
-                }
-                // verification of invite code failed if user requested to join private group.
-                else if(success.equals("0")) {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-                }
+                    break;
 
+                // incorrect invite code (for private groups)
+                case "0":
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    break;
             }
 
         } catch (JSONException e) {

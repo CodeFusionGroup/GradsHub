@@ -1,8 +1,5 @@
 package com.example.gradshub.main.postcomments;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,7 +22,6 @@ import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.example.gradshub.model.Post;
 import com.example.gradshub.model.ResearchGroup;
 import com.example.gradshub.model.User;
-import com.example.gradshub.network.AsyncHTTpPost;
 import com.example.gradshub.network.NetworkRequestQueue;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -43,21 +39,14 @@ import java.util.Locale;
 public class GroupPostCommentsFragment extends Fragment {
 
 
-    private static ArrayList<Comment> commentsList = new ArrayList<>();
-    private TextInputEditText commentET;
-    private String comment;
-    private Post post;
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    private CommentsAdapter mAdapter;
-    private View view;
-
     private ProgressBar progressBar;
+    private View view;
+    private TextInputEditText commentET;
 
-    private Context context;
+    private Post post;
+    private CommentsAdapter mAdapter;
+    private static ArrayList<Comment> commentsList = new ArrayList<>();
+    private String comment;
 
 
     @Override
@@ -69,8 +58,6 @@ public class GroupPostCommentsFragment extends Fragment {
         if(bundle != null) {
             post = bundle.getParcelable("post_item");
         }
-
-        context = this.getActivity();
     }
 
 
@@ -123,6 +110,7 @@ public class GroupPostCommentsFragment extends Fragment {
             }
 
         });
+
     }
 
 
@@ -145,78 +133,65 @@ public class GroupPostCommentsFragment extends Fragment {
     }
 
 
-//    private void getGroupPostComments(Post post) {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("POST_ID", post.getPostID());
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/retrievecommentsGP.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverGetGroupPostCommentsResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//    }
-private void getGroupPostComments(Post post) {
+    private void getGroupPostComments(Post post) {
 
-    String url = "https://gradshub.herokuapp.com/api/GroupPost/retrievecomments.php";
-    HashMap<String, String> params = new HashMap<String,String>();
-    params.put("post_id", post.getPostID());
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/retrievecomments.php";
+        HashMap<String, String> params = new HashMap<>();
 
-    JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    System.err.println(response);
-                    serverGetGroupPostCommentsResponse(response.toString());
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // TODO: Handle error
-                    error.printStackTrace();
-                }
-            });
-    // Access the Global(App) RequestQueue
-    NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
-}
+        params.put("post_id", post.getPostID());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        serverGetGroupPostCommentsResponse(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
+
+    }
 
 
-    private void serverGetGroupPostCommentsResponse(String output) {
+    private void serverGetGroupPostCommentsResponse(JSONObject response) {
 
         try {
 
-            commentsList.clear();
+            commentsList.clear(); // clear to avoid duplicates
+            String statusCode = response.getString("success");
 
-            JSONObject jo = new JSONObject(output);
-            String success = jo.getString("success");
-
-            if (output.equals("")) {
+            // no comments for post
+            if(statusCode.equals("0")) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                if(isAdded()) // Ensures the fragment is added (testing)
+                    Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
             }
 
-            else if(success.equals("0")) {
-                progressBar.setVisibility(View.GONE);
-                if(isAdded())
-                    Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
-            }
+            // post has comments
+            else if(statusCode.equals("1")) {
 
-            else if(success.equals("1")) {
+                JSONArray commentsJA = response.getJSONArray("message");
 
-                JSONArray ja = jo.getJSONArray("message");
+                for(int i = 0 ; i < commentsJA.length(); i++) {
 
-                for(int i = 0 ; i < ja.length(); i++) {
-                    JSONObject jsonObject = (JSONObject)ja.get(i);
-                    String firstName = jsonObject.getString("USER_FNAME");
-                    String lastName = jsonObject.getString("USER_LNAME");
+                    JSONObject commentJO = (JSONObject)commentsJA.get(i);
+
+                    String firstName = commentJO.getString("USER_FNAME");
+                    String lastName = commentJO.getString("USER_LNAME");
                     String fullName = firstName + " " + lastName;
-                    String comment = jsonObject.getString("POST_COMMENT");
-                    String commentDate = jsonObject.getString("POST_COMMENT_DATE");
+                    String comment = commentJO.getString("POST_COMMENT");
+                    String commentDate = commentJO.getString("POST_COMMENT_DATE");
+
                     commentsList.add( new Comment(fullName, comment, commentDate) );
                 }
 
@@ -236,74 +211,48 @@ private void getGroupPostComments(Post post) {
     }
 
 
-//    private void insertGroupPostComment(User user, ResearchGroup researchGroup, Post post, Comment comment) {
-//
-//        ContentValues params = new ContentValues();
-//        params.put("USER_ID", user.getUserID());
-//        params.put("GROUP_ID", researchGroup.getGroupID());
-//        params.put("POST_ID", post.getPostID());
-//        params.put("POST_COMMENT_DATE", comment.getCommentDate());
-//        params.put("POST_COMMENT", comment.getComment());
-//
-//
-//        AsyncHTTpPost asyncHttpPost = new AsyncHTTpPost("https://gradshub.herokuapp.com/insertcommentGP.php", params) {
-//            @SuppressLint("StaticFieldLeak")
-//            @Override
-//            protected void onPostExecute(String output) {
-//                serverInsertPostCommentResponse(output);
-//            }
-//
-//        };
-//        asyncHttpPost.execute();
-//    }
-
     private void insertGroupPostComment(User user, ResearchGroup researchGroup, Post post, Comment comment) {
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/insertcomment.php";
-        HashMap<String, String> params = new HashMap<String,String>();
+        HashMap<String, String> params = new HashMap<>();
+
         params.put("user_id", user.getUserID());
         params.put("group_id", researchGroup.getGroupID());
         params.put("post_id", post.getPostID());
         params.put("post_date", comment.getCommentDate());
         params.put("post_comment", comment.getComment());
 
-
-        JsonObjectRequest postRequest = new JsonObjectRequest(url, new JSONObject(params),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.err.println(response);
-                        serverInsertPostCommentResponse(response.toString());
+                        serverInsertPostCommentResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( context.getApplicationContext() ).addToRequestQueue(postRequest);
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
     }
 
 
-    private void serverInsertPostCommentResponse(String output) {
+    private void serverInsertPostCommentResponse(JSONObject response) {
 
         try {
 
-            JSONObject jo = new JSONObject(output);
-            String success = jo.getString("success");
+            String success = response.getString("success");
 
-            if (output.equals("")) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
-            }
-
-            else if(success.equals("1")) {
-
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), jo.getString("message"), Toast.LENGTH_SHORT).show();
+            // toast msg: inserted comment
+            if(success.equals("1")) {
+                Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
+                // call getGroupPostComments() method to update adapter to show latest comments immediately
                 getGroupPostComments(post);
             }
 
@@ -315,5 +264,12 @@ private void getGroupPostComments(Post post) {
 
     }
 
+
+    // ============= TESTING CODE =========================
+    // setters and getters for testing purposes
+    public void setPost(Post post) {
+        this.post = post;
+    }
+    // ====================================================
 
 }
