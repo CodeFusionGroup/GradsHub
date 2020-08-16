@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "487104537941",
+    "firebase_url": "https://gradshub-98c26.firebaseio.com",
+    "project_id": "gradshub-98c26",
+    "storage_bucket": "gradshub-98c26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487104537941:android:ea09419fb1acd71a7f7bdc",
+        "android_client_info": {
+          "package_name": "com.codefusiongroup.gradshub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487104537941-c9pkojme2fdio6k89h8ejnajv83rksjn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEbpJA4kXxSEJL-aiCcVwBDwuEcgW0WCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "487104537941-c9pkojme2fdio6k89h8ejnajv83rksjn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

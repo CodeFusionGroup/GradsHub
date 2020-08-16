@@ -78,18 +78,20 @@
 
     <Button
         android:id="@+id/postBtn"
-        android:layout_width="155dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/postDescriptionContainer"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="129dp"
-        android:layout_marginLeft="129dp"
-        android:layout_marginTop="81dp"
-        android:layout_marginEnd="127dp"
-        android:layout_marginRight="127dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="132dp"
+        android:layout_marginLeft="132dp"
+        android:layout_marginTop="83dp"
+        android:layout_marginEnd="124dp"
+        android:layout_marginRight="124dp"
+        android:layout_marginBottom="361dp"
         android:background="@drawable/register_rounded_button"
         android:text="POST"
         android:textColor="@color/colorWhite" />
@@ -100,6 +102,25 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/pdfBtn"
+        android:layout_width="380dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/postDescriptionContainer"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/pdf_button"
+        android:drawableLeft="@drawable/ic_pdf"
+        android:text=""
+        android:textColor="@color/colorBlack" />
 
 
 </RelativeLayout>

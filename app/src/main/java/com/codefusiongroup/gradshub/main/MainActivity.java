@@ -1,0 +1,165 @@
+package com.codefusiongroup.gradshub.main;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Menu;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
+import com.codefusiongroup.gradshub.main.availablegroups.AvailableGroupsListFragment;
+import com.codefusiongroup.gradshub.main.eventsSchedule.ScheduleListFragment;
+import com.codefusiongroup.gradshub.main.mygroups.MyGroupsListFragment;
+import com.codefusiongroup.gradshub.main.mygroups.MyGroupsProfileFragment;
+import com.codefusiongroup.gradshub.model.Post;
+import com.codefusiongroup.gradshub.model.ResearchGroup;
+import com.codefusiongroup.gradshub.model.Schedule;
+import com.codefusiongroup.gradshub.model.User;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.MenuCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+
+public class MainActivity extends AppCompatActivity implements MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
+        AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
+        MyGroupsProfileFragment.OnPostsListFragmentInteractionListener,
+        ScheduleListFragment.OnScheduleListFragmentInteractionListener {
+
+
+    public User user; // used in other fragments, so has public access.
+    private AppBarConfiguration mAppBarConfiguration;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        user = intent.getParcelableExtra("USER");
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.feedListFragment, R.id.profileFragment,R.id.myGroupsListFragment, R.id.createGroupFragment,
+                R.id.availableGroupsListFragment, R.id.scheduleFragment).setDrawerLayout(drawer).build();
+
+        // NavController is responsible for replacing the contents of the NavHost with the new destination.
+        // (layout content_main contains the navigation host fragment for MainActivity)
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        // By calling this method, the title in the action bar will automatically be updated when the destination changes.
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        // updates the UI with the contents of the current destination.
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView fullNameTV = headerView.findViewById(R.id.userFullNameTV);
+        TextView emailTV = headerView.findViewById(R.id.userEmailTV);
+        String userFullName = user.getFirstName()+" "+user.getLastName();
+        fullNameTV.setText(userFullName);
+        emailTV.setText(user.getEmail());
+
+    }
+
+
+    // the options menu is the primary collection of menu items for an activity.
+    // initialise the contents of the Activity's standard menu.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuCompat.setGroupDividerEnabled(menu, true);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+
+                Intent intent = new Intent(this, AuthenticationActivity.class);
+                startActivity(intent);
+                finish(); // finish MainActivity
+                return true;
+
+            case R.id.action_settings:
+                // nothing implemented yet
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+
+    // this method is called whenever the user chooses to navigate up (back button) within your application's activity hierarchy from
+    // the action bar
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+
+    @Override
+    public void onMyGroupsListFragmentInteraction(ResearchGroup item) {
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("group_item", item);
+        bundle.putParcelable("user", user);
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_myGroupsFragment_to_myGroupProfileFragment, bundle);
+
+    }
+
+
+    @Override
+    public void onAvailableGroupsListFragmentInteraction(ResearchGroup item) {
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("group_item", item);
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_availableGroupsListFragment_to_availableGroupProfileFragment, bundle);
+
+    }
+
+
+    @Override
+    public void onPostsListFragmentInteraction(Post item) {
+        // not implemented
+    }
+
+
+    @Override
+    public void onScheduleListFragmentInteraction(Schedule item) {
+
+        if ( !item.getLink().startsWith("https://") && !item.getLink().startsWith("http://")) {
+            String link = "http://" + item.getLink();
+            Uri uri = Uri.parse(link);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(Intent.createChooser(intent, "dialogTitle"));
+        }
+        else {
+            Uri uri = Uri.parse(item.getLink());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(Intent.createChooser(intent, "dialogTitle"));
+        }
+
+        Toast.makeText(this, "selected: "+ item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+}
