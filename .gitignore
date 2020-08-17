@@ -44,7 +44,9 @@ app/build/reports/
 app/build/test-results/
 app/build/tmp/
 
-
-
-
-
+#lint reports
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+lint/reports/
