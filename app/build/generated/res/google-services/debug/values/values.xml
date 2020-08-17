@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">487104537941-c9pkojme2fdio6k89h8ejnajv83rksjn.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://gradshub-98c26.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">487104537941</string>
+    <string name="google_api_key" translatable="false">AIzaSyCEbpJA4kXxSEJL-aiCcVwBDwuEcgW0WCo</string>
+    <string name="google_app_id" translatable="false">1:487104537941:android:ea09419fb1acd71a7f7bdc</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCEbpJA4kXxSEJL-aiCcVwBDwuEcgW0WCo</string>
+    <string name="google_storage_bucket" translatable="false">gradshub-98c26.appspot.com</string>
+    <string name="project_id" translatable="false">gradshub-98c26</string>
+</resources>

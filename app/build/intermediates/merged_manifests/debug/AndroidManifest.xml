@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gradshub"
+    package="com.codefusiongroup.gradshub"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -24,7 +24,7 @@
         android:testOnly="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.gradshub.authentication.AuthenticationActivity"
+            android:name="com.codefusiongroup.gradshub.authentication.AuthenticationActivity"
             android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,25 +33,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.gradshub.main.MainActivity"
+            android:name="com.codefusiongroup.gradshub.main.MainActivity"
             android:label="@string/title_activity_main"
             android:noHistory="false"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
-        <activity android:name="com.example.gradshub.authentication.TestingActivity" />
-        <activity android:name="com.example.gradshub.main.availablegroups.AvailableTestingActivity" />
-        <activity android:name="com.example.gradshub.authentication.FragmentRegisterActivity" />
-        <activity android:name="com.example.gradshub.authentication.ResetActivity" />
-        <activity android:name="com.example.gradshub.main.profile.ProfileTestActivity" />
-        <activity android:name="com.example.gradshub.main.creategroup.CreateGroupActivity" />
-        <activity android:name="com.example.gradshub.main.createpost.CreatePostActivity" />
-        <activity android:name="com.example.gradshub.main.availablegroups.GroupListActivity" />
-        <activity android:name="com.example.gradshub.main.home.HomeTestActivity" />
-        <activity android:name="com.example.gradshub.main.postcomments.PostCommentActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.authentication.TestingActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableTestingActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.authentication.FragmentRegisterActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.authentication.ResetActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.profile.ProfileTestActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.creategroup.CreateGroupActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.createpost.CreatePostActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.GroupListActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.home.HomeTestActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.postcomments.PostCommentActivity" />
 
         <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
 
-        <activity android:name="com.example.gradshub.main.home.FeedListActivity" />
+        <activity android:name="com.codefusiongroup.gradshub.main.home.FeedListActivity" />
         <activity
             android:name="androidx.fragment.app.testing.FragmentScenario$EmptyFragmentActivity"
             android:exported="true"
@@ -63,6 +63,16 @@
             </intent-filter>
         </activity>
         <activity android:name="androidx.fragment.app.FragmentActivity" />
+
+        <service
+            android:name="com.google.firebase.components.ComponentDiscoveryService"
+            android:directBootAware="true"
+            android:exported="false" >
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.storage.StorageRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+        </service>
+
         <activity
             android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
             android:theme="@android:style/Theme" >
@@ -84,6 +94,20 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <provider
+            android:name="com.google.firebase.provider.FirebaseInitProvider"
+            android:authorities="com.codefusiongroup.gradshub.firebaseinitprovider"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
