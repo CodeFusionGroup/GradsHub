@@ -1,11 +1,11 @@
 [
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_app_bar_main.xml.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/app_bar_main.xml"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_activity_main.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_app_bar_main.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/app_bar_main.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-mdpi_ic_share.png.flat",
@@ -14,6 +14,10 @@
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_fragment_my_groups_post_item.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/fragment_my_groups_post_item.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxhdpi_ic_pdf.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxhdpi/ic_pdf.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-ldpi_ic_email.png.flat",
@@ -72,12 +76,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxhdpi/ic_share.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_fragment_login.xml.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/fragment_login.xml"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_search.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-anydpi-v21/ic_search.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_fragment_login.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/fragment_login.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/anim_slide_in_right.xml.flat",
@@ -136,6 +140,10 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxxhdpi/ic_share_black.png"
     },
     {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-hdpi_ic_pdf.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-hdpi/ic_pdf.png"
+    },
+    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-hdpi_ic_launcher_round.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
     },
@@ -152,12 +160,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-mdpi/ic_attachment.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_ic_menu_create_group.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxxhdpi/ic_menu_create_group.png"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_reset_testing.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/reset_testing.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_ic_menu_create_group.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxxhdpi/ic_menu_create_group.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_postcomment_test.xml.flat",
@@ -192,12 +200,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/navigation/authentication_navigation.xml"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_like_black.xml.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-anydpi-v21/ic_like_black.xml"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-hdpi_ic_more_black.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable-hdpi/ic_more_black.png"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_like_black.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-anydpi-v21/ic_like_black.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/menu_my_group_info_menu.xml.flat",
@@ -212,12 +220,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-mdpi/ic_launcher_background.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxhdpi_ic_schedule.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxhdpi/ic_schedule.png"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_ic_like_black.png.flat",
@@ -268,6 +276,10 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxhdpi/ic_attachment.png"
     },
     {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable_pdf_button.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable/pdf_button.xml"
+    },
+    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable_list_divider.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable/list_divider.xml"
     },
@@ -284,20 +296,20 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/anim/fade_in.xml"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-mdpi_ic_more_black.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable-mdpi/ic_more_black.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-hdpi_ic_attachment.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-hdpi/ic_attachment.png"
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_thumb_up.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-anydpi-v21/ic_thumb_up.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-hdpi_ic_attachment.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-hdpi/ic_attachment.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-xhdpi_ic_launcher_round.png.flat",
@@ -372,12 +384,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-ldpi/ic_more_black.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_profile_testing.xml.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/profile_testing.xml"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_launcher_background.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xhdpi/ic_launcher_background.png"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_profile_testing.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/profile_testing.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_fragment_create_group.xml.flat",
@@ -468,12 +480,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/fragment_register.xml"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_ic_schedule.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxxhdpi/ic_schedule.png"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-ldpi_ic_menu_my_groups.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-ldpi/ic_menu_my_groups.png"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_ic_schedule.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxxhdpi/ic_schedule.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxhdpi_ic_menu_create_group.png.flat",
@@ -552,12 +564,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_menu_profile.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xhdpi/ic_menu_profile.png"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_fragment_feed_item.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/fragment_feed_item.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_menu_profile.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xhdpi/ic_menu_profile.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-hdpi_ic_lock.png.flat",
@@ -572,12 +584,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xhdpi/ic_email.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/anim_slide_in_left.xml.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/anim/slide_in_left.xml"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_activity_authentication.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/activity_authentication.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/anim_slide_in_left.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/anim/slide_in_left.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-mdpi_ic_stat_name.png.flat",
@@ -620,12 +632,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/menu/my_groups_menu.xml"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxhdpi_ic_menu_home.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxhdpi/ic_menu_home.png"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_activity_testing.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/activity_testing.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxhdpi_ic_menu_home.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxhdpi/ic_menu_home.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/mipmap-xxhdpi_ic_launcher_round.png.flat",
@@ -712,6 +724,10 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-ldpi/ic_insert_comment.png"
     },
     {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-mdpi_ic_pdf.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-mdpi/ic_pdf.png"
+    },
+    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_nav_header_main.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/nav_header_main.xml"
     },
@@ -732,12 +748,20 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-anydpi-v21/ic_email.xml"
     },
     {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-ldpi_ic_pdf.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-ldpi/ic_pdf.png"
+    },
+    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-mdpi_ic_menu_profile.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-mdpi/ic_menu_profile.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-ldpi_ic_schedule.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-ldpi/ic_schedule.png"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_ic_pdf.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xxxhdpi/ic_pdf.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-hdpi_ic_menu_profile.png.flat",
@@ -748,12 +772,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-hdpi/ic_fab_post.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_dialog_private_group.xml.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/dialog_private_group.xml"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/menu_drawer_menu.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/menu/drawer_menu.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_dialog_private_group.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/dialog_private_group.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_attachment.xml.flat",
@@ -770,6 +794,10 @@
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-ldpi_ic_up_vote.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-ldpi/ic_up_vote.png"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_pdf.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xhdpi/ic_pdf.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_menu_create_group.png.flat",
@@ -800,12 +828,16 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable-hdpi/ic_comment_black.png"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_schedule.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xhdpi/ic_schedule.png"
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_pdf.xml.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-anydpi-v21/ic_pdf.xml"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/layout_fragment_profile.xml.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_schedule.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/generated/res/pngs/debug/drawable-xhdpi/ic_schedule.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_more_black.xml.flat",
@@ -888,12 +920,12 @@
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable/login_rounded_button.xml"
     },
     {
-        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_stat_name.png.flat",
-        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable-xhdpi/ic_stat_name.png"
-    },
-    {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-mdpi_ic_like_black.png.flat",
         "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable-mdpi/ic_like_black.png"
+    },
+    {
+        "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable-xhdpi_ic_stat_name.png.flat",
+        "source": "/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/res/drawable-xhdpi/ic_stat_name.png"
     },
     {
         "merged": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/res/merged/debug/drawable_side_nav_bar_theme.xml.flat",

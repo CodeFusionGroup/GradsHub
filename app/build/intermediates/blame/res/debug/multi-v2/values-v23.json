@@ -4,7 +4,7 @@
             "outputFile": "/home/thabo/AndroidStudioProjects/GradsHub/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/home/thabo/.gradle/caches/transforms-2/files-2.1/1fb0446b53434ad48513fb7b65a4ee5b/cardview-1.0.0/res/values-v23/values-v23.xml",
+                    "source": "/home/thabo/.gradle/caches/transforms-2/files-2.1/726e8f213fee675ff467d6ae695c486f/cardview-1.0.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/home/thabo/.gradle/caches/transforms-2/files-2.1/be1aa29bbea3ee778dff6a223a05a542/appcompat-1.1.0/res/values-v23/values-v23.xml",
+                    "source": "/home/thabo/.gradle/caches/transforms-2/files-2.1/0305b098d0d106ffc2c88b16406a612e/appcompat-1.1.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,37,41,42,43,44",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",

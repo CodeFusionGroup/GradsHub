@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+// Needed for firebase
+apply plugin: 'com.google.gms.google-services'
 
 
 android {
@@ -6,7 +8,7 @@ android {
     buildToolsVersion = "29.0.0"
 
     defaultConfig {
-        applicationId "com.example.gradshub"
+        applicationId "com.codefusiongroup.gradshub"
         minSdkVersion 15
         targetSdkVersion 29
         versionCode 1
@@ -85,5 +87,9 @@ dependencies {
 
     //jsoup
     implementation 'org.jsoup:jsoup:1.13.1'
+
+    // Firebase Storage
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+
 
 }

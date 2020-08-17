@@ -7,21 +7,21 @@
 
     <fragment
         android:id="@+id/feedListFragment"
-        android:name="com.example.gradshub.main.home.FeedListFragment"
+        android:name="com.codefusiongroup.gradshub.main.home.FeedListFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_feed_item_list" />
 
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.gradshub.main.profile.ProfileFragment"
+        android:name="com.codefusiongroup.gradshub.main.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile"/>
 
 
     <fragment
         android:id="@+id/myGroupsListFragment"
-        android:name="com.example.gradshub.main.mygroups.MyGroupsListFragment"
+        android:name="com.codefusiongroup.gradshub.main.mygroups.MyGroupsListFragment"
         android:label="@string/menu_myGroups"
         tools:layout="@layout/fragment_my_groups_item_list" >
         <action
@@ -32,7 +32,7 @@
 
     <fragment
         android:id="@+id/myGroupProfileFragment"
-        android:name="com.example.gradshub.main.mygroups.MyGroupsProfileFragment"
+        android:name="com.codefusiongroup.gradshub.main.mygroups.MyGroupsProfileFragment"
         android:label="Group Posts"
         tools:layout="@layout/fragment_my_groups_information" >
         <action
@@ -46,7 +46,7 @@
 
     <fragment
         android:id="@+id/createGroupFragment"
-        android:name="com.example.gradshub.main.creategroup.CreateGroupFragment"
+        android:name="com.codefusiongroup.gradshub.main.creategroup.CreateGroupFragment"
         android:label="@string/menu_createGroup"
         tools:layout="@layout/fragment_create_group" >
     <action
@@ -65,7 +65,7 @@
 
     <fragment
         android:id="@+id/availableGroupsListFragment"
-        android:name="com.example.gradshub.main.availablegroups.AvailableGroupsListFragment"
+        android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableGroupsListFragment"
         android:label="Available Groups"
         tools:layout="@layout/fragment_available_groups_item_list" >
         <action
@@ -76,7 +76,7 @@
 
     <fragment
         android:id="@+id/availableGroupProfileFragment"
-        android:name="com.example.gradshub.main.availablegroups.AvailableGroupProfileFragment"
+        android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableGroupProfileFragment"
         android:label="Group Profile"
         tools:layout="@layout/fragment_available_group_profile" >
         <action
@@ -95,7 +95,7 @@
 
     <fragment
         android:id="@+id/createPostFragment"
-        android:name="com.example.gradshub.main.createpost.CreatePostFragment"
+        android:name="com.codefusiongroup.gradshub.main.createpost.CreatePostFragment"
         android:label="Create Post"
         tools:layout="@layout/fragment_create_post" >
         <action
@@ -114,14 +114,14 @@
 
     <fragment
         android:id="@+id/groupPostCommentsFragment"
-        android:name="com.example.gradshub.main.postcomments.GroupPostCommentsFragment"
+        android:name="com.codefusiongroup.gradshub.main.postcomments.GroupPostCommentsFragment"
         android:label="comments"
         tools:layout="@layout/fragment_group_post_comments" />
 
 
     <fragment
         android:id="@+id/scheduleFragment"
-        android:name="com.example.gradshub.main.eventsSchedule.ScheduleListFragment"
+        android:name="com.codefusiongroup.gradshub.main.eventsSchedule.ScheduleListFragment"
         android:label="Schedule"
         tools:layout="@layout/fragment_schedule_item_list" />
 

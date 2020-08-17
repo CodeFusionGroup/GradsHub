@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gradshub">
+    package="com.codefusiongroup.gradshub">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
 
     <application
         android:allowBackup="true"
@@ -14,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".authentication.AuthenticationActivity" android:noHistory="true">
+        <activity android:name="com.codefusiongroup.gradshub.authentication.AuthenticationActivity" android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,39 +23,35 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".main.MainActivity"
+        <activity android:name="com.codefusiongroup.gradshub.main.MainActivity"
             android:noHistory="false"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name="com.codefusiongroup.gradshub.authentication.TestingActivity"></activity>
 
-        <receiver android:name=".main.EventNotificationPublisher" />
+        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableTestingActivity"></activity>
 
-        <!-- =========================== TEST FILES ============================= -->
-        <activity android:name=".authentication.TestingActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.authentication.FragmentRegisterActivity"></activity>
 
-        <activity android:name=".main.availablegroups.AvailableTestingActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.authentication.ResetActivity"></activity>
 
-        <activity android:name=".authentication.FragmentRegisterActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.main.profile.ProfileTestActivity"></activity>
 
-        <activity android:name=".authentication.ResetActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.main.creategroup.CreateGroupActivity"></activity>
 
-        <activity android:name=".main.profile.ProfileTestActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.main.createpost.CreatePostActivity"></activity>
 
-        <activity android:name=".main.creategroup.CreateGroupActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.GroupListActivity"></activity>
 
-        <activity android:name=".main.createpost.CreatePostActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.main.home.HomeTestActivity"></activity>
 
-        <activity android:name=".main.availablegroups.GroupListActivity"/>
-
-        <activity android:name=".main.home.HomeTestActivity"/>
-
-        <activity android:name=".main.postcomments.PostCommentActivity"/>
+        <activity android:name="com.codefusiongroup.gradshub.main.postcomments.PostCommentActivity"></activity>
 
        <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
 
-        <activity android:name=".main.home.FeedListActivity"/>
-        <!-- ======================================================================== -->
+        <activity android:name="com.codefusiongroup.gradshub.main.home.FeedListActivity"></activity>
+
 
     </application>
 

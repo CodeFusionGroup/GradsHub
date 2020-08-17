@@ -1,6 +1,6 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-3    package="com.example.gradshub"
+3    package="com.codefusiongroup.gradshub"
 4    android:versionCode="1"
 5    android:versionName="1.0" >
 6
@@ -20,15 +20,15 @@
 13-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:7:5-79
 13-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:7:22-76
 14    <uses-permission android:name="android.permission.REORDER_TASKS" />
-14-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:25:5-72
-14-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:25:22-69
+14-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:25:5-72
+14-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:25:22-69
 15
 16    <application
 16-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:10:5-56:19
 17        android:allowBackup="true"
 17-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:11:9-35
 18        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-18-->[androidx.core:core:1.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/5631da26390c5c0d5acea693547ac16e/core-1.3.0/AndroidManifest.xml:24:18-86
+18-->[androidx.core:core:1.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/21d7a9d3b12dc4d84809157517a296ef/core-1.3.0/AndroidManifest.xml:24:18-86
 19        android:debuggable="true"
 20        android:icon="@mipmap/applogo"
 20-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:12:9-39
@@ -43,10 +43,10 @@
 25-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:16:9-40
 26        <activity
 26-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:9-24:20
-27            android:name="com.example.gradshub.authentication.AuthenticationActivity"
-27-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:19-72
+27            android:name="com.codefusiongroup.gradshub.authentication.AuthenticationActivity"
+27-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:19-100
 28            android:noHistory="true" >
-28-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:73-97
+28-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:18:101-125
 29            <intent-filter>
 29-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:19:13-23:29
 30                <action android:name="android.intent.action.MAIN" />
@@ -60,8 +60,8 @@
 34        </activity>
 35        <activity
 35-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:26:9-30:20
-36            android:name="com.example.gradshub.main.MainActivity"
-36-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:26:19-52
+36            android:name="com.codefusiongroup.gradshub.main.MainActivity"
+36-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:26:19-80
 37            android:label="@string/title_activity_main"
 37-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:28:13-56
 38            android:noHistory="false"
@@ -69,103 +69,146 @@
 39            android:theme="@style/AppTheme.NoActionBar" >
 39-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:29:13-56
 40        </activity>
-41        <activity android:name="com.example.gradshub.authentication.TestingActivity" />
-41-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:31:9-77
-41-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:31:19-65
-42        <activity android:name="com.example.gradshub.main.availablegroups.AvailableTestingActivity" />
-42-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:33:9-92
-42-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:33:19-80
-43        <activity android:name="com.example.gradshub.authentication.FragmentRegisterActivity" />
-43-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:35:9-86
-43-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:35:19-74
-44        <activity android:name="com.example.gradshub.authentication.ResetActivity" />
-44-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:37:9-75
-44-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:37:19-63
-45        <activity android:name="com.example.gradshub.main.profile.ProfileTestActivity" />
-45-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:39:9-79
-45-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:39:19-67
-46        <activity android:name="com.example.gradshub.main.creategroup.CreateGroupActivity" />
-46-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:41:9-83
-46-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:41:19-71
-47        <activity android:name="com.example.gradshub.main.createpost.CreatePostActivity" />
-47-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:43:9-81
-47-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:43:19-69
-48        <activity android:name="com.example.gradshub.main.availablegroups.GroupListActivity" />
-48-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:45:9-85
-48-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:45:19-73
-49        <activity android:name="com.example.gradshub.main.home.HomeTestActivity" />
-49-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:47:9-73
-49-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:47:19-61
-50        <activity android:name="com.example.gradshub.main.postcomments.PostCommentActivity" />
-50-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:49:9-84
-50-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:49:19-72
+41        <activity android:name="com.codefusiongroup.gradshub.authentication.TestingActivity" />
+41-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:31:9-105
+41-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:31:19-93
+42        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableTestingActivity" />
+42-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:33:9-120
+42-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:33:19-108
+43        <activity android:name="com.codefusiongroup.gradshub.authentication.FragmentRegisterActivity" />
+43-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:35:9-114
+43-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:35:19-102
+44        <activity android:name="com.codefusiongroup.gradshub.authentication.ResetActivity" />
+44-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:37:9-103
+44-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:37:19-91
+45        <activity android:name="com.codefusiongroup.gradshub.main.profile.ProfileTestActivity" />
+45-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:39:9-107
+45-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:39:19-95
+46        <activity android:name="com.codefusiongroup.gradshub.main.creategroup.CreateGroupActivity" />
+46-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:41:9-111
+46-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:41:19-99
+47        <activity android:name="com.codefusiongroup.gradshub.main.createpost.CreatePostActivity" />
+47-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:43:9-109
+47-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:43:19-97
+48        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.GroupListActivity" />
+48-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:45:9-113
+48-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:45:19-101
+49        <activity android:name="com.codefusiongroup.gradshub.main.home.HomeTestActivity" />
+49-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:47:9-101
+49-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:47:19-89
+50        <activity android:name="com.codefusiongroup.gradshub.main.postcomments.PostCommentActivity" />
+50-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:49:9-112
+50-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:49:19-100
 51
 52        <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
 53
-54        <activity android:name="com.example.gradshub.main.home.FeedListActivity" />
-54-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:53:9-73
-54-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:53:19-61
+54        <activity android:name="com.codefusiongroup.gradshub.main.home.FeedListActivity" />
+54-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:53:9-101
+54-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:53:19-89
 55        <activity
-55-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:28:9-37:20
+55-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:28:9-37:20
 56            android:name="androidx.fragment.app.testing.FragmentScenario$EmptyFragmentActivity"
-56-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:29:13-96
+56-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:29:13-96
 57            android:exported="true"
-57-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:30:13-36
+57-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:30:13-36
 58            android:multiprocess="true"
-58-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:31:13-40
+58-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:31:13-40
 59            android:taskAffinity=""
-59-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:32:13-36
+59-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:32:13-36
 60            android:theme="@style/FragmentScenarioEmptyFragmentActivityTheme" >
-60-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:33:13-78
+60-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:33:13-78
 61            <intent-filter>
-61-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
+61-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
 62                <action android:name="android.intent.action.MAIN" />
 62-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
 62-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
 63            </intent-filter>
 64        </activity>
 65        <activity android:name="androidx.fragment.app.FragmentActivity" />
-65-->[com.21buttons:fragment-test-rule-extras:2.0.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/7e0fa4bbba222dda5de547fa94a97caf/jetified-fragment-test-rule-extras-2.0.1/AndroidManifest.xml:12:9-75
-65-->[com.21buttons:fragment-test-rule-extras:2.0.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/7e0fa4bbba222dda5de547fa94a97caf/jetified-fragment-test-rule-extras-2.0.1/AndroidManifest.xml:12:19-72
-66        <activity
-66-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:27:9-33:20
-67            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
-67-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:28:13-99
-68            android:theme="@android:style/Theme" >
-68-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:29:13-49
-69            <intent-filter>
-69-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
-70                <action android:name="android.intent.action.MAIN" />
-70-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
-70-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
-71            </intent-filter>
-72        </activity>
-73        <activity
-73-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:34:9-40:20
-74            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
-74-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:35:13-95
-75            android:theme="@android:style/Theme" >
-75-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:36:13-49
-76            <intent-filter>
-76-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
-77                <action android:name="android.intent.action.MAIN" />
-77-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
-77-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
-78            </intent-filter>
-79        </activity>
-80        <activity
-80-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:41:9-47:20
-81            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
-81-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:42:13-103
-82            android:theme="@android:style/Theme.Dialog" >
-82-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7d786830bd3e4364bd8edad0233fe6f5/jetified-core-1.2.0/AndroidManifest.xml:43:13-56
-83            <intent-filter>
-83-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/712c841915d14b3b9cac972325e5ba9e/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
-84                <action android:name="android.intent.action.MAIN" />
-84-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
-84-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
-85            </intent-filter>
-86        </activity>
-87    </application>
-88
-89</manifest>
+65-->[com.21buttons:fragment-test-rule-extras:2.0.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/f5076a6d4ea8068ac7ecc073f718f508/jetified-fragment-test-rule-extras-2.0.1/AndroidManifest.xml:12:9-75
+65-->[com.21buttons:fragment-test-rule-extras:2.0.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/f5076a6d4ea8068ac7ecc073f718f508/jetified-fragment-test-rule-extras-2.0.1/AndroidManifest.xml:12:19-72
+66
+67        <service
+67-->[com.google.firebase:firebase-storage:19.1.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/92f128fd8a8a6d1f9571fb4259bf1c58/jetified-firebase-storage-19.1.1/AndroidManifest.xml:30:9-36:19
+68            android:name="com.google.firebase.components.ComponentDiscoveryService"
+68-->[com.google.firebase:firebase-storage:19.1.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/92f128fd8a8a6d1f9571fb4259bf1c58/jetified-firebase-storage-19.1.1/AndroidManifest.xml:31:13-84
+69            android:directBootAware="true"
+69-->[com.google.firebase:firebase-common:19.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7371ad9edd16a08bc6028f6725a7f10d/jetified-firebase-common-19.3.0/AndroidManifest.xml:34:13-43
+70            android:exported="false" >
+70-->[com.google.firebase:firebase-storage:19.1.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/92f128fd8a8a6d1f9571fb4259bf1c58/jetified-firebase-storage-19.1.1/AndroidManifest.xml:32:13-37
+71            <meta-data
+71-->[com.google.firebase:firebase-storage:19.1.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/92f128fd8a8a6d1f9571fb4259bf1c58/jetified-firebase-storage-19.1.1/AndroidManifest.xml:33:13-35:85
+72                android:name="com.google.firebase.components:com.google.firebase.storage.StorageRegistrar"
+72-->[com.google.firebase:firebase-storage:19.1.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/92f128fd8a8a6d1f9571fb4259bf1c58/jetified-firebase-storage-19.1.1/AndroidManifest.xml:34:17-107
+73                android:value="com.google.firebase.components.ComponentRegistrar" />
+73-->[com.google.firebase:firebase-storage:19.1.1] /home/thabo/.gradle/caches/transforms-2/files-2.1/92f128fd8a8a6d1f9571fb4259bf1c58/jetified-firebase-storage-19.1.1/AndroidManifest.xml:35:17-82
+74        </service>
+75
+76        <activity
+76-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:27:9-33:20
+77            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+77-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:28:13-99
+78            android:theme="@android:style/Theme" >
+78-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:29:13-49
+79            <intent-filter>
+79-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
+80                <action android:name="android.intent.action.MAIN" />
+80-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
+80-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
+81            </intent-filter>
+82        </activity>
+83        <activity
+83-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:34:9-40:20
+84            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+84-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:35:13-95
+85            android:theme="@android:style/Theme" >
+85-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:36:13-49
+86            <intent-filter>
+86-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
+87                <action android:name="android.intent.action.MAIN" />
+87-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
+87-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
+88            </intent-filter>
+89        </activity>
+90        <activity
+90-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:41:9-47:20
+91            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+91-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:42:13-103
+92            android:theme="@android:style/Theme.Dialog" >
+92-->[androidx.test:core:1.2.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/f6fa7ab40126a6d84f7d5c7a9ce16582/jetified-core-1.2.0/AndroidManifest.xml:43:13-56
+93            <intent-filter>
+93-->[androidx.fragment:fragment-testing:1.2.5] /home/thabo/.gradle/caches/transforms-2/files-2.1/64364a5ddb8e302adc441781ee37116d/jetified-fragment-testing-1.2.5/AndroidManifest.xml:34:13-36:29
+94                <action android:name="android.intent.action.MAIN" />
+94-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:17-69
+94-->/home/thabo/AndroidStudioProjects/GradsHub/app/src/main/AndroidManifest.xml:20:25-66
+95            </intent-filter>
+96        </activity>
+97        <activity
+97-->[com.google.android.gms:play-services-base:17.0.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/c9741e8a2564f5645b28dfa7b521f2f3/jetified-play-services-base-17.0.0/AndroidManifest.xml:23:9-26:75
+98            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+98-->[com.google.android.gms:play-services-base:17.0.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/c9741e8a2564f5645b28dfa7b521f2f3/jetified-play-services-base-17.0.0/AndroidManifest.xml:24:13-79
+99            android:exported="false"
+99-->[com.google.android.gms:play-services-base:17.0.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/c9741e8a2564f5645b28dfa7b521f2f3/jetified-play-services-base-17.0.0/AndroidManifest.xml:25:13-37
+100            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+100-->[com.google.android.gms:play-services-base:17.0.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/c9741e8a2564f5645b28dfa7b521f2f3/jetified-play-services-base-17.0.0/AndroidManifest.xml:26:13-72
+101
+102        <provider
+102-->[com.google.firebase:firebase-common:19.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7371ad9edd16a08bc6028f6725a7f10d/jetified-firebase-common-19.3.0/AndroidManifest.xml:26:9-30:39
+103            android:name="com.google.firebase.provider.FirebaseInitProvider"
+103-->[com.google.firebase:firebase-common:19.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7371ad9edd16a08bc6028f6725a7f10d/jetified-firebase-common-19.3.0/AndroidManifest.xml:27:13-77
+104            android:authorities="com.codefusiongroup.gradshub.firebaseinitprovider"
+104-->[com.google.firebase:firebase-common:19.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7371ad9edd16a08bc6028f6725a7f10d/jetified-firebase-common-19.3.0/AndroidManifest.xml:28:13-72
+105            android:exported="false"
+105-->[com.google.firebase:firebase-common:19.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7371ad9edd16a08bc6028f6725a7f10d/jetified-firebase-common-19.3.0/AndroidManifest.xml:29:13-37
+106            android:initOrder="100" />
+106-->[com.google.firebase:firebase-common:19.3.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7371ad9edd16a08bc6028f6725a7f10d/jetified-firebase-common-19.3.0/AndroidManifest.xml:30:13-36
+107
+108        <meta-data
+108-->[com.google.android.gms:play-services-basement:17.0.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7fc1954727be17940adc1cd8aa8d1931/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+109            android:name="com.google.android.gms.version"
+109-->[com.google.android.gms:play-services-basement:17.0.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7fc1954727be17940adc1cd8aa8d1931/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+110            android:value="@integer/google_play_services_version" />
+110-->[com.google.android.gms:play-services-basement:17.0.0] /home/thabo/.gradle/caches/transforms-2/files-2.1/7fc1954727be17940adc1cd8aa8d1931/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+111    </application>
+112
+113</manifest>
