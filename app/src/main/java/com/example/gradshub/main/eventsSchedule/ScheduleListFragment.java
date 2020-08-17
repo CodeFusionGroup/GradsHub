@@ -60,15 +60,22 @@ public class ScheduleListFragment extends Fragment {
 
     private ScheduleListRecyclerViewAdapter adapter;
 
-    HashMap<String, Integer> temp = new HashMap<>();
+    HashMap<String, Integer> eventsVotesCounts = new HashMap<>();
+
     // hash maps store events IDs as keys and votes as booleans values
     private static HashMap<String, Boolean> userPreviouslyVotedEvents = new HashMap<>();
     private static HashMap<String, Boolean> userCurrentlyVotedEvents = new HashMap<>();
+
+    // lists store events IDs that have been favoured by user
+    private static ArrayList<String> userPreviouslyFavouredEvents = new ArrayList<>();
+    private static ArrayList<String> userCurrentlyFavouredEvents = new ArrayList<>();
 
     // listener that keeps track of which item has the user clicked on
     private OnScheduleListFragmentInteractionListener mListener;
     // listener that keeps track of which event is voted for by the user
     private ScheduleListRecyclerViewAdapter.OnScheduleItemVotedListener onScheduleItemVotedListener;
+    // listener that keeps track of which event is favoured by the user
+    private ScheduleListRecyclerViewAdapter.OnScheduleItemFavouredListener onScheduleItemFavouredListener;
 
 
     @Override
@@ -99,9 +106,13 @@ public class ScheduleListFragment extends Fragment {
 
         getEventVotesCount();
 
+        //getUserFavouredEvents();
+
         getUserVotedEvents();
 
         onScheduleItemVotedListener = (item, value) -> userCurrentlyVotedEvents.put(item.getId(), value);
+
+        onScheduleItemFavouredListener = (item) -> userCurrentlyFavouredEvents.add(item.getId());
 
     }
 
@@ -244,10 +255,10 @@ public class ScheduleListFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // means something went wrong when contacting server. Just display message indicating
-                        // to user to try again
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        /*
+                        NOTE: regarding the display of a toast message here, its also a similar explanation given below
+                        on the corresponding server response method for this method (i.e serverGetEventVotesCountResponse())
+                         */
                         error.printStackTrace();
                     }
                 });
@@ -261,7 +272,7 @@ public class ScheduleListFragment extends Fragment {
 
         try {
 
-            temp.clear(); // clear to avoid duplicates
+            eventsVotesCounts.clear(); // clear to avoid duplicates
             String success = response.getString("success");
 
             switch (success) {
@@ -280,14 +291,14 @@ public class ScheduleListFragment extends Fragment {
                         Integer votes_false = Integer.parseInt(eventJO.getString("VOTES_FALSE"));
                         Integer total_votes = votes_true - votes_false;
 
-                        temp.put(event_id, total_votes);
+                        eventsVotesCounts.put(event_id, total_votes);
 
                     }
 
                     for(Schedule item: schedules) {
                         String event_id = item.getId();
 
-                        for(HashMap.Entry<String, Integer> entry: temp.entrySet()) {
+                        for(HashMap.Entry<String, Integer> entry: eventsVotesCounts.entrySet()) {
 
                             String id = entry.getKey();
                             int event_total_votes = entry.getValue();
@@ -300,18 +311,31 @@ public class ScheduleListFragment extends Fragment {
 
                     break;
 
-                // no voted events
+                /*
+                NOTE: Since these network calls happen asynchronously and there are multiple methods in this fragment
+                that make network requests, it is not always clear as to which method will finish its network request
+                first thus it becomes difficult as to which Toast message will be shown to the user especially in the
+                case of the DB not having any records of the requested data since then these methods display different
+                Toast messages in that instance which can be confusing to the user. It is therefore important to consider
+                which toast messages are important to show to the user when a network request has been made.
+                So for methods like this one there's no need to display toast msg for network calls that get data
+                but don't necessarily have to inform the user of the outcome of that response from server.
+                */
                 case "0":
-                    Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
+                    // no toast message shown.
                     break;
             }
 
+            // NOTE: this will execute regardless whether there are voted events or not because it shows the events items.
+            // only after event votes counts have been calculated for each voted event do we populate the
+            // recycler view adapter. This is to ensure that all the necessary data is collected first then an accurate
+            // information is shown to the user
             if (view instanceof RelativeLayout) {
                 progressBar.setVisibility(View.GONE);
                 Context context = view.getContext();
                 RecyclerView recyclerView = view.findViewById(R.id.scheduleList);
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                adapter = new ScheduleListRecyclerViewAdapter(schedules, mListener, onScheduleItemVotedListener);
+                adapter = new ScheduleListRecyclerViewAdapter(schedules, mListener, onScheduleItemVotedListener, onScheduleItemFavouredListener);
                 recyclerView.setAdapter(adapter);
             }
 
@@ -333,20 +357,19 @@ public class ScheduleListFragment extends Fragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        //System.err.println(response);
                         serverGetUserVotedEventsResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // means something went wrong when contacting server. Just display message indicating
-                        // to user to try again
-                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        /*
+                        NOTE: regarding the display of a toast message here, its also a similar explanation given below
+                        on the corresponding server response method for this method (i.e serverGetUserVotedEventsResponse())
+                         */
                         error.printStackTrace();
                     }
                 });
-
         // Access the Global(App) RequestQueue
         NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
 
@@ -355,10 +378,9 @@ public class ScheduleListFragment extends Fragment {
 
     private void serverGetUserVotedEventsResponse(JSONObject response) {
 
-        userPreviouslyVotedEvents.clear(); // clear to avoid duplicates
-
         try {
 
+            userPreviouslyVotedEvents.clear(); // clear to avoid duplicates
             String statusCode = response.getString("success");
 
             // user has previously voted for some events
@@ -376,9 +398,92 @@ public class ScheduleListFragment extends Fragment {
                 }
             }
 
-            // user hasn't voted for any events yet
+            /*
+            NOTE: Since these network calls happen asynchronously and there are multiple methods in this fragment
+            that make network requests, it is not always clear as to which method will finish its network request
+            first thus it becomes difficult as to which Toast message will be shown to the user especially in the
+            case of the DB not having any records of the requested data since then these methods display different
+            Toast messages in that instance which can be confusing to the user. It is therefore important to consider
+            which toast messages are important to show to the user when a network request has been made.
+            So for methods like this one there's no need to display toast msg for network calls that get data
+            but don't necessarily have to inform the user of the outcome of that response from server.
+            */
             else if (statusCode.equals("0")) {
-                Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
+                // no toast message shown.
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void getUserFavouredEvents() {
+
+        String url = "https://gradshub.herokuapp.com/api/Event/retrieveuserfavouredevents.php";
+        HashMap<String, String> params = new HashMap<>();
+
+        params.put("user_id", user.getUserID());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        serverGetUserFavouredEventsResponse(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        /*
+                        NOTE: regarding the display of a toast message here, its also a similar explanation given below
+                        on the corresponding server response method for this method (i.e serverGetUserFavouredEventsResponse())
+                         */
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
+
+    }
+
+
+    private void serverGetUserFavouredEventsResponse(JSONObject response) {
+
+        try {
+
+            userPreviouslyFavouredEvents.clear(); // clear to avoid duplicates
+            String success = response.getString("success");
+
+            switch (success) {
+
+                // there are favoured events by user
+                case "1":
+
+                    JSONArray favouredEventsJA = response.getJSONArray("message");
+                    for(int i = 0 ; i < favouredEventsJA.length(); i++) {
+
+                        JSONObject favouredEventJO = (JSONObject)favouredEventsJA.get(i);
+                        String event_id = favouredEventJO.getString("EVENT_ID");
+                        userPreviouslyFavouredEvents.add(event_id);
+                    }
+
+                    break;
+
+                /*
+                NOTE: Since these network calls happen asynchronously and there are multiple methods in this fragment
+                that make network requests, it is not always clear as to which method will finish its network request
+                first thus it becomes difficult as to which Toast message will be shown to the user especially in the
+                case of the DB not having any records of the requested data since then these methods display different
+                Toast messages in that instance which can be confusing to the user. It is therefore important to consider
+                which toast messages are important to show to the user when a network request has been made.
+                So for methods like this one there's no need to display toast msg for network calls that get data
+                but don't necessarily have to inform the user of the outcome of that response from server.
+                */
+                case "0":
+                    // no toast message shown.
+                    break;
             }
 
         } catch (JSONException e) {
@@ -405,6 +510,26 @@ public class ScheduleListFragment extends Fragment {
         }
 
         return userPreviouslyVotedEvents;
+    }
+
+
+    public static ArrayList<String> getUserCurrentlyFavouredEvents() {
+
+        if (userCurrentlyFavouredEvents.size() == 0) {
+            return null;
+        }
+
+        return userCurrentlyFavouredEvents;
+    }
+
+
+    public static ArrayList<String> getUserPreviouslyFavouredEvents() {
+
+        if (userPreviouslyFavouredEvents.size() == 0) {
+            return null;
+        }
+
+        return userPreviouslyFavouredEvents;
     }
 
 

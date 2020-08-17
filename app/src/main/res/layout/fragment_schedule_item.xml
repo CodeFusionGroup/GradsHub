@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/titleTV"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
@@ -30,7 +30,7 @@
 
         <TextView
             android:id="@+id/deadlineTV"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/titleTV"
             android:layout_marginStart="@dimen/text_margin"
@@ -69,7 +69,7 @@
 
         <TextView
             android:id="@+id/placeTV"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/dateTV"
             android:layout_marginStart="@dimen/text_margin"
@@ -98,12 +98,10 @@
             android:id="@+id/votesCountTV"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:layout_below="@+id/placeTV"
+            android:layout_below="@+id/upVoteBtn"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="4dp"
-            android:layout_toEndOf="@+id/upVoteBtn"
-            android:layout_toRightOf="@+id/upVoteBtn"
             android:text="100" />
 
 
@@ -111,16 +109,27 @@
             android:id="@+id/downVoteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/placeTV"
+            android:layout_below="@+id/votesCountTV"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_toEndOf="@+id/votesCountTV"
-            android:layout_toRightOf="@+id/votesCountTV"
             android:background="@color/colorWhite"
             android:contentDescription="up vote"
             android:src="@drawable/ic_down_vote" />
+
+
+        <ImageButton
+            android:id="@+id/favouriteBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="270dp"
+            android:layout_marginStart="270dp"
+            android:layout_alignBottom="@id/downVoteBtn"
+            android:contentDescription="favourite"
+            android:background="@drawable/favourite_event"
+            android:src="@drawable/ic_favorite" />
 
     </RelativeLayout>
 

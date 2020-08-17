@@ -247,9 +247,10 @@ public class MyGroupsProfileFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // means something went wrong when contacting server. Just display message indicating
-                        // to user to try again
-                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        /*
+                        NOTE: regarding the display of a toast message here, its also a similar explanation given on
+                        ScheduleListFragment under the relevant methods.
+                         */
                         error.printStackTrace();
                     }
                 });
@@ -276,13 +277,14 @@ public class MyGroupsProfileFragment extends Fragment {
             if (statusCode.equals("1")) {
 
                 JSONArray ja = response.getJSONArray("message");
-
                 for(int i = 0 ; i < ja.length(); i++) {
                     JSONObject jasonObject = (JSONObject)ja.get(i);
                     userAlreadyLikedPosts.add(jasonObject.getString("GROUP_POST_ID"));
                 }
 
             }
+
+            // no need to display a toast message if they haven't liked any post.
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -322,8 +324,8 @@ public class MyGroupsProfileFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // means something went wrong when contacting server. Just display message indicating
-                        // to user to try again
-                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        // the specific toast message.
+                        Toast.makeText(requireActivity(), "Error processing your liked posts, try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });

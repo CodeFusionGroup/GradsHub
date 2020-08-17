@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gradshub.R;
 import com.example.gradshub.main.eventsSchedule.ScheduleListFragment.OnScheduleListFragmentInteractionListener;
+import com.example.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.example.gradshub.model.Schedule;
 
 import java.util.ArrayList;
@@ -28,20 +29,31 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
     private HashMap<String, Boolean> userPreviouslyVotedEvents = new HashMap<>();
     private HashMap<String, Boolean> userCurrentlyVotedEvents = new HashMap<>();
 
-    private final ScheduleListFragment.OnScheduleListFragmentInteractionListener mListener;
+    private ArrayList<String> userPreviouslyFavouredEvents = new ArrayList<>();
+    private ArrayList<String> userCurrentlyFavouredEvents = new ArrayList<>();
 
+    private final ScheduleListFragment.OnScheduleListFragmentInteractionListener mListener;
 
     private OnScheduleItemVotedListener onScheduleItemVotedListener;
     interface OnScheduleItemVotedListener {
         void onScheduleItemVoted(Schedule item, Boolean value);
     }
 
+
+    private OnScheduleItemFavouredListener onScheduleItemFavouredListener;
+    interface OnScheduleItemFavouredListener {
+        void onScheduleItemFavoured(Schedule item);
+    }
+
+
     public ScheduleListRecyclerViewAdapter(List<Schedule> items, OnScheduleListFragmentInteractionListener listener,
-                                           OnScheduleItemVotedListener onScheduleItemVotedListener) {
+                                           OnScheduleItemVotedListener onScheduleItemVotedListener,
+                                           OnScheduleItemFavouredListener onScheduleItemFavouredListener) {
         mValues = items;
         mListener = listener;
         mValuesFull = new ArrayList<>(mValues);
         this.onScheduleItemVotedListener = onScheduleItemVotedListener;
+        this.onScheduleItemFavouredListener = onScheduleItemFavouredListener;
     }
 
 
@@ -124,6 +136,27 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         });
 
 
+        holder.mFavouriteBtnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                userPreviouslyFavouredEvents = ScheduleListFragment.getUserPreviouslyFavouredEvents();
+                userCurrentlyFavouredEvents = ScheduleListFragment.getUserCurrentlyFavouredEvents();
+
+                if ( userPreviouslyFavouredEvents != null && userPreviouslyFavouredEvents.contains(holder.mItem.getId()) ||
+                        userCurrentlyFavouredEvents != null && userCurrentlyFavouredEvents.contains(holder.mItem.getId()) ) {
+                    Toast.makeText(v.getContext(), "already favoured event.", Toast.LENGTH_SHORT).show();
+                }
+
+                else {
+                    onScheduleItemFavouredListener.onScheduleItemFavoured(holder.mItem);
+                    Toast.makeText(v.getContext(), "favoured event", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,6 +186,7 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         public final ImageButton mUpVoteBtnView;
         public final ImageButton mDownVoteBtnView;
         public final TextView mVotesCountView;
+        public final ImageButton mFavouriteBtnView;
         public Schedule mItem;
 
 
@@ -167,6 +201,7 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
             mUpVoteBtnView = view.findViewById(R.id.upVoteBtn);
             mDownVoteBtnView = view.findViewById(R.id.downVoteBtn);
             mVotesCountView = view.findViewById(R.id.votesCountTV);
+            mFavouriteBtnView = view.findViewById(R.id.favouriteBtn);
         }
 
     }

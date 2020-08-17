@@ -9,6 +9,7 @@ import com.example.gradshub.R;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

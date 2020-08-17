@@ -24,6 +24,7 @@ import com.example.gradshub.network.NetworkRequestQueue;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -63,8 +64,15 @@ public class FeedListFragment extends Fragment {
             ScheduleListFragment.getUserCurrentlyVotedEvents().clear(); // important to clear map after
         }
 
-    }
+        // similar explanation as above for favoured events in this case
+        if( ScheduleListFragment.getUserCurrentlyFavouredEvents() != null) {
 
+            ArrayList<String> userCurrentlyFavouredEvents = ScheduleListFragment.getUserCurrentlyFavouredEvents();
+            insertUserFavouredEvents(userCurrentlyFavouredEvents);
+            ScheduleListFragment.getUserCurrentlyFavouredEvents().clear(); // important to clear list after
+        }
+
+    }
 
 
     public void insertUserVotedEvents(HashMap<String, Boolean> userCurrentlyVotedEvents) {
@@ -104,9 +112,14 @@ public class FeedListFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // means something went wrong when contacting server. Just display message indicating
-                        // to user to try again
-                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        /*
+                        NOTE: this means something went wrong when trying to contact the server.
+                        Just display specific toast message indicating the type of action that was to be performed
+                        in the background as a result of the user's actions on the app.
+                        However this means the user might have to manually repeat that action every time there's a
+                        failure which can be a time consuming task for the user depending on what they were doing.
+                         */
+                        Toast.makeText(requireActivity(), "Error processing your voted events, try again later.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
@@ -128,6 +141,77 @@ public class FeedListFragment extends Fragment {
                 Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
             }
 
+            // NOTE: no fail case based on the implemented logic for this task, so might have to remove this condition.
+            else if(statusCode.equals("0")) {
+                Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void insertUserFavouredEvents(ArrayList<String> userCurrentlyFavouredEvents) {
+
+        StringBuilder eventsIDs = new StringBuilder();
+
+        for(int i = 0; i < userCurrentlyFavouredEvents.size(); i++) {
+
+            eventsIDs.append(userCurrentlyFavouredEvents.get(i));
+
+            if (i != userCurrentlyFavouredEvents.size()-1) {
+                eventsIDs.append(",");
+            }
+        }
+
+        String url = "https://gradshub.herokuapp.com/api/Event/insertfavouredevents.php";
+        HashMap<String, String> params = new HashMap<>();
+
+        params.put("user_id", user.getUserID());
+        params.put("event_ids", eventsIDs.toString());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        serverInsertFavouredEventsResponse(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        /*
+                        NOTE: this means something went wrong when trying to contact the server.
+                        Just display specific toast message indicating the type of action that was to be performed
+                        in the background as a result of the user's actions on the app.
+                        However this means the user might have to manually repeat that action every time there's a
+                        failure which can be a time consuming task for the user depending on what they were doing.
+                         */
+                        Toast.makeText(requireActivity(), "Error processing your favourite events, try again later.", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
+
+    }
+
+
+    private void serverInsertFavouredEventsResponse(JSONObject response) {
+
+        try {
+
+            String statusCode = response.getString("success");
+            String message = response.getString("message");
+
+            // favoured events have been inserted
+            if(statusCode.equals("1")) {
+                Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+
+            // NOTE: no fail case based on the implemented logic for this task, so might have to remove this condition.
             else if(statusCode.equals("0")) {
                 Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
             }
@@ -156,5 +240,6 @@ public class FeedListFragment extends Fragment {
         }
 
     }
+
 
 }
