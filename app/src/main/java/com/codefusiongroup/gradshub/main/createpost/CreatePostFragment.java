@@ -82,6 +82,12 @@ public class CreatePostFragment extends Fragment {
 //    private String displayName;
     private Uri uri;
 
+    // Global values
+    private MainActivity mainActivity;
+    private String postDate;
+    private ResearchGroup researchGroup;
+    private CreatePostActivity createPostActivity;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,7 +112,7 @@ public class CreatePostFragment extends Fragment {
         postDescriptionET = view.findViewById(R.id.postDescriptionET);
         Button postBtn = view.findViewById(R.id.postBtn);
         pdfBtn = view.findViewById(R.id.pdfBtn);
-        pdfBtn.setVisibility(View.GONE);
+        pdfBtn.setVisibility(View.INVISIBLE);
 
         // POST BUTTON
         postBtn.setOnClickListener(v -> {
@@ -116,9 +122,9 @@ public class CreatePostFragment extends Fragment {
 
             if ( isValidInput() ) {
 
-                MainActivity mainActivity = (MainActivity) requireActivity();
-                String postDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-                ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
+                mainActivity = (MainActivity) requireActivity();
+                postDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                researchGroup = MyGroupsProfileFragment.getGroup();
 
 //                createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 progressBar.setVisibility(View.VISIBLE);
@@ -127,25 +133,14 @@ public class CreatePostFragment extends Fragment {
                 // Post attachment is a pdf document
                 if(uri != null) {
 
-                    // Group post information for uploading a pdf
-//                    HashMap<String, String> params = new HashMap<>();
-//                    params.put("group_id", researchGroup.getGroupID());
-//                    params.put("user_id", mainActivity.user.getUserID());
-//                    params.put("post_title", postSubject);
-//                    params.put("post_date", postDate);
-//
-//                    uploadPDF(displayName,uri,params);
-
                     // Upload file to firebase storage
                     uploadFile();
-
 
                 } else {
                     // Post attachment is a URL
                     createGroupPost( new Post(postDate, postSubject, postDescription), mainActivity.user, researchGroup );
                 }
             }
-
         });
 
         // PDF BUTTON
@@ -155,13 +150,13 @@ public class CreatePostFragment extends Fragment {
             target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
             Intent appChooser = Intent.createChooser(target,"Open File");
+
             try{
                 startActivity(appChooser);
             }catch(ActivityNotFoundException error){
                 System.err.println(error);
                 // Instruct the user to install a PDF reader here, or something
                 Toast.makeText(requireActivity(), "Please install a pdf reader", Toast.LENGTH_LONG).show();
-
             }
         });
 
@@ -183,12 +178,12 @@ public class CreatePostFragment extends Fragment {
             postSubjectET.requestFocus();
             return false;
         }
-
-        if (postDescription.isEmpty()) {
-            postDescriptionET.setError("Not a valid post description!");
-            postDescriptionET.requestFocus();
-            return false;
-        }
+        // Post description can be null
+//        if (postDescription.isEmpty()) {
+//            postDescriptionET.setError("Not a valid post description!");
+//            postDescriptionET.requestFocus();
+//            return false;
+//        }
 
         return true;
     }
@@ -224,7 +219,6 @@ public class CreatePostFragment extends Fragment {
                 });
         // Access the Global(App) RequestQueue
         NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
-
     }
 
 
@@ -313,6 +307,7 @@ public class CreatePostFragment extends Fragment {
 
                             // Disable url(description) editText
                             postDescriptionET.setInputType(0);
+                            postDescriptionET.setVisibility(View.INVISIBLE);
                         }
 
                     } finally {
@@ -375,12 +370,93 @@ public class CreatePostFragment extends Fragment {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // TODO: Handle successful uploads on complete
 
-                Toast.makeText(requireActivity(), "File uploaded", Toast.LENGTH_SHORT).show();
+                getFileURL(storageRef);
+
+//                progressBar.setVisibility(View.GONE);
+//                Toast.makeText(mainActivity.getApplicationContext(), "File uploaded", Toast.LENGTH_SHORT).show();
+//                // navigate to the profile of this group to see the post that was created
+//                NavController navController = Navigation.findNavController(mainActivity, R.id.main_nav_host_fragment);
+//                navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
             }
         });
-
-
     }
+
+    private void getFileURL(StorageReference storageRef){
+
+        storageRef.child("docs/"+uri.getLastPathSegment()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL , post data to server
+                createPost(uri);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Toast.makeText(requireActivity(), "Error uploading", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // A group post with a file attachment
+    private void createPost(Uri fileURL){
+
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/create.php";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("group_id", researchGroup.getGroupID());
+        params.put("user_id", mainActivity.user.getUserID());
+        params.put("post_title", postSubject);
+        params.put("post_date", postDate);
+        params.put("post_file", fileURL.toString());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        createPostResponse(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // means something went wrong when contacting server. Just display message indicating
+                        // to user to try again
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(requireActivity(), "Connection failed, please try again later.", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance(mainActivity.getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private void createPostResponse(JSONObject jsonObject){
+        try {
+            jsonObject.toString().replace("\\\\","");
+            String success = jsonObject.getString("success");
+            String message = jsonObject.getString("message");
+
+            switch (success) {
+                case "0": // Toast message: You didn't send the required values
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+                    break;
+                case "1": // Toast message: New post created
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(mainActivity.getApplicationContext(),message, Toast.LENGTH_SHORT).show();
+                    NavController navController = Navigation.findNavController(getActivity(), R.id.main_nav_host_fragment);
+                    navController.navigate(R.id.action_createPostFragment_to_myGroupProfileFragment);
+                    break;
+            }
+
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    // TODO: The functions below are not used any more(possibly delete)
 
     private void uploadPDF(final String pdfName, Uri pdfFile,Map<String, String> passedParams) {
 
