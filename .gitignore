@@ -33,6 +33,16 @@ output.json
 obj/
 .externalNativeBuild
 
+#test results
+app/build/generated/res/
+app/build/generated/source/buildConfig/androidTest/
+app/build/generated/source/buildConfig/release/
+app/build/intermediates/
+app/build/jacoco/
+app/build/outputs/
+app/build/reports/
+app/build/test-results/
+app/build/tmp/
 
 
 
