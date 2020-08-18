@@ -115,9 +115,9 @@ public class RegisterFragmentTest {
             closeSoftKeyboard();
 
 
-            //ViewInteraction view6 = onView(withId(R.id.submitBtn));
-            //view6.perform(click());
-            onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
+            ViewInteraction view6 = onView(withId(R.id.submitBtn));
+            view6.perform(click());
+            //onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
 
         //}
         //catch (PerformException e) {
