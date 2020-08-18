@@ -32,6 +32,7 @@ Thumbs.db
 output.json
 /.idea/libraries 
 
+
 #NDK
 obj/
 .externalNativeBuild
@@ -46,7 +47,7 @@ app/build/outputs/
 app/build/reports/
 app/build/test-results/
 app/build/tmp/
-
+app/build/
 #lint reports
 lint/intermediates/
 lint/generated/

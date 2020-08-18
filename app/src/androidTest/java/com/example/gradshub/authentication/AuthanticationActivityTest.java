@@ -58,6 +58,7 @@ public class AuthanticationActivityTest {
 
         onView(withId(R.id.forgotPasswordBtn))
                 .perform(click());
+
         onView(withId(R.id.resetPasswordBtn))
                 .perform(click());
     }
