@@ -75,7 +75,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        NavController navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);;
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
+        //NavController navController;
         switch ( v.getId() ) {
 
             case R.id.loginBtn:
