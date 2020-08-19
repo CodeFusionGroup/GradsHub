@@ -38,6 +38,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
+
             android:text="deadline: 2020-07-31 23:59:59" />
 
 
