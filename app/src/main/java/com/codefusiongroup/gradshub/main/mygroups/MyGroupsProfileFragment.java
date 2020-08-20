@@ -423,6 +423,7 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
+    //Do not change to private
     public void shareGroupInviteCode() {
 
         Intent shareCodeIntent = new Intent(android.content.Intent.ACTION_SEND);
