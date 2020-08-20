@@ -196,7 +196,7 @@ public class testAppNavigation {
     };
 
     //Test the whole app activities in general, mostly those with private methods
-    //@Ignore("Intend to see if it is stalling travis build")
+    @Ignore("Intend to see if it is the one stalling travis build")
     @Test
     public void testUserActivities()
     {
@@ -262,14 +262,12 @@ public class testAppNavigation {
 
     }
 
+    //TODO: Implement a test for a logout button
+    /*@Ignore("Implement login button later")
+    @Test
+    public void testLogOutButton(){
 
-
-
-
-
-    /*@After
-    public void tearDown() throws Exception {
-        loginFragment = null;
-    }*/
+    }
+    */
 }
 

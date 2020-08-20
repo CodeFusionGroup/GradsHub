@@ -18,14 +18,7 @@ import static org.junit.Assert.*;
 
 public class ProfileFragmentTest {
 
-    /*@Rule
-    public FragmentTestRule<?,ProfileFragment> fragmentTestRule = FragmentTestRule.create(ProfileFragment.class);
 
-    @Test
-    public void ProfileFragmentLaunched()
-    {
-        onView(withId(R.id.profile)).check(matches(isDisplayed()));
-    }*/
     @Rule
     public ActivityTestRule<ProfileTestActivity> activityActivityTestRule = new ActivityTestRule<ProfileTestActivity>(ProfileTestActivity.class);
     private ProfileTestActivity profileFragment = null;
@@ -50,8 +43,6 @@ public class ProfileFragmentTest {
 
     @After
     public void tearDown() throws Exception {
-        profileFragment = null;
-
         profileFragment = null;
 
     }
