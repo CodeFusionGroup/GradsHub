@@ -1,4 +1,4 @@
-package com.example.gradshub.main.navigation;
+package com.codefusiongroup.gradshub.main.navigation;
 
 import android.widget.RelativeLayout;
 
@@ -10,11 +10,11 @@ import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.gradshub.R;
-import com.example.gradshub.authentication.AuthanticationActivityTest;
-import com.example.gradshub.authentication.AuthenticationActivity;
-import com.example.gradshub.authentication.LoginFragment;
-import com.example.gradshub.authentication.TestingActivity;
+import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.authentication.AuthanticationActivityTest;
+import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
+import com.codefusiongroup.gradshub.authentication.LoginFragment;
+import com.codefusiongroup.gradshub.authentication.TestingActivity;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
