@@ -32,18 +32,6 @@ public class CreateGroupFragmentTest {
     }
 
     @Test
-    public void CreateGroupFragmentLaunched()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);
-        assertNotNull(rlContainer);
-        CreateGroupFragment Fragment = new CreateGroupFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        View view = Fragment.getView().findViewById(R.id.create_group);
-        assertNotNull(view);
-    }
-
-    @Test
     public void CreateGroupFragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.creatgroup_test);

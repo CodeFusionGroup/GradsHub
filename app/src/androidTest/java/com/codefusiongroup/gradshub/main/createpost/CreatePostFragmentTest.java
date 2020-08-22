@@ -34,18 +34,6 @@ public class CreatePostFragmentTest {
     }
 
     @Test
-    public void CreatePostFragmentLaunched()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
-        assertNotNull(rlContainer);
-        CreatePostFragment Fragment = new CreatePostFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        View view = Fragment.getView().findViewById(R.id.crete_post);
-        assertNotNull(view);
-    }
-
-    @Test
     public void CreatePostFragmentLaunching()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
@@ -69,8 +57,6 @@ public class CreatePostFragmentTest {
         assertNotNull(view6);
 
     }
-
-
 
     @After
     public void tearDown() throws Exception {

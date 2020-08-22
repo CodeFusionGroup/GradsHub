@@ -44,22 +44,6 @@ public class GroupPostCommentsFragmentTest {
         setPost();
     }
 
-    //The recycle viewer can launch test
-	//@Ignore
-    @Test
-    public void testingLaunched()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcomment_container);
-        assertNotNull(rlContainer);
-
-        GroupPostCommentsFragment Fragment = new GroupPostCommentsFragment();
-        Fragment.setPost(post);
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        View fView = Fragment.getView().findViewById(R.id.post_comment);
-        assertNotNull(fView);
-    }
-
     //All the required fields are visible test
 	//@Ignore
     @Test

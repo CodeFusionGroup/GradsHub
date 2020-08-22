@@ -36,19 +36,6 @@ public class LoginFragmentTest {
     }
 
     @Test
-    public void testLoginFragmentLaunched()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
-
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        View fView = Fragment.getView().findViewById(R.id.Launched);
-        assertNotNull(fView);
-    }
-
-    @Test
     public void testLoginfragmentViews() {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);

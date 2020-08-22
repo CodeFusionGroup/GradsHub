@@ -1,11 +1,11 @@
-package com.example.gradshub.authentication;
+package com.codefusiongroup.gradshub.authentication;
 
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.gradshub.R;
+import com.codefusiongroup.gradshub.R;
 
 import org.junit.Rule;
 import org.junit.Test;
