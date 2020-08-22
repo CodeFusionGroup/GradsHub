@@ -90,6 +90,24 @@
 
 
         <ImageButton
+            android:id="@+id/fileDownloadBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/commentBtn"
+            android:layout_alignStart="@+id/postDescriptionTV"
+            android:layout_alignLeft="@+id/postDescriptionTV"
+            android:layout_alignEnd="@+id/postDescriptionTV"
+            android:layout_alignRight="@+id/postDescriptionTV"
+            android:layout_marginStart="340dp"
+            android:layout_marginLeft="340dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="7dp"
+            android:background="@color/colorWhite"
+            android:contentDescription="download pdf"
+            android:src="@drawable/ic_file_download" />
+
+        <ImageButton
             android:id="@+id/postLikeBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -145,6 +163,8 @@
             android:layout_toEndOf="@+id/postCommentBtn"
             android:layout_toRightOf="@+id/postCommentBtn"
             android:text="50" />
+
+
 
 
         <Button

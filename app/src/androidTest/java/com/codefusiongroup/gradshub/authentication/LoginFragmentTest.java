@@ -32,28 +32,15 @@ public class LoginFragmentTest {
     @Before
     public void setUp() throws Exception{
         loginFragment = activityActivityTestRule.getActivity();
+
     }
 
     @Test
-    public void testLoginFragmentLaunched()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
-
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        View fView = Fragment.getView().findViewById(R.id.Launched);
-        assertNotNull(fView);
-    }
-
-    @Test
-    public void testLoginfragmentViews()
-    {
+    public void testLoginfragmentViews() {
         RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
         assertNotNull(rlContainer);
         LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
+        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(), Fragment).commitAllowingStateLoss();
         getInstrumentation().waitForIdleSync();
         View fView = Fragment.getView().findViewById(R.id.emailET);
         assertNotNull(fView);
@@ -70,90 +57,7 @@ public class LoginFragmentTest {
         View RegisterBT = Fragment.getView().findViewById(R.id.registerBtn);
         assertNotNull(RegisterBT);
     }
-    //Ignore this test as it is the same as the test found in main/navigation/testNavigation
-    @Ignore
-    @Test
-    public void testUserLogin()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
 
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-
-        ViewInteraction view2 = onView(withId(R.id.emailET));
-        view2.perform(ViewActions.typeText("testuser@gmail.com"));
-        ViewInteraction view = onView(withId(R.id.passwordET));
-        view.perform(ViewActions.typeText("simple1"));
-        closeSoftKeyboard();
-        ViewInteraction view1 = onView(withId(R.id.loginBtn));
-        view1.perform(click());
-//        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-//Wait for 1 minute to  log in, else the log in fails due to slow network!!!
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    //TODO: Test UI navigation
-   // @Ignore
-    @Test
-    public void testInvalidUser(){
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
-
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-
-        ViewInteraction view2 = onView(withId(R.id.emailET));
-        view2.perform(ViewActions.typeText("testuser1@gmail.com"));
-        ViewInteraction view = onView(withId(R.id.passwordET));
-        view.perform(ViewActions.typeText("simple1"));
-        closeSoftKeyboard();
-        ViewInteraction view1 = onView(withId(R.id.loginBtn));
-        view1.perform(click());
-    }
-
-    @Test
-    public void testNoEmailLogin(){
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
-
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-
-        ViewInteraction view2 = onView(withId(R.id.emailET));
-        view2.perform(ViewActions.typeText(""));
-        ViewInteraction view = onView(withId(R.id.passwordET));
-        view.perform(ViewActions.typeText("simple1"));
-        closeSoftKeyboard();
-        ViewInteraction view1 = onView(withId(R.id.loginBtn));
-        view1.perform(click());
-    }
-
-    @Test
-    public void testNoPassLogin(){
-        RelativeLayout rlContainer = (RelativeLayout) loginFragment.findViewById(R.id.containing_tests);
-        assertNotNull(rlContainer);
-
-        LoginFragment Fragment = new LoginFragment();
-        loginFragment.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-
-        ViewInteraction view2 = onView(withId(R.id.emailET));
-        view2.perform(ViewActions.typeText("testuser1@gmail.com"));
-        ViewInteraction view = onView(withId(R.id.passwordET));
-        view.perform(ViewActions.typeText(""));
-        closeSoftKeyboard();
-        ViewInteraction view1 = onView(withId(R.id.loginBtn));
-        view1.perform(click());
-    }
 
     @After
     public void tearDown() throws Exception {
