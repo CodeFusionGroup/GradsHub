@@ -85,21 +85,19 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
 
 
         // TODO: fix logic for highlighting user's already favoured events
-//        if ( userPreviouslyFavouredEvents != null ) {
-//
-//            for (String eventId: userPreviouslyFavouredEvents) {
-//
-//                if ( eventId.equals(holder.mItem.getId()) ) {
-//                    //System.out.println("itemId: "+itemId+", eventId: "+eventId);
-//                    //Log.i("itemId", itemId);
-//                    holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
-//                    holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
-//                    break;
-//                }
-//
-//            }
-//
-//        }
+        if ( userPreviouslyFavouredEvents != null ) {
+
+            for (String eventId: userPreviouslyFavouredEvents) {
+
+                if ( eventId.equals(holder.mItem.getId()) ) {
+                    holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
+                    holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
+                    break;
+                }
+
+            }
+
+        }
 
 
         holder.mUpVoteBtnView.setOnClickListener(v -> {
