@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.main.MainActivity;
+import com.codefusiongroup.gradshub.main.eventsSchedule.ScheduleListFragment;
 import com.codefusiongroup.gradshub.model.ResearchGroup;
 import com.codefusiongroup.gradshub.model.User;
 import com.codefusiongroup.gradshub.network.NetworkRequestQueue;
@@ -75,10 +76,81 @@ public class MyGroupsListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
+        // inserting liked posts of user if they have liked any posts
+        if( MyGroupsProfileFragment.getCurrentlyLikedPosts() != null) {
+
+            ArrayList<String> userCurrentlyLikedPosts = MyGroupsProfileFragment.getCurrentlyLikedPosts();
+            User user = MyGroupsProfileFragment.getUser();
+            ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
+            insertGroupLikedPosts(userCurrentlyLikedPosts, user, researchGroup);
+            MyGroupsProfileFragment.getCurrentlyLikedPosts().clear(); // important to clear list after
+
+        }
+
         progressBar = view.findViewById(R.id.progress_circular);
         MainActivity mainActivity = (MainActivity) requireActivity();
         getUserGroups(mainActivity.user);
         progressBar.setVisibility(View.VISIBLE);
+
+    }
+
+
+    private void insertGroupLikedPosts(ArrayList<String> userCurrentlyLikedPosts, User user, ResearchGroup researchGroup) {
+
+        StringBuilder likedPostsIDs = new StringBuilder();
+
+        for(int i = 0; i < userCurrentlyLikedPosts.size(); i++) {
+
+            likedPostsIDs.append(userCurrentlyLikedPosts.get(i));
+
+            if (i != userCurrentlyLikedPosts.size()-1) {
+                likedPostsIDs.append(",");
+            }
+        }
+
+        String url = "https://gradshub.herokuapp.com/api/GroupPost/insertlikes.php";
+        HashMap<String, String> params = new HashMap<>();
+
+        params.put("user_id", user.getUserID());
+        params.put("group_id", researchGroup.getGroupID());
+        params.put("post_id", likedPostsIDs.toString());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        serverInsertGroupLikedPostsResponse(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Toast.makeText(requireActivity(), "Error processing your liked posts, try again later.", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                });
+        // Access the Global(App) RequestQueue
+        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
+
+    }
+
+
+    private void serverInsertGroupLikedPostsResponse(JSONObject response) {
+
+        try {
+
+            String statusCode = response.getString("success");
+            String message = response.getString("message");
+
+            // liked posts inserted
+            if(statusCode.equals("1")) {
+                Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

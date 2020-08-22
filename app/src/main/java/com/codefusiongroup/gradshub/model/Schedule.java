@@ -58,7 +58,7 @@ public class Schedule {
 
     public String getTimezone() { return timezone; }
 
-    public void setDate(){ this.date = date; }
+    public void setDate(String date){ this.date = date; }
 
     public String getDate() { return date; }
 

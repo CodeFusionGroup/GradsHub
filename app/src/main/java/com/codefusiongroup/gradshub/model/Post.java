@@ -11,6 +11,7 @@ public class Post implements Parcelable {
     private String postDate;
     private String postSubject;
     private String postDescription;
+    private String postFileName;
     private int postLikesCount = 0;
     private int postCommentsCount = 0;
 
@@ -20,6 +21,14 @@ public class Post implements Parcelable {
         this.postDate = postDate;
         this.postSubject = postSubject;
         this.postDescription = postDescription;
+    }
+
+    // this constructor is for a post with a file attachment
+    public Post(String postDate, String postSubject, String postDescription, String postFileName) {
+        this.postDate = postDate;
+        this.postSubject = postSubject;
+        this.postDescription = postDescription;
+        this.postFileName = postFileName;
     }
 
     public Post() {}
@@ -54,9 +63,7 @@ public class Post implements Parcelable {
         return postDescription;
     }
 
-    public void setPostDescription(String postDescription) {
-        this.postDescription = postDescription;
-    }
+    public void setPostDescription(String postDescription) { this.postDescription = postDescription; }
 
     public int getPostLikesCount() { return postLikesCount; }
 
@@ -66,6 +73,10 @@ public class Post implements Parcelable {
 
     public void setPostCommentsCount(int postCommentsCount) { this.postCommentsCount += postCommentsCount; }
 
+    public String getPostFileName() {return postFileName; }
+
+    public void setPostFileName(String postFileName) { this.postFileName = postFileName; }
+
 
 
     protected Post(Parcel in) {
@@ -74,8 +85,11 @@ public class Post implements Parcelable {
         postDate = in.readString();
         postSubject = in.readString();
         postDescription = in.readString();
+        //=============================
         //postLikesCount = in.readInt();
+        //============================
         postCommentsCount = in.readInt();
+        postFileName = in.readString();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -103,7 +117,10 @@ public class Post implements Parcelable {
         dest.writeString(postDate);
         dest.writeString(postSubject);
         dest.writeString(postDescription);
+        dest.writeString(postFileName);
+        //================================
         //dest.writeInt(postLikesCount);
         //dest.writeInt(postCommentsCount);
     }
+
 }

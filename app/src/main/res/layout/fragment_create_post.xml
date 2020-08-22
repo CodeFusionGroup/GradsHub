@@ -36,7 +36,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="type title" />
-        <!--android:maxLength="50"-->
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -46,79 +45,57 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/postSubjectContainer"
         android:layout_margin="16dp"
-        android:text="@string/description"
+        android:text="Description"
         android:textStyle="bold"/>
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/postDescriptionContainer"
-        android:layout_width="380dp"
-        android:layout_height="76dp"
+    <EditText
+        android:id="@+id/postDescriptionET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:inputType="textMultiLine"
         android:layout_below="@id/descriptionTV"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="16dp">
+        android:linksClickable="true"
+        android:hint="insert link or attach pdf file" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/postDescriptionET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/post_hint" />
 
-        <TextView
-            android:id="@+id/fileAttachmentTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:visibility="gone" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/pdfBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_below="@id/descriptionTV"
+        android:drawableLeft="@drawable/ic_pdf"
+        android:drawableStart="@drawable/ic_pdf"
+        android:text="filename.pdf"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"/>
 
 
     <Button
         android:id="@+id/postBtn"
         android:layout_width="155dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/postDescriptionContainer"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="132dp"
-        android:layout_marginLeft="132dp"
-        android:layout_marginTop="83dp"
-        android:layout_marginEnd="124dp"
-        android:layout_marginRight="124dp"
+        android:layout_below="@id/postDescriptionET"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
         android:background="@drawable/register_rounded_button"
         android:text="POST"
         android:textColor="@color/colorWhite" />
+
 
     <ProgressBar
         android:id="@+id/progress_circular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/postBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
         android:visibility="gone" />
-
-    <Button
-        android:id="@+id/pdfBtn"
-        android:layout_width="380dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/postDescriptionContainer"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="17dp"
-        android:layout_marginLeft="17dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/pdf_button"
-        android:drawableLeft="@drawable/ic_pdf"
-        android:text=""
-        android:textColor="@color/colorBlack" />
 
 
 </RelativeLayout>

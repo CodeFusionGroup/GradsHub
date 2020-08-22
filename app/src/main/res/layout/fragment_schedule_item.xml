@@ -128,8 +128,8 @@
             android:layout_marginStart="270dp"
             android:layout_alignBottom="@id/downVoteBtn"
             android:contentDescription="favourite"
-            android:background="@drawable/favourite_event"
-            android:src="@drawable/ic_favorite" />
+            android:background="@null"
+            android:src="@drawable/ic_fav_stroke" />
 
     </RelativeLayout>
 

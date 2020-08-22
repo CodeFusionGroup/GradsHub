@@ -1,8 +1,10 @@
 package com.codefusiongroup.gradshub.main.mygroups;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,7 +35,11 @@ import com.codefusiongroup.gradshub.model.Post;
 import com.codefusiongroup.gradshub.model.ResearchGroup;
 import com.codefusiongroup.gradshub.model.User;
 import com.codefusiongroup.gradshub.network.NetworkRequestQueue;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +48,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 
 public class MyGroupsProfileFragment extends Fragment {
@@ -63,6 +71,10 @@ public class MyGroupsProfileFragment extends Fragment {
     private GroupPostsListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener;
     // listener that keeps track of which post the user wishes to comment on
     private GroupPostsListRecyclerViewAdapter.OnPostItemCommentListener onPostItemCommentListener;
+
+    // listener that keeps track of which post PDF the user wants to download
+    private GroupPostsListRecyclerViewAdapter.OnPostPDFDownloadListener onPostPDFDownloadListener;
+
     // listener that keeps track of which post has the user clicked on
     private MyGroupsProfileFragment.OnPostsListFragmentInteractionListener mListener;
 
@@ -89,7 +101,7 @@ public class MyGroupsProfileFragment extends Fragment {
             Context context = view.getContext();
             recyclerView = view.findViewById(R.id.postsList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener);
+            adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
             recyclerView.setAdapter(adapter);
         }
 
@@ -104,17 +116,13 @@ public class MyGroupsProfileFragment extends Fragment {
         TextView groupNameTV = view.findViewById(R.id.groupNameTV);
         groupNameTV.setText(researchGroup.getGroupName());
 
-        if ( userCurrentlyLikedPosts.size() > 0 ) {
-            insertGroupLikedPosts();
-            userCurrentlyLikedPosts.clear();
-        }
-
         getUserLikedPosts();
-
         getGroupPosts();
         progressBar.setVisibility(View.VISIBLE);
 
+
         onPostItemLikedListener = item -> userCurrentlyLikedPosts.add(item.getPostID());
+
 
         onPostItemCommentListener = item -> {
 
@@ -124,6 +132,15 @@ public class MyGroupsProfileFragment extends Fragment {
             navController.navigate(R.id.action_myGroupProfileFragment_to_groupPostCommentsFragment, bundle);
 
         };
+
+
+        onPostPDFDownloadListener = new GroupPostsListRecyclerViewAdapter.OnPostPDFDownloadListener() {
+            @Override
+            public void onPostPDFDownload(Post item) {
+                downloadFile(requireActivity(), item.getPostFileName(), ".pdf", DIRECTORY_DOWNLOADS, item.getPostDescription());
+            }
+        };
+
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(view1 -> {
@@ -184,22 +201,33 @@ public class MyGroupsProfileFragment extends Fragment {
             else {
 
                 JSONArray groupPostsJA = response.getJSONArray("message");
+                String postDescription = null;
+
 
                 for(int i = 0 ; i < groupPostsJA.length(); i++) {
 
                     JSONObject groupPostJO = (JSONObject)groupPostsJA.get(i);
+                    Post post = new Post();
+
+                    if( !groupPostJO.isNull("POST_FILE") ) {
+                        postDescription = groupPostJO.getString("POST_FILE");
+                        String postFileName = groupPostJO.getString("POST_FILE_NAME");
+                        post.setPostFileName(postFileName);
+
+                    }
+                    else if ( !groupPostJO.isNull("POST_URL") ) {
+                        postDescription = groupPostJO.getString("POST_URL");
+                    }
 
                     String firstName = groupPostJO.getString("USER_FNAME");
                     String lastName = groupPostJO.getString("USER_LNAME");
                     String postCreator = firstName + " "+ lastName;
                     String postSubject = groupPostJO.getString("POST_TITLE");
                     String postDate = groupPostJO.getString("POST_DATE");
-                    String postDescription = groupPostJO.getString("POST_ATTACHMENT_URL");
                     String postID = groupPostJO.getString("GROUP_POST_ID");
                     int noLikes = Integer.parseInt(groupPostJO.getString("NO_OF_LIKES"));
                     int noComments = Integer.parseInt(groupPostJO.getString("NO_OF_COMMENTS"));
 
-                    Post post = new Post();
                     post.setPostID(postID);
                     post.setPostDate(postDate);
                     post.setPostCreator(postCreator);
@@ -217,7 +245,7 @@ public class MyGroupsProfileFragment extends Fragment {
                     Context context = view.getContext();
                     recyclerView = view.findViewById(R.id.postsList);
                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener);
+                    adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
                     recyclerView.setAdapter(adapter);
                 }
 
@@ -293,49 +321,18 @@ public class MyGroupsProfileFragment extends Fragment {
     }
 
 
-    private void insertGroupLikedPosts() {
+    public void downloadFile(Context ctx, String fileName, String fileExtension, String destDir, String url) {
 
-        StringBuilder likedPostsIDs = new StringBuilder();
+        DownloadManager dm = (DownloadManager) ctx.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(ctx, destDir, fileName ); // we didn't add fileExtension here because the file gets downloaded with .pdf appended already
 
-        for(int i = 0; i < userCurrentlyLikedPosts.size(); i++) {
-
-            likedPostsIDs.append(userCurrentlyLikedPosts.get(i));
-
-            if (i != userCurrentlyLikedPosts.size()-1) {
-                likedPostsIDs.append(",");
-            }
-        }
-
-        String url = "https://gradshub.herokuapp.com/api/GroupPost/insertlikes.php";
-        HashMap<String, String> params = new HashMap<>();
-
-        params.put("user_id", user.getUserID());
-        params.put("group_id", researchGroup.getGroupID());
-        params.put("post_id", likedPostsIDs.toString());
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //serverInsertGroupLikedPostsResponse(response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // means something went wrong when contacting server. Just display message indicating
-                        // the specific toast message.
-                        Toast.makeText(requireActivity(), "Error processing your liked posts, try again later.", Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
-                    }
-                });
-        // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
+        assert dm != null;
+        dm.enqueue(request);
 
     }
-
-
-    private void serverInsertGroupLikedPostsResponse(String output) { }
 
 
     public static ResearchGroup getGroup() { return researchGroup; }

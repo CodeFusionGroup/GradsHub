@@ -119,7 +119,8 @@ public class FeedListFragment extends Fragment {
                         However this means the user might have to manually repeat that action every time there's a
                         failure which can be a time consuming task for the user depending on what they were doing.
                          */
-                        Toast.makeText(requireActivity(), "Error processing your voted events, try again later.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(requireActivity(), "Error processing your voted events, try again later.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireActivity(), error.toString(), Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
@@ -166,7 +167,7 @@ public class FeedListFragment extends Fragment {
             }
         }
 
-        String url = "https://gradshub.herokuapp.com/api/Event/insertfavouredevents.php";
+        String url = "https://gradshub.herokuapp.com/api/Event/insertfavourite.php";
         HashMap<String, String> params = new HashMap<>();
 
         params.put("user_id", user.getUserID());
@@ -206,13 +207,8 @@ public class FeedListFragment extends Fragment {
             String statusCode = response.getString("success");
             String message = response.getString("message");
 
-            // favoured events have been inserted
+            // events have been favoured
             if(statusCode.equals("1")) {
-                Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
-            }
-
-            // NOTE: no fail case based on the implemented logic for this task, so might have to remove this condition.
-            else if(statusCode.equals("0")) {
                 Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
             }
 

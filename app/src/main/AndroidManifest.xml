@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/applogo"
@@ -28,6 +27,22 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.codefusiongroup.gradshub.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false" >
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+
+        </provider>
+
+        <receiver android:name="com.codefusiongroup.gradshub.main.EventNotificationPublisher" />
+
+        <!-- =========================== TEST FILES ============================= -->
         <activity android:name="com.codefusiongroup.gradshub.authentication.TestingActivity"></activity>
 
         <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableTestingActivity"></activity>
@@ -48,10 +63,10 @@
 
         <activity android:name="com.codefusiongroup.gradshub.main.postcomments.PostCommentActivity"></activity>
 
-       <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
+        <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
 
         <activity android:name="com.codefusiongroup.gradshub.main.home.FeedListActivity"></activity>
-
+        <!-- ======================================================================== -->
 
     </application>
 

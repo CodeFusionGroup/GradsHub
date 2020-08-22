@@ -1,5 +1,7 @@
 package com.codefusiongroup.gradshub.main.eventsSchedule;
 
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.main.eventsSchedule.ScheduleListFragment.OnScheduleListFragmentInteractionListener;
+import com.codefusiongroup.gradshub.main.mygroups.MyGroupsProfileFragment;
 import com.codefusiongroup.gradshub.model.Schedule;
 
 import java.util.ArrayList;
@@ -28,26 +31,38 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
     private HashMap<String, Boolean> userPreviouslyVotedEvents = new HashMap<>();
     private HashMap<String, Boolean> userCurrentlyVotedEvents = new HashMap<>();
 
-    private final ScheduleListFragment.OnScheduleListFragmentInteractionListener mListener;
+    private ArrayList<String> userPreviouslyFavouredEvents = new ArrayList<>();
+    private ArrayList<String> userCurrentlyFavouredEvents = new ArrayList<>();
 
+    private final ScheduleListFragment.OnScheduleListFragmentInteractionListener mListener;
 
     private OnScheduleItemVotedListener onScheduleItemVotedListener;
     interface OnScheduleItemVotedListener {
         void onScheduleItemVoted(Schedule item, Boolean value);
     }
 
+
+    private OnScheduleItemFavouredListener onScheduleItemFavouredListener;
+    interface OnScheduleItemFavouredListener {
+        void onScheduleItemFavoured(Schedule item);
+    }
+
+
     public ScheduleListRecyclerViewAdapter(List<Schedule> items, OnScheduleListFragmentInteractionListener listener,
-                                           OnScheduleItemVotedListener onScheduleItemVotedListener) {
+                                           OnScheduleItemVotedListener onScheduleItemVotedListener,
+                                           OnScheduleItemFavouredListener onScheduleItemFavouredListener) {
         mValues = items;
         mListener = listener;
         mValuesFull = new ArrayList<>(mValues);
         this.onScheduleItemVotedListener = onScheduleItemVotedListener;
+        this.onScheduleItemFavouredListener = onScheduleItemFavouredListener;
     }
 
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_schedule_item, parent, false);
         return new ViewHolder(view);
     }
@@ -63,14 +78,34 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         holder.mTimeZoneView.setText(mValues.get(position).getTimezone());
         holder.mDateView.setText(mValues.get(position).getDate());
         holder.mPlaceView.setText(mValues.get(position).getPlace());
-
         holder.mVotesCountView.setText( String.valueOf( mValues.get(position).getVotesCount() ) );
 
-        holder.mUpVoteBtnView.setOnClickListener(v -> {
-            holder.mItem = mValues.get(position);
+        userPreviouslyVotedEvents = ScheduleListFragment.getUserPreviouslyVotedEvents();
+        userPreviouslyFavouredEvents = ScheduleListFragment.getUserPreviouslyFavouredEvents();
 
-            userPreviouslyVotedEvents = ScheduleListFragment.getUserPreviouslyVotedEvents();
+
+        // TODO: fix logic for highlighting user's already favoured events
+//        if ( userPreviouslyFavouredEvents != null ) {
+//
+//            for (String eventId: userPreviouslyFavouredEvents) {
+//
+//                if ( eventId.equals(holder.mItem.getId()) ) {
+//                    //System.out.println("itemId: "+itemId+", eventId: "+eventId);
+//                    //Log.i("itemId", itemId);
+//                    holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
+//                    holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
+//                    break;
+//                }
+//
+//            }
+//
+//        }
+
+
+        holder.mUpVoteBtnView.setOnClickListener(v -> {
+
             userCurrentlyVotedEvents = ScheduleListFragment.getUserCurrentlyVotedEvents();
+            holder.mItem = mValues.get(position);
 
             if ( userPreviouslyVotedEvents != null && userPreviouslyVotedEvents.containsKey(holder.mItem.getId()) ) {
                 Boolean value = userPreviouslyVotedEvents.get(holder.mItem.getId());
@@ -96,10 +131,9 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
 
 
         holder.mDownVoteBtnView.setOnClickListener(v -> {
-            holder.mItem = mValues.get(position);
 
-            userPreviouslyVotedEvents = ScheduleListFragment.getUserPreviouslyVotedEvents();
             userCurrentlyVotedEvents = ScheduleListFragment.getUserCurrentlyVotedEvents();
+            holder.mItem = mValues.get(position);
 
             if ( userPreviouslyVotedEvents != null && userPreviouslyVotedEvents.containsKey(holder.mItem.getId()) ) {
                 Boolean value = userPreviouslyVotedEvents.get(holder.mItem.getId());
@@ -124,6 +158,30 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         });
 
 
+        holder.mFavouriteBtnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                userCurrentlyFavouredEvents = ScheduleListFragment.getUserCurrentlyFavouredEvents();
+
+                if ( userPreviouslyFavouredEvents != null && userPreviouslyFavouredEvents.contains(holder.mItem.getId()) ||
+                        userCurrentlyFavouredEvents != null && userCurrentlyFavouredEvents.contains(holder.mItem.getId()) ) {
+                    Toast.makeText(v.getContext(), "already favoured event.", Toast.LENGTH_SHORT).show();
+                }
+
+                else {
+
+                    onScheduleItemFavouredListener.onScheduleItemFavoured(holder.mItem);
+                    Toast.makeText(v.getContext(), "favoured event", Toast.LENGTH_SHORT).show();
+                    holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
+                    holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
+
+                }
+
+            }
+        });
+
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,6 +190,7 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
                 }
             }
         });
+
 
     }
 
@@ -153,6 +212,7 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         public final ImageButton mUpVoteBtnView;
         public final ImageButton mDownVoteBtnView;
         public final TextView mVotesCountView;
+        public final ImageButton mFavouriteBtnView;
         public Schedule mItem;
 
 
@@ -167,6 +227,7 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
             mUpVoteBtnView = view.findViewById(R.id.upVoteBtn);
             mDownVoteBtnView = view.findViewById(R.id.downVoteBtn);
             mVotesCountView = view.findViewById(R.id.votesCountTV);
+            mFavouriteBtnView = view.findViewById(R.id.favouriteBtn);
         }
 
     }
@@ -210,5 +271,6 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         }
         return results;
     }
+
 
 }

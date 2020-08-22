@@ -1,7 +1,6 @@
 package com.codefusiongroup.gradshub.main.eventsSchedule;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,21 +32,9 @@ import com.codefusiongroup.gradshub.network.NetworkRequestQueue;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 
 public class ScheduleListFragment extends Fragment {
@@ -56,15 +43,14 @@ public class ScheduleListFragment extends Fragment {
     private View view;
 
     private User user;
-    private ArrayList<Schedule> schedules = new ArrayList<>();
-
     private ScheduleListRecyclerViewAdapter adapter;
 
-    HashMap<String, Integer> eventsVotesCounts = new HashMap<>();
-
+    private ArrayList<Schedule> schedules = new ArrayList<>();
     // hash maps store events IDs as keys and votes as booleans values
     private static HashMap<String, Boolean> userPreviouslyVotedEvents = new HashMap<>();
     private static HashMap<String, Boolean> userCurrentlyVotedEvents = new HashMap<>();
+
+    private HashMap<String, Integer> eventsVotesCounts = new HashMap<>();
 
     // lists store events IDs that have been favoured by user
     private static ArrayList<String> userPreviouslyFavouredEvents = new ArrayList<>();
@@ -86,6 +72,12 @@ public class ScheduleListFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         user = mainActivity.user;
 
+        //getUserFavouredEvents();
+
+        if (mainActivity.getScheduleList() != null) {
+            schedules = mainActivity.getScheduleList();
+        }
+
     }
 
 
@@ -102,140 +94,15 @@ public class ScheduleListFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_circular);
         progressBar.setVisibility(View.VISIBLE);
 
-        readScheduleFromFile();
+        getUserFavouredEvents();
 
         getEventVotesCount();
-
-        //getUserFavouredEvents();
 
         getUserVotedEvents();
 
         onScheduleItemVotedListener = (item, value) -> userCurrentlyVotedEvents.put(item.getId(), value);
 
         onScheduleItemFavouredListener = (item) -> userCurrentlyFavouredEvents.add(item.getId());
-
-    }
-
-
-    // this method gets schedule from website and writes the schedules to a file (Schedule-data.txt)
-    // NOTE: method is not called anywhere yet
-    private void requestSchedule() {
-
-        try {
-
-            Document document = Jsoup.connect("https://github.com/abhshkdz/ai-deadlines/blob/gh-pages/_data/conferences.yml").get();
-            Elements scheduleData = document.getElementsByTag("tr");
-
-            // Create a new file
-            File file = new File("Schedule-data.txt");
-
-            // File writer for the new file
-            FileWriter fileWriter = new FileWriter("Schedule-data.txt");
-            int count = 0;
-            for( Element data : scheduleData) {
-                count++;
-                if(count < 3) {
-                    continue;
-                }
-                fileWriter.write(data.text());
-                //fileWriter.write(System.lineSeparator()); // lineSeparator() giving error
-            }
-            fileWriter.close();
-
-            // Parse the file
-            FileReader fileReader = new FileReader("Schedule-data.txt");
-            Scanner scanner = new Scanner(fileReader);
-
-            while(scanner.hasNext()) {
-                String scanLine = scanner.nextLine();
-                if(scanLine.length() == 0) {
-                    continue;
-                }
-
-                System.out.println(scanLine);
-            }
-            scanner.close();
-
-
-        } catch (IOException e) {
-            System.out.println("Error connecting to url");
-            e.printStackTrace();
-        }
-
-    }
-
-
-    private void readScheduleFromFile() {
-
-        schedules.clear(); // avoid duplicate elements in recycler view
-        StringBuilder contents = new StringBuilder();
-        InputStream is = null;
-        BufferedReader reader = null;
-
-        try {
-            AssetManager am = requireActivity().getAssets();
-            is = am.open("Schedule-data.txt");
-            reader = new BufferedReader(new InputStreamReader(is));
-            contents = new StringBuilder(reader.readLine());
-            String line;
-
-            while ( (line = reader.readLine() ) != null) {
-                contents.append('\n').append(line);
-
-            }
-
-            // temp holds all the schedules of each conference
-            String[] temp = contents.toString().split("\n\n");
-
-            // from temp we take each item and form an object of type Schedule
-            for (String s : temp) {
-
-                String title = null, id = null, link = null, deadline = null, timezone = null, date = null, place = null;
-                String[] scheduleItem = s.split("\n");
-
-                for (String value : scheduleItem) {
-
-                    // select only relevant parts of the schedule item
-                    String substring = value.substring(value.indexOf(":") + 2); // for title, id and link
-                    if (value.startsWith("- title")) {
-                        title = substring;
-                    } else if (value.startsWith("id")) {
-                        id = substring;
-                    } else if (value.startsWith("link")) {
-                        link = substring;
-                    } else if (value.startsWith("deadline")) {
-                        deadline = value;
-                    } else if (value.startsWith("timezone")) {
-                        timezone = value;
-                    } else if (value.startsWith("date")) {
-                        date = value;
-                    } else if (value.startsWith("place")) {
-                        place = value;
-                    }
-                }
-                schedules.add(new Schedule(id, title, link, deadline, timezone, date, place));
-            }
-
-
-        } catch (final Exception e) {
-            e.printStackTrace();
-
-        } finally {
-            // releases system resources associated with this stream and reader
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ignored) {
-                }
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {
-                }
-            }
-
-        }
 
     }
 
@@ -392,7 +259,7 @@ public class ScheduleListFragment extends Fragment {
 
                     JSONObject eventJO = (JSONObject)eventsJA.get(i);
                     String event_id = eventJO.getString("EVENT_ID");
-                    Boolean user_vote = Boolean.parseBoolean(eventJO.getString("USER_EVENT_LIKE"));
+                    Boolean user_vote = Boolean.parseBoolean(eventJO.getString("EVENT_VOTE"));
                     userPreviouslyVotedEvents.put(event_id, user_vote);
 
                 }
@@ -421,7 +288,7 @@ public class ScheduleListFragment extends Fragment {
 
     private void getUserFavouredEvents() {
 
-        String url = "https://gradshub.herokuapp.com/api/Event/retrieveuserfavouredevents.php";
+        String url = "https://gradshub.herokuapp.com/api/User/retrievefavourites.php";
         HashMap<String, String> params = new HashMap<>();
 
         params.put("user_id", user.getUserID());
@@ -444,7 +311,7 @@ public class ScheduleListFragment extends Fragment {
                     }
                 });
         // Access the Global(App) RequestQueue
-        NetworkRequestQueue.getInstance( requireActivity().getApplicationContext() ).addToRequestQueue(jsonObjectRequest);
+        NetworkRequestQueue.getInstance(requireActivity().getApplicationContext()).addToRequestQueue(jsonObjectRequest);
 
     }
 
@@ -453,7 +320,7 @@ public class ScheduleListFragment extends Fragment {
 
         try {
 
-            userPreviouslyFavouredEvents.clear(); // clear to avoid duplicates
+            userPreviouslyFavouredEvents.clear(); // clear in case activity is recreated due to configuration changes
             String success = response.getString("success");
 
             switch (success) {
@@ -462,9 +329,9 @@ public class ScheduleListFragment extends Fragment {
                 case "1":
 
                     JSONArray favouredEventsJA = response.getJSONArray("message");
-                    for(int i = 0 ; i < favouredEventsJA.length(); i++) {
+                    for (int i = 0; i < favouredEventsJA.length(); i++) {
 
-                        JSONObject favouredEventJO = (JSONObject)favouredEventsJA.get(i);
+                        JSONObject favouredEventJO = (JSONObject) favouredEventsJA.get(i);
                         String event_id = favouredEventJO.getString("EVENT_ID");
                         userPreviouslyFavouredEvents.add(event_id);
                     }
@@ -599,5 +466,6 @@ public class ScheduleListFragment extends Fragment {
     public interface OnScheduleListFragmentInteractionListener {
         void onScheduleListFragmentInteraction(Schedule item);
     }
+
 
 }

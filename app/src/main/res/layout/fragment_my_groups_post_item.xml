@@ -26,6 +26,7 @@
             android:layout_marginRight="16dp"
             android:text="2020 May 25" />
 
+
         <TextView
             android:id="@+id/postCreatorNameTV"
             android:layout_width="match_parent"
@@ -38,6 +39,7 @@
             android:layout_marginRight="16dp"
             android:text="Kamo Kamo"
             android:textAppearance="?attr/textAppearanceListItem" />
+
 
         <TextView
             android:id="@+id/postSubjectTV"
@@ -65,7 +67,27 @@
             android:layout_marginBottom="4dp"
             android:autoLink="web"
             android:linksClickable="true"
-            android:text="description link or pdf attachment" />
+            android:visibility="visible"/>
+
+
+        <TextView
+            android:id="@+id/pdfDownloadTV"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/postSubjectTV"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:drawableLeft="@drawable/ic_pdf"
+            android:drawableStart="@drawable/ic_pdf"
+            android:text="DOWNLOAD PDF"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"/>
+
 
         <ImageButton
             android:id="@+id/postLikeBtn"
@@ -74,11 +96,12 @@
             android:layout_below="@+id/postDescriptionTV"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="35dp"
             android:layout_marginBottom="4dp"
-            android:background="@color/colorWhite"
+            android:background="@null"
             android:contentDescription="like post"
             android:src="@drawable/ic_thumb_up" />
+
 
         <TextView
             android:id="@+id/postLikesCountTV"
@@ -87,7 +110,7 @@
             android:layout_below="@+id/postDescriptionTV"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="35dp"
             android:layout_marginBottom="4dp"
             android:layout_toEndOf="@+id/postLikeBtn"
             android:layout_toRightOf="@+id/postLikeBtn"
@@ -101,13 +124,14 @@
             android:layout_below="@+id/postDescriptionTV"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="35dp"
             android:layout_marginBottom="4dp"
             android:layout_toEndOf="@+id/postLikesCountTV"
             android:layout_toRightOf="@+id/postLikesCountTV"
-            android:background="@color/colorWhite"
+            android:background="@null"
             android:contentDescription="comment about post"
             android:src="@drawable/ic_insert_comment" />
+
 
         <TextView
             android:id="@+id/postCommentsCountTV"
@@ -116,7 +140,7 @@
             android:layout_below="@+id/postDescriptionTV"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="35dp"
             android:layout_marginBottom="4dp"
             android:layout_toEndOf="@+id/postCommentBtn"
             android:layout_toRightOf="@+id/postCommentBtn"
@@ -125,13 +149,13 @@
 
         <Button
             android:id="@+id/commentBtn"
-            android:layout_width="135dp"
-            android:layout_height="45dp"
+            android:layout_width="130dp"
+            android:layout_height="40dp"
             android:layout_below="@+id/postDescriptionTV"
-            android:layout_alignRight="@id/postDescriptionTV"
+            android:layout_alignRight="@id/postDateTV"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="28dp"
             android:layout_marginBottom="4dp"
             android:drawableStart="@drawable/ic_insert_comment"
             android:drawableLeft="@drawable/ic_insert_comment"

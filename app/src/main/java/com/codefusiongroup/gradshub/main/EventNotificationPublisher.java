@@ -1,4 +1,4 @@
-package com.example.gradshub.main;
+package com.codefusiongroup.gradshub.main;
 
 import android.app.Notification;
 import android.content.BroadcastReceiver;

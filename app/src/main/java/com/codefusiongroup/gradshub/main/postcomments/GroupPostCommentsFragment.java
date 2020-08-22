@@ -77,12 +77,28 @@ public class GroupPostCommentsFragment extends Fragment {
         TextView postDateTV = view.findViewById(R.id.postDateTV);
         TextView postCreatorTV = view.findViewById(R.id.postCreatorNameTV);
         TextView postSubjectTV = view.findViewById(R.id.postSubjectTV);
+
         TextView postDescriptionTV = view.findViewById(R.id.postDescriptionTV);
+        TextView pdfDownloadTV = view.findViewById(R.id.pdfDownloadTV);
 
         postDateTV.setText(post.getPostDate());
         postCreatorTV.setText(post.getPostCreator());
         postSubjectTV.setText(post.getPostSubject());
-        postDescriptionTV.setText(post.getPostDescription());
+
+        if(post.getPostDescription().startsWith("https://firebasestorage")) {
+            pdfDownloadTV.setVisibility(View.VISIBLE);
+            pdfDownloadTV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(requireActivity(), "Downloading file...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            postDescriptionTV.setVisibility(View.VISIBLE);
+            postDescriptionTV.setText(post.getPostDescription());
+        }
+
 
         getGroupPostComments(post);
         progressBar.setVisibility(View.VISIBLE);
