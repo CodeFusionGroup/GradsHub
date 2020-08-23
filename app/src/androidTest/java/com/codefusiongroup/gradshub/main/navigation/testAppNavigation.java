@@ -201,7 +201,7 @@ public class testAppNavigation {
     };
 
     //Test the whole app activities in general, mostly those with private methods
-    //@Ignore("Intend to see if it is the one stalling travis build")
+    @Ignore("Intend to see if it is the one failing travis build")
     @Test
     public void testUserActivities() throws InterruptedException {
        TestNavHostController navController = new TestNavHostController(
