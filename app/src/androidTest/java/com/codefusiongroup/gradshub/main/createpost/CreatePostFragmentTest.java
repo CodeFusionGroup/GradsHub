@@ -49,8 +49,7 @@ public class CreatePostFragmentTest {
         assertNotNull(view2);
         View view3 = Fragment.getView().findViewById(R.id.descriptionTV);
         assertNotNull(view3);
-        View view4 = Fragment.getView().findViewById(R.id.postDescriptionContainer);
-        assertNotNull(view4);
+
         View view5 = Fragment.getView().findViewById(R.id.postDescriptionET);
         assertNotNull(view5);
         View view6 = Fragment.getView().findViewById(R.id.postBtn);
