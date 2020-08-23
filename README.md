@@ -37,14 +37,14 @@ A few things you can do with GradsHub:
 ## Developers
 
 - User Interface:
-    - @[Rekgotso](https://github.com/Rekgotso)
+    - [@Rekgotso](https://github.com/Rekgotso)
 - Front-End
-    - @[bakang-dev](https://github.com/bakang-dev)
+    - [@bakang-dev](https://github.com/bakang-dev)
 - Back-End
-    - @[tb0se](https://github.com/tb0se)
-    - @[sizxle](https://github.com/sizxle)
+    - [@tb0se](https://github.com/tb0se)
+    - [@sizxle](https://github.com/sizxle)
 - Testing(Android)
-    - @[Cogeta](https://github.com/BongumusaSizwe)
+    - [@Cogeta](https://github.com/BongumusaSizwe)
     
 
 **To find out more, please visit the [GradsHub wiki][wiki].**
