@@ -100,12 +100,10 @@ public class RegisterFragmentTest {
             navController.setGraph(R.navigation.authentication_navigation);
             FragmentScenario<RegisterFragment> fragment = FragmentScenario.launchInContainer(RegisterFragment.class);
             fragment.onFragment(fragment1 -> Navigation.setViewNavController(fragment1.requireView(), navController));
-            ViewInteraction view = onView(withId(R.id.firstNameET));
-            view.perform(ViewActions.typeText("f_name"));
-            ViewInteraction view1 = onView(withId(R.id.lastNameET));
-            view1.perform(ViewActions.typeText("lname"));
-            ViewInteraction view2 = onView(withId(R.id.emailET));
-            view2.perform(ViewActions.typeText("tester141414fhfvbd@gmail.com"));
+
+            onView(withId(R.id.firstNameET)).perform(ViewActions.typeText("f_name"));
+            onView(withId(R.id.lastNameET)).perform(ViewActions.typeText("lname"));
+            onView(withId(R.id.emailET)).perform(ViewActions.typeText("tester141414fhfvbd@gmail.com"));
             closeSoftKeyboard();
             onView(withId(R.id.phoneNumberET)).perform(typeText(String.valueOf("123456789")));
             closeSoftKeyboard();
