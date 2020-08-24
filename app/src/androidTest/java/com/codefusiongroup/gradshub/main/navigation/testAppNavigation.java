@@ -223,7 +223,7 @@ public class testAppNavigation {
         //Click on profile option
         onView(withText("Profile"))
                 .perform(click());
-        /*
+
 
         openDrawer();
         //Must Add a create group interaction
@@ -248,7 +248,7 @@ public class testAppNavigation {
 
        testTaskScheduler();
 
-       testShareInviteCode();*/
+       testShareInviteCode();
 
     }
 
