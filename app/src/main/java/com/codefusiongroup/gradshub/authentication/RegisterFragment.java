@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -94,6 +95,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 
 
     // this part of the code allows us to create a spinner with a drop down list of items we want to display to the user to select.
+    @VisibleForTesting
     private void initialiseSpinner(Spinner spinner) {
 
         // style and populate spinner.
@@ -248,7 +250,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
         return true;
     }
 
-
+    @VisibleForTesting
     private void registerUser(User user) {
 
         String url = "https://gradshub.herokuapp.com/api/User/register.php";
@@ -283,7 +285,7 @@ public class RegisterFragment extends Fragment implements AdapterView.OnItemSele
 
     }
 
-
+    @VisibleForTesting
     private void serverRegisterUserResponse(JSONObject response) {
 
         try {
