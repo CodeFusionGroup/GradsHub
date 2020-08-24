@@ -39,13 +39,13 @@ public class RegisterFragmentTest {
 
     private FragmentRegisterActivity mActivity = null;
 
-    @Before
+    /*@Before
     public void setUp() throws Exception {
         mActivity = mActivityTestRule.getActivity();
-    }
+    }*/
 
     //Register screen can succesfully launch
-    @Test
+ /*   @Test
     public void RegisterFragmentLaunched()
     {
         RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.registerfragment_testing_test);
@@ -85,14 +85,14 @@ public class RegisterFragmentTest {
         View view8 = Fragment.getView().findViewById(R.id.submitBtn);
         assertNotNull(view8);
     }
-
+*/
     //Register user
     /* Test ignored because it passes locally, but failes on travis. The test passes
     on travis when there is a scroll view present in the register screen.
      */
-    @Ignore
+    //@Ignore
     @Test
-    public void testRegisterUser(){
+    public void testRegisterUser() throws InterruptedException {
         //try {
             //Create a TestNavHostController
             TestNavHostController navController = new TestNavHostController(
@@ -120,6 +120,7 @@ public class RegisterFragmentTest {
             ViewInteraction view6 = onView(withId(R.id.submitBtn));
             view6.perform(click());
             //onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
+            Thread.sleep(3000);
 
         //}
         //catch (PerformException e) {
