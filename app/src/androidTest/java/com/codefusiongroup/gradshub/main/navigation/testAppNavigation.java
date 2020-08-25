@@ -2,15 +2,20 @@ package com.codefusiongroup.gradshub.main.navigation;
 
 import android.app.Instrumentation;
 import android.content.Intent;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.ActivityResultMatchers;
 import androidx.test.espresso.contrib.DrawerActions;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.rule.ActivityTestRule;
 
 import com.codefusiongroup.gradshub.R;
@@ -25,6 +30,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.Random;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onData;
@@ -94,24 +101,16 @@ public class testAppNavigation {
                 .perform(DrawerActions.open());
     }
 
-    private void createPost(){
-
+    private void createPost() throws InterruptedException {
+        openDrawer();
         onView(withText("My Groups"))
                 .perform(click());
 
-        try {
-            Thread.sleep(2500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        waitForResources(2500);
 
         onView(withText("The_Private_Group"))
                 .perform(click());
-        try {
-            Thread.sleep(2500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        waitForResources(2500);
 
         onView(withId(R.id.fab)).perform(click());
 
@@ -130,26 +129,36 @@ public class testAppNavigation {
         closeSoftKeyboard();
         //valid operation
 
-        //TODO: The create post button has some issues
-       /* onView(withId(R.id.postBtn)).perform(click());
+       onView(withId(R.id.postBtn)).perform(click());
         //wait for server response
-        try {
-            Thread.sleep(2500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-/*
-        onData(withItemContent("This post is for tests"))
-                .onChildView(withText("COMMENTS")).perform(click());
+        waitForResources(2500);
+        pressBack();
 
-        try {
-            Thread.sleep(2500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-  */
     }
 
+
+    private void tesPostComments() throws InterruptedException {
+
+        //Like post first
+        onView(withText("Tutoring Science"))
+                .perform(click());
+        waitForResources(2500);
+        onView(withId(R.id.postLikeBtn)).perform(click());
+
+        onView(withId(R.id.commentBtn)).perform(click());
+        waitForResources(2500);
+
+        //Post Our comment
+        Random rd = new Random();
+        String comment =  "We are" + Integer.toString(rd.nextInt()) + "% Happy";
+
+        onView(withId(R.id.typeCommentET)).perform(typeText(comment));
+        onView(withId(R.id.submitCommentBtn)).perform(click());
+
+        waitForResources(3000);
+        closeSoftKeyboard();
+        pressBack();
+    }
 
     //Matcher helper for the testTaskScheduler below
     private Matcher<Object> withItemContent(String s) {
@@ -158,9 +167,16 @@ public class testAppNavigation {
     }
     //TODO: Update this test, after it has been fully implemented
 
-    private void testTaskScheduler(){
+    private static final int value= 1;
+    private void testTaskScheduler() throws InterruptedException {
+
+        openDrawer();
         onView(withText("Schedule")).perform(click());
-        //onData(withItemContent("3DV")).perform(click());
+        waitForResources(3000);
+        //This will upvote any first event. TODO: Update this test when implementation of Task Scheduler is finished
+        onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.upVoteBtn)));
+        //Star the event
+        onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.favouriteBtn)));
     }
 
     private void testShareInviteCode() {
@@ -196,10 +212,9 @@ public class testAppNavigation {
     };
 
     //Test the whole app activities in general, mostly those with private methods
-    @Ignore("Intend to see if it is the one stalling travis build")
+    //@Ignore("Intend to see if it is the one failing travis build")
     @Test
-    public void testUserActivities()
-    {
+    public void testUserActivities() throws InterruptedException {
        TestNavHostController navController = new TestNavHostController(
                 ApplicationProvider.getApplicationContext());
         navController.setGraph(R.navigation.authentication_navigation);
@@ -212,29 +227,21 @@ public class testAppNavigation {
         closeSoftKeyboard();
         onView(withId(R.id.loginBtn))
                 .perform(click());
-
-        //Wait for 1 minute to  log in, else the log in fails due to slow network!!!
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        //Wait for 12 seconds to  log in, else the log in fails due to slow network!!!
+        waitForResources(12000);
+        //waitForResources(6000);
         openDrawer();
         //Click on profile option
         onView(withText("Profile"))
                 .perform(click());
+
 
         openDrawer();
         //Must Add a create group interaction
         onView(withText("Search Groups"))
                 .perform(click());
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        waitForResources(3000);
 
         openDrawer();
 
@@ -246,28 +253,42 @@ public class testAppNavigation {
 
         createGroupTest();
 
-        //TODO: There create post button has some issues
-        openDrawer();
-
+        //NOTE: This two methods depend on each other, so must strictly be in this order
         createPost();
+        tesPostComments();
 
-        openDrawer();
+       testTaskScheduler();
 
-        testTaskScheduler();
-
-
-
-        testShareInviteCode();
-
+       testShareInviteCode();
 
     }
 
     //TODO: Implement a test for a logout button
-    /*@Ignore("Implement login button later")
-    @Test
-    public void testLogOutButton(){
 
+
+    private void waitForResources(long millis) throws InterruptedException {
+            Thread.sleep(millis);
     }
-    */
 }
 
+class MyViewAction{
+    static ViewAction clickChildWithId(final int id){
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return null;
+            }
+
+            @Override
+            public String getDescription() {
+                return "Click on a child view with a specific id.";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                View v = view.findViewById(id);
+                v.performClick();
+            }
+        };
+    }
+}

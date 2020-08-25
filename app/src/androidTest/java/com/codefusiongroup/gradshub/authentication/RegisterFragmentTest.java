@@ -90,9 +90,10 @@ public class RegisterFragmentTest {
     /* Test ignored because it passes locally, but failes on travis. The test passes
     on travis when there is a scroll view present in the register screen.
      */
-    @Ignore
+
+    //@Ignore
     @Test
-    public void testRegisterUser(){
+    public void testRegisterUser() throws InterruptedException {
         //try {
             //Create a TestNavHostController
             TestNavHostController navController = new TestNavHostController(
@@ -100,12 +101,10 @@ public class RegisterFragmentTest {
             navController.setGraph(R.navigation.authentication_navigation);
             FragmentScenario<RegisterFragment> fragment = FragmentScenario.launchInContainer(RegisterFragment.class);
             fragment.onFragment(fragment1 -> Navigation.setViewNavController(fragment1.requireView(), navController));
-            ViewInteraction view = onView(withId(R.id.firstNameET));
-            view.perform(ViewActions.typeText("f_name"));
-            ViewInteraction view1 = onView(withId(R.id.lastNameET));
-            view1.perform(ViewActions.typeText("lname"));
-            ViewInteraction view2 = onView(withId(R.id.emailET));
-            view2.perform(ViewActions.typeText("tester141414fhfvbd@gmail.com"));
+
+            onView(withId(R.id.firstNameET)).perform(ViewActions.typeText("f_name"));
+            onView(withId(R.id.lastNameET)).perform(ViewActions.typeText("lname"));
+            onView(withId(R.id.emailET)).perform(ViewActions.typeText("tester141414fhfvbd@gmail.com"));
             closeSoftKeyboard();
             onView(withId(R.id.phoneNumberET)).perform(typeText(String.valueOf("123456789")));
             closeSoftKeyboard();
@@ -115,13 +114,12 @@ public class RegisterFragmentTest {
             view4.perform(ViewActions.typeText("aBC123xyZ!"));
             closeSoftKeyboard();
             ViewInteraction view5 = onView(withId(R.id.confirmNewPasswordET));
-            view5.perform(ViewActions.typeText("aBC123xyZ!"));
+            view5.perform(scrollTo(),ViewActions.typeText("aBC123xyZ!"));
             closeSoftKeyboard();
-
-
-            ViewInteraction view6 = onView(withId(R.id.submitBtn));
-            view6.perform(click());
-            //onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
+            //ViewInteraction view6 = onView(withId(R.id.submitBtn));
+            //view6.perform(click());
+            onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
+            Thread.sleep(3000);
 
         //}
         //catch (PerformException e) {
