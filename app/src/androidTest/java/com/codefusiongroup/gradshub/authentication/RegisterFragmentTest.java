@@ -90,9 +90,10 @@ public class RegisterFragmentTest {
     /* Test ignored because it passes locally, but failes on travis. The test passes
     on travis when there is a scroll view present in the register screen.
      */
-    @Ignore
+
+    //@Ignore
     @Test
-    public void testRegisterUser(){
+    public void testRegisterUser() throws InterruptedException {
         //try {
             //Create a TestNavHostController
             TestNavHostController navController = new TestNavHostController(
@@ -113,13 +114,12 @@ public class RegisterFragmentTest {
             view4.perform(ViewActions.typeText("aBC123xyZ!"));
             closeSoftKeyboard();
             ViewInteraction view5 = onView(withId(R.id.confirmNewPasswordET));
-            view5.perform(ViewActions.typeText("aBC123xyZ!"));
+            view5.perform(scrollTo(),ViewActions.typeText("aBC123xyZ!"));
             closeSoftKeyboard();
-
-
-            ViewInteraction view6 = onView(withId(R.id.submitBtn));
-            view6.perform(click());
-            //onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
+            //ViewInteraction view6 = onView(withId(R.id.submitBtn));
+            //view6.perform(click());
+            onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
+            Thread.sleep(3000);
 
         //}
         //catch (PerformException e) {
