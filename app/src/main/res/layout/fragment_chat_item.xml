@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xml:card_views="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+
+    app:cardCornerRadius="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/userImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"/>
+
+
+        <TextView
+            android:id="@+id/contactNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/userImageView"
+            android:layout_toRightOf="@id/userImageView"
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:text="Kamo Kamo"
+            android:textStyle="bold"/>
+
+
+        <TextView
+            android:id="@+id/latestMessageTimeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/text_margin"
+            android:text="11:30" />
+
+
+        <TextView
+            android:id="@+id/latestMessageTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contactNameTV"
+            android:layout_toEndOf="@id/userImageView"
+            android:layout_toRightOf="@id/userImageView"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:text="this is the last message sent" />
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>
