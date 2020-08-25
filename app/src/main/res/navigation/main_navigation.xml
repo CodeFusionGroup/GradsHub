@@ -130,7 +130,7 @@
         android:id="@+id/chatMessagesFragment"
         android:name="com.codefusiongroup.gradshub.main.chats.ChatMessagesFragment"
         android:label="Messages"
-        tools:layout="@layout/fragment_chat_messages" />
+        tools:layout="@layout/fragment_chat_messages_list" />
 
 
     <fragment
