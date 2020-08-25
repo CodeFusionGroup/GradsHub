@@ -19,10 +19,10 @@ public class createpostUnitTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    /*@Test
+/*
+    @Test
     public void someTest(){
-
+        ClassToTest t = new ClassToTest
     }
 */
     @Test

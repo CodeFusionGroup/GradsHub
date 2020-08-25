@@ -144,8 +144,6 @@ public class testAppNavigation {
         onView(withId(R.id.typeMessageET)).perform(typeText("Hey There!"));
         closeSoftKeyboard();
         onView(withId(R.id.submitMessageBtn)).perform(click());
-        pressBack();
-
     }
 
     private void tesPostComments() throws InterruptedException {
@@ -219,6 +217,7 @@ public class testAppNavigation {
 
         onView(withText("CANCEL")).perform(click());
 
+        pressBack();
     };
 
     //Test the whole app activities in general, mostly those with private methods
