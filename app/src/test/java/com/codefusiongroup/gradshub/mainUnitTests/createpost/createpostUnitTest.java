@@ -5,11 +5,26 @@ import android.net.Uri;
 
 import com.codefusiongroup.gradshub.main.createpost.CreatePostFragment;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import static android.app.Activity.RESULT_OK;
 
 public class createpostUnitTest {
+    @Mock
+    CreatePostFragment createPostFragment;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    /*@Test
+    public void someTest(){
+
+    }
+*/
     @Test
     public void onActivityResutTest(){
         CreatePostFragment createPost = new CreatePostFragment();
@@ -19,6 +34,7 @@ public class createpostUnitTest {
         Uri uri = Uri.parse(s);
         data.setData(uri);
         createPost.onActivityResult(1,RESULT_OK,  data);
+
 
     }
 

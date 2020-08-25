@@ -238,8 +238,8 @@ public class testAppNavigation {
         onView(withId(R.id.loginBtn))
                 .perform(click());
         //Wait for 12 seconds to  log in, else the log in fails due to slow network!!!
-        //waitForResources(12000);
-        waitForResources(6000);
+        waitForResources(12000);
+        //waitForResources(6000);
 
         openDrawer();
         //Click on profile option
