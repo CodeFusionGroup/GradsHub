@@ -91,7 +91,7 @@ public class RegisterFragmentTest {
     on travis when there is a scroll view present in the register screen.
      */
 
-    @Ignore
+    //@Ignore
     @Test
     public void testRegisterUser() throws InterruptedException {
         //try {
@@ -118,9 +118,9 @@ public class RegisterFragmentTest {
             closeSoftKeyboard();
 
 
-            ViewInteraction view6 = onView(withId(R.id.submitBtn));
-            view6.perform(click());
-            //onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
+            //ViewInteraction view6 = onView(withId(R.id.submitBtn));
+            //view6.perform(click());
+            onView(ViewMatchers.withId(R.id.submitBtn)).perform(scrollTo(), ViewActions.click());
             Thread.sleep(3000);
 
         //}
