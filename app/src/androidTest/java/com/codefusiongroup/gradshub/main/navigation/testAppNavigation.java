@@ -136,6 +136,17 @@ public class testAppNavigation {
 
     }
 
+    private void chatTest() throws InterruptedException {
+        openDrawer();
+        onView(withText("Direct Messages")).perform(click());
+        onView(withText("Kamo Kamo")).perform(click());
+        waitForResources(2000);
+        onView(withId(R.id.typeMessageET)).perform(typeText("Hey There!"));
+        closeSoftKeyboard();
+        onView(withId(R.id.submitMessageBtn)).perform(click());
+        pressBack();
+
+    }
 
     private void tesPostComments() throws InterruptedException {
 
@@ -167,7 +178,6 @@ public class testAppNavigation {
     }
     //TODO: Update this test, after it has been fully implemented
 
-    private static final int value= 1;
     private void testTaskScheduler() throws InterruptedException {
 
         openDrawer();
@@ -228,8 +238,9 @@ public class testAppNavigation {
         onView(withId(R.id.loginBtn))
                 .perform(click());
         //Wait for 12 seconds to  log in, else the log in fails due to slow network!!!
-        waitForResources(12000);
-        //waitForResources(6000);
+        //waitForResources(12000);
+        waitForResources(6000);
+
         openDrawer();
         //Click on profile option
         onView(withText("Profile"))
@@ -260,6 +271,8 @@ public class testAppNavigation {
        testTaskScheduler();
 
        testShareInviteCode();
+
+       chatTest();
 
     }
 

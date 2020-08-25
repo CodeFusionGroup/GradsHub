@@ -1,3 +1,0 @@
-ignore:
-  - "/app/src/main/java/com/codefusiongroup/gradshub/network"  # ignore folders and all its contents
-  - "/app/src/main/java/com/codefusiongroup/gradshub/main/home/"  #ignore this folder for now
