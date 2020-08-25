@@ -115,7 +115,7 @@
     <fragment
         android:id="@+id/groupPostCommentsFragment"
         android:name="com.codefusiongroup.gradshub.main.postcomments.GroupPostCommentsFragment"
-        android:label="comments"
+        android:label="Comments"
         tools:layout="@layout/fragment_group_post_comments" />
 
 
@@ -124,5 +124,24 @@
         android:name="com.codefusiongroup.gradshub.main.eventsSchedule.ScheduleListFragment"
         android:label="Schedule"
         tools:layout="@layout/fragment_schedule_item_list" />
+
+
+    <fragment
+        android:id="@+id/chatMessagesFragment"
+        android:name="com.codefusiongroup.gradshub.main.chats.ChatMessagesFragment"
+        android:label="Messages"
+        tools:layout="@layout/fragment_chat_messages" />
+
+
+    <fragment
+        android:id="@+id/chatsListFragment"
+        android:name="com.codefusiongroup.gradshub.main.chats.ChatsListFragment"
+        android:label="Open Chats"
+        tools:layout="@layout/fragment_chats_list" >
+
+        <action
+            android:id="@+id/action_chatsListFragment_to_chatMessagesFragment"
+            app:destination="@id/chatMessagesFragment" />
+    </fragment>
 
 </navigation>

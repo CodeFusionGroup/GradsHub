@@ -24,9 +24,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.main.availablegroups.AvailableGroupsListFragment;
+import com.codefusiongroup.gradshub.main.chats.ChatsListFragment;
 import com.codefusiongroup.gradshub.main.eventsSchedule.ScheduleListFragment;
 import com.codefusiongroup.gradshub.main.mygroups.MyGroupsListFragment;
 import com.codefusiongroup.gradshub.main.mygroups.MyGroupsProfileFragment;
+import com.codefusiongroup.gradshub.model.Chat;
 import com.codefusiongroup.gradshub.model.Post;
 import com.codefusiongroup.gradshub.model.ResearchGroup;
 import com.codefusiongroup.gradshub.model.Schedule;
@@ -71,7 +73,8 @@ import java.util.Scanner;
 public class MainActivity extends AppCompatActivity implements MyGroupsListFragment.OnMyGroupsListFragmentInteractionListener,
         AvailableGroupsListFragment.OnAvailableGroupsListFragmentInteractionListener,
         MyGroupsProfileFragment.OnPostsListFragmentInteractionListener,
-        ScheduleListFragment.OnScheduleListFragmentInteractionListener {
+        ScheduleListFragment.OnScheduleListFragmentInteractionListener,
+        ChatsListFragment.OnChatsListFragmentInteractionListener {
 
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -186,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.feedListFragment, R.id.profileFragment, R.id.myGroupsListFragment, R.id.createGroupFragment,
-                R.id.availableGroupsListFragment, R.id.scheduleFragment).setDrawerLayout(drawer).build();
+                R.id.availableGroupsListFragment, R.id.scheduleFragment, R.id.chatsListFragment).setDrawerLayout(drawer).build();
 
 
         // NavController is responsible for replacing the contents of the NavHost with the new destination.
@@ -292,6 +295,17 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         }
 
         Toast.makeText(this, "selected: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onChatsListFragmentInteraction(Chat item) {
+
+        Bundle bundle = new Bundle();
+        bundle.putString("contact_name", item.getContactName());
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_chatsListFragment_to_chatMessagesFragment, bundle);
+
     }
 
 

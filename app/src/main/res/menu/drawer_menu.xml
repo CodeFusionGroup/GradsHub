@@ -36,10 +36,11 @@
             android:id="@+id/scheduleFragment"
             android:icon="@drawable/ic_schedule"
             android:title="Schedule" />
+
         <item
-            android:id="@+id/directMessageFragment"
+            android:id="@+id/chatsListFragment"
             android:icon="@drawable/ic_message"
-            android:title="Direct Message" />
+            android:title="Direct Messages" />
     </group>
 
 </menu>
