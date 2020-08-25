@@ -1,5 +1,6 @@
 package com.codefusiongroup.gradshub.main.createpost;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static android.app.Activity.RESULT_OK;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
@@ -49,7 +51,6 @@ public class CreatePostFragmentTest {
         assertNotNull(view2);
         View view3 = Fragment.getView().findViewById(R.id.descriptionTV);
         assertNotNull(view3);
-
         View view5 = Fragment.getView().findViewById(R.id.postDescriptionET);
         assertNotNull(view5);
         View view6 = Fragment.getView().findViewById(R.id.postBtn);
