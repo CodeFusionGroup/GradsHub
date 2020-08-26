@@ -87,10 +87,12 @@ public class ChatMessagesFragment extends Fragment {
         typeMessageET = view.findViewById(R.id.typeMessageET);
         Button sendMessageBtn = view.findViewById(R.id.sendMessageBtn);
 
+        String userID = ChatsListFragment.getUserID();
+
         chatMessagesList.clear();
-        chatMessagesList.add( new ChatMessage("62", "15:12", "what's the latest on the article?") );
+        chatMessagesList.add( new ChatMessage(userID, "15:12", "what's the latest on the article?") );
         chatMessagesList.add( new ChatMessage("20", "15:30", "only the first part on motion prediction modeling is drafted.") );
-        chatMessagesList.add( new ChatMessage("62", "16:00", "Alright cool.") );
+        chatMessagesList.add( new ChatMessage(userID, "16:00", "Alright cool.") );
         chatMessagesList.add( new ChatMessage("20", "16:15", "Will update you when it's released") );
 
 

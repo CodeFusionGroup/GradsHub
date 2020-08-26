@@ -39,7 +39,7 @@ public class ChatsListFragment extends Fragment {
 
     private ProgressBar progressBar;
     private View view;
-    private User user;
+    private static User user;
 
     private RecyclerView recyclerView;
     private ChatsListRecyclerViewAdapter adapter;
@@ -80,6 +80,11 @@ public class ChatsListFragment extends Fragment {
             recyclerView.setAdapter(adapter);
         }
 
+    }
+
+
+    public static String getUserID() {
+        return user.getUserID();
     }
 
 

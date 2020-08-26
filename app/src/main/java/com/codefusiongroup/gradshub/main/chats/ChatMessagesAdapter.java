@@ -11,7 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.main.MainActivity;
 import com.codefusiongroup.gradshub.model.ChatMessage;
+import com.codefusiongroup.gradshub.model.User;
 
 import java.util.ArrayList;
 
@@ -35,9 +37,12 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
 
+
+        String userID = ChatsListFragment.getUserID();
+
         ChatMessage message = (ChatMessage) chatMessagesList.get(position);
 
-        if (message.getMessageCreator().equals("62")) {
+        if (message.getMessageCreator().equals(userID)) {
             // if the current user id is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
         } else{

@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                         // TESTING NOTIFICATION with dummy event
                         Schedule event = new Schedule();
                         event.setTitle("Robotics");
-                        event.setDate("date: August 29, 2020"); // adjust month/date appropriately & leave formatting as it is.
+                        event.setDate("date: September 6, 2020"); // adjust month/date appropriately & leave formatting as it is.
                         event.setPlace("place: Vancouver, Canada");
                         //***************************************
 
