@@ -3,20 +3,17 @@ package com.codefusiongroup.gradshub.authentication;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.rule.ActivityTestRule;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.authentication.authtests.TestingActivity;
+import com.codefusiongroup.gradshub.authentication.login.LoginFragment;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static androidx.test.espresso.Espresso.closeSoftKeyboard;
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;

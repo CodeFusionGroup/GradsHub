@@ -1,40 +1,28 @@
 package com.codefusiongroup.gradshub.main.navigation;
 
-import android.app.Instrumentation;
-import android.content.Intent;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import androidx.navigation.testing.TestNavHostController;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.contrib.ActivityResultMatchers;
 import androidx.test.espresso.contrib.DrawerActions;
 
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.rule.ActivityTestRule;
 
 import com.codefusiongroup.gradshub.R;
-import com.codefusiongroup.gradshub.authentication.AuthanticationActivityTest;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
-import com.codefusiongroup.gradshub.authentication.LoginFragment;
-import com.codefusiongroup.gradshub.authentication.TestingActivity;
 
 import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Random;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -42,7 +30,6 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.core.internal.deps.guava.base.Preconditions.checkNotNull;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.EasyMock2Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -174,7 +161,7 @@ public class testAppNavigation {
         onView(withText("Schedule")).perform(click());
         waitForResources(3000);
         //This will upvote any first event. TODO: Update this test when implementation of Task Scheduler is finished
-        onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.upVoteBtn)));
+        //onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.upVoteBtn)));
         //Star the event
         onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.favouriteBtn)));
     }

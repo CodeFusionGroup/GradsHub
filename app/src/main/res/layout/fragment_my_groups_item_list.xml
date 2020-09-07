@@ -7,6 +7,12 @@
     android:id = "@+id/group_list_launched"
     android:layout_height="match_parent" >
 
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myGroupsList"
         android:name="com.example.gradshub.MyGroupsFragment"
@@ -15,8 +21,11 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".main.mygroups.MyGroupsListFragment"
+        tools:context=".groups.userGroups.userGroupsList.MyGroupsListFragment"
         tools:listitem="@layout/fragment_my_groups_item" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <ProgressBar
         android:id="@+id/progress_circular"
@@ -24,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone" />
+
 
 </RelativeLayout>
 

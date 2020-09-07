@@ -28,7 +28,7 @@
             android:title="@string/menu_createGroup" />
 
         <item
-            android:id="@+id/availableGroupsListFragment"
+            android:id="@+id/exploreGroupsFragment"
             android:icon="@drawable/ic_search"
             android:title="@string/menu_exploreGroup" />
 
@@ -41,6 +41,13 @@
             android:id="@+id/chatsListFragment"
             android:icon="@drawable/ic_message"
             android:title="Direct Messages" />
+
+        <item
+            android:id="@+id/usersListFragment"
+            android:icon="@drawable/ic_search"
+            android:title="Search Users" />
+
+
     </group>
 
 </menu>

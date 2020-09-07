@@ -5,7 +5,7 @@
     android:id="@+id/registerLaunched"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".authentication.RegisterFragment">
+    tools:context=".authentication.registration.RegisterFragment">
 
 
     <!-- will solve country codes for phone numbers later, below we just specify the digits allowed -->

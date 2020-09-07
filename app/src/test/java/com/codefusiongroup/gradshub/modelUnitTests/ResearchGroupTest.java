@@ -1,7 +1,7 @@
 package com.codefusiongroup.gradshub.modelUnitTests;
 
 
-import com.codefusiongroup.gradshub.model.ResearchGroup;
+import com.codefusiongroup.gradshub.common.models.ResearchGroup;
 
 import org.junit.Test;
 

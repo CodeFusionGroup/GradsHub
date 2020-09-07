@@ -12,12 +12,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
+        android:id="@+id/eventContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/titleTV"
-            android:layout_width="wrap_content"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginLeft="@dimen/text_margin"
@@ -30,7 +31,7 @@
 
         <TextView
             android:id="@+id/deadlineTV"
-            android:layout_width="wrap_content"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/titleTV"
             android:layout_marginStart="@dimen/text_margin"
@@ -81,55 +82,30 @@
             android:text="place: Fukuoka, Japan" />
 
 
-        <ImageButton
-            android:id="@+id/upVoteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/placeTV"
-            android:layout_marginStart="@dimen/text_margin"
-            android:layout_marginLeft="@dimen/text_margin"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@color/colorWhite"
-            android:contentDescription="up vote"
-            android:src="@drawable/ic_up_vote" />
-
-
         <TextView
-            android:id="@+id/votesCountTV"
+            android:id="@+id/starCountTV"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:layout_below="@+id/upVoteBtn"
+            android:layout_below="@+id/placeTV"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="4dp"
-            android:text="100" />
-
-
-        <ImageButton
-            android:id="@+id/downVoteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/votesCountTV"
-            android:layout_marginStart="@dimen/text_margin"
-            android:layout_marginLeft="@dimen/text_margin"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@color/colorWhite"
-            android:contentDescription="up vote"
-            android:src="@drawable/ic_down_vote" />
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:textStyle="bold"
+            android:text="100000"
+            android:gravity="center"
+            android:drawableLeft="@drawable/ic_fav_filled"
+            android:drawableStart="@drawable/ic_fav_filled"/>
 
 
         <ImageButton
             android:id="@+id/favouriteBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="270dp"
-            android:layout_marginStart="270dp"
-            android:layout_alignBottom="@id/downVoteBtn"
-            android:contentDescription="favourite"
+            android:layout_toRightOf="@id/titleTV"
+            android:layout_toEndOf="@id/titleTV"
             android:background="@null"
+            android:contentDescription="favourite"
             android:src="@drawable/ic_fav_stroke" />
 
     </RelativeLayout>

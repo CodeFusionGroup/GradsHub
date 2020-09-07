@@ -5,23 +5,24 @@
     android:id="@+id/main_navigation"
     app:startDestination="@+id/feedListFragment">
 
+
     <fragment
         android:id="@+id/feedListFragment"
-        android:name="com.codefusiongroup.gradshub.main.home.FeedListFragment"
+        android:name="com.codefusiongroup.gradshub.feed.FeedListFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_feed_item_list" />
 
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.codefusiongroup.gradshub.main.profile.ProfileFragment"
+        android:name="com.codefusiongroup.gradshub.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile"/>
 
 
     <fragment
         android:id="@+id/myGroupsListFragment"
-        android:name="com.codefusiongroup.gradshub.main.mygroups.MyGroupsListFragment"
+        android:name="com.codefusiongroup.gradshub.groups.userGroups.userGroupsList.MyGroupsListFragment"
         android:label="@string/menu_myGroups"
         tools:layout="@layout/fragment_my_groups_item_list" >
         <action
@@ -32,7 +33,7 @@
 
     <fragment
         android:id="@+id/myGroupProfileFragment"
-        android:name="com.codefusiongroup.gradshub.main.mygroups.MyGroupsProfileFragment"
+        android:name="com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment"
         android:label="Group Posts"
         tools:layout="@layout/fragment_my_groups_information" >
         <action
@@ -46,7 +47,7 @@
 
     <fragment
         android:id="@+id/createGroupFragment"
-        android:name="com.codefusiongroup.gradshub.main.creategroup.CreateGroupFragment"
+        android:name="com.codefusiongroup.gradshub.groups.creategroup.CreateGroupFragment"
         android:label="@string/menu_createGroup"
         tools:layout="@layout/fragment_create_group" >
     <action
@@ -64,23 +65,23 @@
 
 
     <fragment
-        android:id="@+id/availableGroupsListFragment"
-        android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableGroupsListFragment"
+        android:id="@+id/exploreGroupsFragment"
+        android:name="com.codefusiongroup.gradshub.groups.searchGroups.exploreGroupsList.ExploreGroupsFragment"
         android:label="Available Groups"
-        tools:layout="@layout/fragment_available_groups_item_list" >
+        tools:layout="@layout/fragment_explore_groups_item_list" >
         <action
-            android:id="@+id/action_availableGroupsListFragment_to_availableGroupProfileFragment"
-            app:destination="@id/availableGroupProfileFragment" />
+            android:id="@+id/action_exploreGroupsFragment_to_exploredGroupProfileFragment"
+            app:destination="@id/exploredGroupProfileFragment" />
     </fragment>
 
 
     <fragment
-        android:id="@+id/availableGroupProfileFragment"
-        android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableGroupProfileFragment"
+        android:id="@+id/exploredGroupProfileFragment"
+        android:name="com.codefusiongroup.gradshub.groups.searchGroups.exploredGroupProfile.ExploredGroupProfileFragment"
         android:label="Group Profile"
-        tools:layout="@layout/fragment_available_group_profile" >
+        tools:layout="@layout/fragment_explored_group_profile" >
         <action
-            android:id="@+id/action_availableGroupProfileFragment_to_myGroupsListFragment"
+            android:id="@+id/action_exploredGroupProfileFragment_to_myGroupsListFragment"
             app:destination="@id/myGroupsListFragment"
 
             app:enterAnim="@anim/slide_in_right"
@@ -88,14 +89,14 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
 
-            app:popUpTo="@id/availableGroupProfileFragment"
+            app:popUpTo="@id/exploredGroupProfileFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
 
     <fragment
         android:id="@+id/createPostFragment"
-        android:name="com.codefusiongroup.gradshub.main.createpost.CreatePostFragment"
+        android:name="com.codefusiongroup.gradshub.posts.createpost.CreatePostFragment"
         android:label="Create Post"
         tools:layout="@layout/fragment_create_post" >
         <action
@@ -114,28 +115,28 @@
 
     <fragment
         android:id="@+id/groupPostCommentsFragment"
-        android:name="com.codefusiongroup.gradshub.main.postcomments.GroupPostCommentsFragment"
+        android:name="com.codefusiongroup.gradshub.posts.postcomments.GroupPostCommentsFragment"
         android:label="Comments"
         tools:layout="@layout/fragment_group_post_comments" />
 
 
     <fragment
         android:id="@+id/scheduleFragment"
-        android:name="com.codefusiongroup.gradshub.main.eventsSchedule.ScheduleListFragment"
+        android:name="com.codefusiongroup.gradshub.events.ScheduleListFragment"
         android:label="Schedule"
         tools:layout="@layout/fragment_schedule_item_list" />
 
 
     <fragment
         android:id="@+id/chatMessagesFragment"
-        android:name="com.codefusiongroup.gradshub.main.chats.ChatMessagesFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.chats.ChatMessagesFragment"
         android:label="Messages"
         tools:layout="@layout/fragment_chat_messages_list" />
 
 
     <fragment
         android:id="@+id/chatsListFragment"
-        android:name="com.codefusiongroup.gradshub.main.chats.ChatsListFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.chats.ChatsListFragment"
         android:label="Open Chats"
         tools:layout="@layout/fragment_chats_list" >
 
@@ -143,5 +144,42 @@
             android:id="@+id/action_chatsListFragment_to_chatMessagesFragment"
             app:destination="@id/chatMessagesFragment" />
     </fragment>
+
+
+    <fragment
+        android:id="@+id/usersListFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.users.UsersListFragment"
+        android:label="Users"
+        tools:layout="@layout/fragment_users_list" >
+        <argument
+            android:name="USER"
+            app:argType="com.codefusiongroup.gradshub.common.models.User"/>
+
+        <action
+            android:id="@+id/action_usersListFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.users.UserProfileFragment"
+        android:label="User Profile"
+        tools:layout="@layout/fragment_user_profile">
+
+    <action
+        android:id="@+id/action_userProfileFragment_to_chatMessagesFragment"
+        app:destination="@id/chatMessagesFragment"
+
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"
+
+        app:popUpTo="@id/chatMessagesFragment"
+        app:popUpToInclusive="true" />
+
+    </fragment>
+
 
 </navigation>

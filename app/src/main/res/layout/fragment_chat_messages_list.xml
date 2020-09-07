@@ -5,7 +5,13 @@
     android:layout_height="match_parent"
     android:id="@+id/chat_messages"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.chats.ChatMessagesFragment">
+    tools:context=".messaging.chats.ChatMessagesFragment">
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -17,7 +23,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".main.chats.ChatMessagesFragment" />
+        tools:context=".messaging.chats.ChatMessagesFragment" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     <EditText

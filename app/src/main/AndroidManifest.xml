@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
     <application
+        android:name=".common.GradsHubApplication"
         android:allowBackup="true"
         android:icon="@mipmap/applogo"
         android:label="@string/app_name"
@@ -14,7 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.codefusiongroup.gradshub.authentication.AuthenticationActivity" android:noHistory="true">
+
+        <activity
+            android:name="com.codefusiongroup.gradshub.authentication.AuthenticationActivity"
+            android:noHistory="true"
+            android:screenOrientation="nosensor" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,11 +29,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.MainActivity"
+
+        <activity android:name="com.codefusiongroup.gradshub.common.MainActivity"
             android:noHistory="false"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="nosensor">
         </activity>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -40,32 +50,32 @@
 
         </provider>
 
-        <receiver android:name="com.codefusiongroup.gradshub.main.EventNotificationPublisher" />
+        <receiver android:name="com.codefusiongroup.gradshub.utils.EventNotificationPublisher" />
 
         <!-- =========================== TEST FILES ============================= -->
-        <activity android:name="com.codefusiongroup.gradshub.authentication.TestingActivity"></activity>
+        <activity android:name="com.codefusiongroup.gradshub.authentication.authtests.TestingActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.AvailableTestingActivity"></activity>
+        <activity android:name=".groups.searchGroups.searchGroupsTests.AvailableTestingActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.authentication.FragmentRegisterActivity"></activity>
+        <activity android:name="com.codefusiongroup.gradshub.authentication.authtests.registrationtests.FragmentRegisterActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.authentication.ResetActivity"></activity>
+        <activity android:name="com.codefusiongroup.gradshub.authentication.authtests.logintests.ResetActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.profile.ProfileTestActivity"></activity>
+        <activity android:name="com.codefusiongroup.gradshub.profile.ProfileTestActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.creategroup.CreateGroupActivity"></activity>
+        <activity android:name="com.codefusiongroup.gradshub.groups.creategroup.createGroupTests.CreateGroupActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.createpost.CreatePostActivity"></activity>
+        <activity android:name="com.codefusiongroup.gradshub.posts.createpost.CreatePostActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.availablegroups.GroupListActivity"></activity>
+        <activity android:name=".groups.searchGroups.searchGroupsTests.GroupListActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.home.HomeTestActivity"></activity>
+        <activity android:name=".feed.feedtests.HomeTestActivity"></activity>
 
-        <activity android:name="com.codefusiongroup.gradshub.main.postcomments.PostCommentActivity"></activity>
+        <activity android:name="com.codefusiongroup.gradshub.posts.postcomments.PostCommentActivity"></activity>
 
         <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
 
-        <activity android:name="com.codefusiongroup.gradshub.main.home.FeedListActivity"></activity>
+        <activity android:name=".feed.feedtests.FeedListActivity"></activity>
         <!-- ======================================================================== -->
 
     </application>
