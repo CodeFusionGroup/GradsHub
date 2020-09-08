@@ -9,6 +9,7 @@ public class Schedule {
     private String timezone;
     private String date;
     private String place;
+    private boolean isFavouredByUser = false;
     private int starCount = 0;
 
 
@@ -73,6 +74,10 @@ public class Schedule {
     public int getStarCount() {
         return starCount;
     }
+
+    public void setFavouredByUser(boolean value) { isFavouredByUser = value; }
+
+    public boolean isFavouredByUser() { return isFavouredByUser; }
 
 
 }

@@ -85,14 +85,13 @@
         <TextView
             android:id="@+id/starCountTV"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/placeTV"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
             android:textStyle="bold"
-            android:text="100000"
             android:gravity="center"
             android:drawableLeft="@drawable/ic_fav_filled"
             android:drawableStart="@drawable/ic_fav_filled"/>

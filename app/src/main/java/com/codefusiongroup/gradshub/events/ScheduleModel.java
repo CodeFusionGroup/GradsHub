@@ -125,7 +125,7 @@ public class ScheduleModel implements ScheduleContract.IScheduleModel {
                         for (JsonElement jsonElement: favouredEventsJA) {
                             JsonObject favouredEventJO = jsonElement.getAsJsonObject();
                             String eventID = favouredEventJO.get("EVENT_ID").getAsString();
-                            String eventStars = favouredEventJO.get("NUM_STARS").getAsString();
+                            String eventStars = favouredEventJO.get("NO_STARS").getAsString();
                             eventsStatistics.put(eventID, eventStars);
                         }
 
@@ -158,7 +158,7 @@ public class ScheduleModel implements ScheduleContract.IScheduleModel {
 
 
     @Override
-    public void updateUserFavouredEvents(User user, List<String> favouredEvents) {
+    public void registerFavouredEvents(User user, List<String> favouredEvents) {
 
         StringBuilder eventsIDs = new StringBuilder();
 
@@ -172,7 +172,7 @@ public class ScheduleModel implements ScheduleContract.IScheduleModel {
 
         params.put("user_id", user.getUserID());
         params.put("event_ids", eventsIDs.toString());
-        eventsAPI.updateUserFavouredEvents(params).enqueue(new Callback<JsonObject>() {
+        eventsAPI.registerFavouredEvents(params).enqueue(new Callback<JsonObject>() {
 
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
@@ -206,5 +206,55 @@ public class ScheduleModel implements ScheduleContract.IScheduleModel {
 
     }
 
+
+
+    @Override
+    public void unRegisterFavouredEvents(User user, List<String> unFavouredEvents) {
+
+        StringBuilder eventsIDs = new StringBuilder();
+
+        for(int i = 0; i < unFavouredEvents.size(); i++) {
+            eventsIDs.append(unFavouredEvents.get(i));
+
+            if (i != unFavouredEvents.size()-1) {
+                eventsIDs.append(",");
+            }
+        }
+
+        params.put("user_id", user.getUserID());
+        params.put("event_ids", eventsIDs.toString());
+        eventsAPI.unRegisterFavouredEvents(params).enqueue(new Callback<JsonObject>() {
+
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+
+                if ( response.isSuccessful() ) {
+
+                    JsonObject jsonObject = response.body();
+
+                    if ( jsonObject.get("success").getAsString().equals(SUCCESS_CODE) ) {
+                        mPresenter.setUserFavouredEventsResponseCode(SUCCESS_CODE);
+                        mPresenter.setUserFavouredEventsResponseMsg(jsonObject.get("message").getAsString());
+                    }
+
+                    mPresenter.onRequestUpdateUserFavouredEventsFinished();
+                }
+                else {
+                    Log.i("ScheduleModel", "response.isSuccessful = false");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                mPresenter.setUserFavouredEventsResponseCode(SERVER_FAILURE_CODE);
+                mPresenter.setUserFavouredEventsResponseMsg(SERVER_FAILURE_MSG);
+                mPresenter.onRequestUpdateUserFavouredEventsFinished();
+                t.printStackTrace();
+            }
+
+        });
+
+    }
 
 }

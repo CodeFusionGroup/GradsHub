@@ -90,8 +90,13 @@ public interface ScheduleContract {
         void getEventsStars(); // don't delete
 
         // invoked by the presenter on the model to update the user's favoured events in case they have
-        // favoured or unfavoured any events
-        void updateUserFavouredEvents(User user, List<String> favouredEvents);
+        // favoured some events
+        void registerFavouredEvents(User user, List<String> favouredEvents);
+
+
+        // invoked by the presenter on the model to update the user's favoured events in case they have
+        // unfavoured some events
+        void unRegisterFavouredEvents(User user, List<String> favouredEvents);
 
     }
 
