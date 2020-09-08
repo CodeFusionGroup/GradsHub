@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:name=".common.GradsHubApplication"
         android:allowBackup="true"
@@ -15,69 +14,61 @@
         android:roundIcon="@mipmap/applogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <service
+            android:name=".common.network.MessagingService"
+            android:enabled="true"
+            android:exported="true"></service>
 
         <activity
-            android:name="com.codefusiongroup.gradshub.authentication.AuthenticationActivity"
+            android:name=".authentication.AuthenticationActivity"
             android:noHistory="true"
-            android:screenOrientation="nosensor" >
-
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity android:name="com.codefusiongroup.gradshub.common.MainActivity"
-            android:noHistory="false"
+        <activity
+            android:name=".common.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="nosensor">
-        </activity>
-
+            android:noHistory="false"
+            android:screenOrientation="nosensor"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.codefusiongroup.gradshub.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false" >
-
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
-
         </provider>
 
-        <receiver android:name="com.codefusiongroup.gradshub.utils.EventNotificationPublisher" />
+        <receiver android:name=".utils.EventNotificationPublisher" />
+
+        <!-- [START firebase_service] -->
+        <service
+            android:name=".common.network.MessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service> <!-- [END firebase_service] -->
 
         <!-- =========================== TEST FILES ============================= -->
-        <activity android:name="com.codefusiongroup.gradshub.authentication.authtests.TestingActivity"></activity>
-
-        <activity android:name=".groups.searchGroups.searchGroupsTests.AvailableTestingActivity"></activity>
-
-        <activity android:name="com.codefusiongroup.gradshub.authentication.authtests.registrationtests.FragmentRegisterActivity"></activity>
-
-        <activity android:name="com.codefusiongroup.gradshub.authentication.authtests.logintests.ResetActivity"></activity>
-
-        <activity android:name="com.codefusiongroup.gradshub.profile.ProfileTestActivity"></activity>
-
-        <activity android:name="com.codefusiongroup.gradshub.groups.creategroup.createGroupTests.CreateGroupActivity"></activity>
-
-        <activity android:name="com.codefusiongroup.gradshub.posts.createpost.CreatePostActivity"></activity>
-
-        <activity android:name=".groups.searchGroups.searchGroupsTests.GroupListActivity"></activity>
-
-        <activity android:name=".feed.feedtests.HomeTestActivity"></activity>
-
-        <activity android:name="com.codefusiongroup.gradshub.posts.postcomments.PostCommentActivity"></activity>
-
-        <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
-
-        <activity android:name=".feed.feedtests.FeedListActivity"></activity>
-        <!-- ======================================================================== -->
-
+        <activity android:name=".authentication.authtests.TestingActivity" />
+        <activity android:name=".groups.searchGroups.searchGroupsTests.AvailableTestingActivity" />
+        <activity android:name=".authentication.authtests.registrationtests.FragmentRegisterActivity" />
+        <activity android:name=".authentication.authtests.logintests.ResetActivity" />
+        <activity android:name=".profile.ProfileTestActivity" />
+        <activity android:name=".groups.creategroup.createGroupTests.CreateGroupActivity" />
+        <activity android:name=".posts.createpost.CreatePostActivity" />
+        <activity android:name=".groups.searchGroups.searchGroupsTests.GroupListActivity" />
+        <activity android:name=".feed.feedtests.HomeTestActivity" />
+        <activity android:name=".posts.postcomments.PostCommentActivity" /> <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
+        <activity android:name=".feed.feedtests.FeedListActivity" />
     </application>
 
 </manifest>
