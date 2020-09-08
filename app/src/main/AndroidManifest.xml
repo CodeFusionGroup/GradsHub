@@ -14,10 +14,10 @@
         android:roundIcon="@mipmap/applogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service
-            android:name=".common.network.MessagingService"
-            android:enabled="true"
-            android:exported="true"></service>
+<!--        <service-->
+<!--            android:name=".common.network.MessagingService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"></service>-->
 
         <activity
             android:name=".authentication.AuthenticationActivity"
