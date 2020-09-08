@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/post_comment"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.postcomments.GroupPostCommentsFragment">
+    tools:context=".posts.postcomments.GroupPostCommentsFragment">
 
 
     <androidx.cardview.widget.CardView xml:card_views="http://schemas.android.com/apk/res-auto"
@@ -101,24 +101,35 @@
     </androidx.cardview.widget.CardView>
 
 
-    <ListView
-        android:id="@+id/commentsListView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/card_view"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="120dp"
-        android:paddingTop="10dp"
-        android:divider="@drawable/list_divider"
-        android:dividerHeight="1.0sp"/>
+        android:layout_marginBottom="120dp" >
+
+
+        <androidx.recyclerview.widget.RecyclerView
+
+            android:id="@+id/commentsList"
+            android:name="com.example.gradshub.GroupPostCommentsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".posts.postcomments.GroupPostCommentsFragment"
+            tools:listitem="@layout/fragment_my_groups_comment_item" />
+
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/commentContainer"
-        android:layout_width="310dp"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
@@ -146,9 +157,12 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginBottom="60dp"
         android:background="@drawable/ic_send_comment"
-        android:layout_alignRight="@+id/commentsListView"/>
+        android:layout_toRightOf="@+id/commentContainer"
+        android:layout_toEndOf="@+id/commentContainer" />
 
 
     <ProgressBar

@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-// Needed for firebase
-apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services' // Needed for firebase
+apply plugin: 'androidx.navigation.safeargs'
 
 
 android {
@@ -66,6 +66,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -80,7 +81,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     //noinspection GradleDependency
     androidTestImplementation "com.android.support:support-annotations:27.1.1"
-    //
+
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
 
@@ -91,14 +92,17 @@ dependencies {
     //apply plugin: 'org.sonarqube'
     apply plugin: 'jacoco'
 
-    // Used for networking
+    // volley for network requests
     implementation 'com.android.volley:volley:1.1.1'
 
-    //jsoup
+    // retrofit for network requests (for mvp)
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+
+    // jsoup for web scraping
     implementation 'org.jsoup:jsoup:1.13.1'
 
     // Firebase Storage
     implementation 'com.google.firebase:firebase-storage:19.1.1'
-
 
 }

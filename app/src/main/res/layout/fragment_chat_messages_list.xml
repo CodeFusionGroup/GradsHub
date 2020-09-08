@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/chat_messages"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".messaging.chats.ChatMessagesFragment">
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+
+    <androidx.recyclerview.widget.RecyclerView
+
+        android:id="@+id/chatMessagesList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".messaging.chats.ChatMessagesFragment" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+    <EditText
+        android:id="@+id/typeMessageET"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="32dp"
+        android:layout_alignParentBottom="true"
+        android:hint="type message" />
+
+
+    <Button
+        android:id="@+id/sendMessageBtn"
+        android:layout_width="70dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="32dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/typeMessageET"
+        android:layout_toEndOf="@id/typeMessageET"
+        android:text="SEND"
+        android:gravity="center" />
+
+
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

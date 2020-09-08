@@ -8,6 +8,8 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.rule.ActivityTestRule;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.authentication.authtests.logintests.ResetActivity;
+import com.codefusiongroup.gradshub.authentication.login.ResetPasswordFragment;
 
 import org.junit.After;
 import org.junit.Before;

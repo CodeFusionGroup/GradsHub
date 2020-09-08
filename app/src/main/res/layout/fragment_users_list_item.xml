@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xml:card_views="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/userListNoTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignBaseline="@id/userNameTV"
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:text="1" />
+
+
+        <TextView
+            android:id="@+id/userNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/userListNoTV"
+            android:layout_toRightOf="@id/userListNoTV"
+            android:layout_margin="@dimen/text_margin"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:text="Kamo Kamo" />
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

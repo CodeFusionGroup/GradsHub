@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.mygroups.MyGroupsProfileFragment">
+    tools:context=".groups.userGroups.userGroupProfile.MyGroupsProfileFragment">
 
     <TextView
         android:id="@+id/groupNameTV"
@@ -15,6 +15,12 @@
         android:layout_marginTop="16dp"
         android:text="Group Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -28,8 +34,10 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".main.home.FeedListFragment"
+        tools:context=".feed.FeedListFragment"
         tools:listitem="@layout/fragment_my_groups_post_item" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.codefusiongroup.gradshub.authentication.LoginFragment"
+        android:name="com.codefusiongroup.gradshub.authentication.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/resetPasswordFragment"
-        android:name="com.codefusiongroup.gradshub.authentication.ResetPasswordFragment"
+        android:name="com.codefusiongroup.gradshub.authentication.login.ResetPasswordFragment"
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password">
         <action
@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.codefusiongroup.gradshub.authentication.RegisterFragment"
+        android:name="com.codefusiongroup.gradshub.authentication.registration.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register">
         <action

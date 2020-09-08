@@ -7,6 +7,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+
     <androidx.recyclerview.widget.RecyclerView
 
         android:id="@+id/chatsList"
@@ -16,14 +23,19 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".main.chats.ChatsListFragment"
+        tools:context=".messaging.chats.ChatsListFragment"
         tools:listitem="@layout/fragment_chat_item" />
+
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <ProgressBar
         android:id="@+id/progress_circular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="visible" />
+
 
 </RelativeLayout>

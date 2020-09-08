@@ -1,6 +1,6 @@
 package com.codefusiongroup.gradshub.modelUnitTests;
 
-import com.codefusiongroup.gradshub.model.Post;
+import com.codefusiongroup.gradshub.common.models.Post;
 
 import org.junit.Test;
 

@@ -14,10 +14,18 @@
         order) where 100 is used as the starting value (can be any value), an item with 200 will come after an item with 100, etc.
      -->
 
+    <group android:id="@+id/refresh" >
+        <item
+            android:id="@+id/action_refresh"
+            android:orderInCategory="100"
+            android:title="refresh"
+            app:showAsAction="never" />
+    </group>
+
     <group android:id="@+id/settings" >
         <item
             android:id="@+id/action_settings"
-            android:orderInCategory="100"
+            android:orderInCategory="200"
             android:title="@string/action_settings"
             app:showAsAction="never" />
     </group>
@@ -25,7 +33,7 @@
     <group android:id="@+id/logout" >
         <item
             android:id="@+id/action_logout"
-            android:orderInCategory="200"
+            android:orderInCategory="300"
             android:title="logout"
             app:showAsAction="never" />
     </group>
