@@ -84,6 +84,7 @@ public interface RegisterContract {
 
         void setRegistrationResponseMsg(String responseMessage);
 
+
     }
 
 

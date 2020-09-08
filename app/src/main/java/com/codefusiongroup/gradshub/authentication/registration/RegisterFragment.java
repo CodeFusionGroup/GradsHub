@@ -24,6 +24,10 @@ import android.widget.Toast;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 
 public class RegisterFragment extends Fragment implements RegisterContract.IRegisterView, AdapterView.OnItemSelectedListener {
@@ -38,6 +42,9 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
 
     private String mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword;
     private RegisterPresenter mRegisterPresenter;
+
+    // Used for Firebase Cloud Messaging
+    private String mToken;
 
 
     @Override
@@ -75,8 +82,8 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
             mConfirmPassword = mConfirmPasswordET.getText().toString().trim();
 
             if ( mRegisterPresenter.validateRegistrationInput(mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword) ) {
-
-                mRegisterPresenter.registerUser( new User( mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword ) );
+                // Register User with FCM Token
+                registrationWithToken();
             }
 
         });
@@ -96,6 +103,32 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
         mConfirmPasswordET = view.findViewById(R.id.confirmNewPasswordET);
         mSubmitBtn = view.findViewById(R.id.submitBtn);
 
+    }
+
+    // Retrieve the FCM registration token
+    public void registrationWithToken(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        mToken = task.getResult().getToken();
+                        Log.d(TAG, mToken);
+
+                        //Register User
+                        mRegisterPresenter.registerUser( new User( mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mToken ) );
+
+                        //Log and toast
+//                        String msg = getString(R.string.msg_token_fmt, mToken);
+//                        Log.d(TAG, mToken);
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
