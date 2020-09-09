@@ -17,13 +17,16 @@ public interface EventsAPI {
     Call<JsonObject> getUserFavouredEvents(@Body HashMap<String, String> params);
 
 
-    @GET("Event/eventsStars.php")
+    @GET("Event/retrieveStarCount.php")
     Call<JsonObject> getEventsStars();
 
 
-    //TODO: change php file name to updateUserEvents.php
     @POST("Event/insertfavourite.php")
-    Call<JsonObject> updateUserFavouredEvents(@Body HashMap<String, String> params);
+    Call<JsonObject> registerFavouredEvents(@Body HashMap<String, String> params);
+
+
+    @POST("User/updatefavourites.php")
+    Call<JsonObject> unRegisterFavouredEvents(@Body HashMap<String, String> params);
 
 
 }

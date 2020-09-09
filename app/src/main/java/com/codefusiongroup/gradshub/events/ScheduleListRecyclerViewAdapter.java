@@ -1,6 +1,7 @@
 package com.codefusiongroup.gradshub.events;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,17 @@ import com.codefusiongroup.gradshub.events.ScheduleListFragment.OnScheduleListFr
 import com.codefusiongroup.gradshub.common.models.Schedule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 
 public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<ScheduleListRecyclerViewAdapter.ViewHolder> implements Filterable {
 
+
+    private static final String TAG = "ScheduleRVAdapter";
 
     private List<Schedule> mValuesFull;
     private final List<Schedule> mValues;
@@ -72,38 +79,24 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         holder.mTimeZoneView.setText( holder.mEvent.getTimezone() );
         holder.mDateView.setText( holder.mEvent.getDate() );
         holder.mPlaceView.setText( holder.mEvent.getPlace() );
+        holder.mStarCountView.setText( String.valueOf( holder.mEvent.getStarCount() ) );
 
-
-        userPreviouslyFavouredEvents = ScheduleListFragment.getUserPreviouslyFavouredEvents();
-
-        // TODO: must assign keys instead and use those to compare
-        if ( userPreviouslyFavouredEvents != null ) {
-
-            for (String eventId: userPreviouslyFavouredEvents) {
-
-                if ( eventId.equals( holder.mEvent.getId() ) ) {
-                    holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
-                    holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
-                    break;
-                }
-
-            }
-
+        if ( mValues.get(position).isFavouredByUser() ) {
+            holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
+            holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
         }
-
-
-        // TODO: requires php file to test
-//        Map<String, Integer> eventsStars = ScheduleListFragment.getEventsStars();
-//        if ( eventsStarCounts != null && eventsStarCounts.containsKey( holder.mItem.getId() ) ) {
-//            holder.mStarCountView.setText( String.valueOf( mValues.get(position).getStarCount() ) );
-//        }
+        else { // MUST handle the else condition otherwise it wouldn't highlight properly
+            holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_stroke);
+            holder.mFavouriteBtnView.setColorFilter(Color.rgb(128,128,128));
+        }
 
 
         holder.mFavouriteBtnView.setOnClickListener(v -> {
 
+            userPreviouslyFavouredEvents = ScheduleListFragment.getUserPreviouslyFavouredEvents();
             userCurrentlyFavouredEvents = ScheduleListFragment.getUserCurrentlyFavouredEvents();
 
-            // if they unfavoured an event that was previously favoured and exists in the DB.
+            // if they un-star an event that they had previously starred (event id exists in DB)
             if ( userPreviouslyFavouredEvents != null && userPreviouslyFavouredEvents.contains( holder.mEvent.getId() ) ) {
 
                 // remove event from the previously favoured list
@@ -112,25 +105,50 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
                 // add the event id to the unfavoured list
                 onScheduleItemUnFavouredListener.onScheduleItemUnFavoured(holder.mEvent);
 
+                // update the isFavouredByUser property of this event
+                holder.mEvent.setFavouredByUser(false);
+
+                // update the star counts for this event (local changes)
+                holder.mEvent.setStarCount(holder.mEvent.getStarCount()-1);
+                holder.mStarCountView.setText( String.valueOf( holder.mEvent.getStarCount() ) );
+
                 holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_stroke);
                 holder.mFavouriteBtnView.setColorFilter(Color.rgb(128,128,128));
                 Toast.makeText(v.getContext(), "unfavoured event.", Toast.LENGTH_SHORT).show();
             }
 
-            // if they unfavoured an event that they recently favoured but this event does not exist in the DB
+            // if they un-star an event that is currently in the userCurrentlyFavouredEvents list
+            // (event id does not exist in DB)
             else if ( userCurrentlyFavouredEvents != null && userCurrentlyFavouredEvents.contains( holder.mEvent.getId() ) ) {
 
                 // remove the event id from the currently favoured list
                 ScheduleListFragment.removeEventFromFavouredList( holder.mEvent.getId() );
 
+                // update the isFavouredByUser property of this event
+                holder.mEvent.setFavouredByUser(false);
+
+                // update the star counts for this event (local changes)
+                holder.mEvent.setStarCount(holder.mEvent.getStarCount()-1);
+                holder.mStarCountView.setText( String.valueOf( holder.mEvent.getStarCount() ) );
+
                 holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_stroke);
                 holder.mFavouriteBtnView.setColorFilter(Color.rgb(128,128,128));
                 Toast.makeText(v.getContext(), "unfavoured event.", Toast.LENGTH_SHORT).show();
             }
 
+            // if they star an event that was not previously starred (does not exist in DB)
             else {
 
+                // add the event id to the currently favoured list
                 onScheduleItemFavouredListener.onScheduleItemFavoured(holder.mEvent);
+
+                // update the isFavouredByUser property for this event
+                holder.mEvent.setFavouredByUser(true);
+
+                // update the star counts for this event (local changes)
+                holder.mEvent.setStarCount(holder.mEvent.getStarCount()+1);
+                holder.mStarCountView.setText( String.valueOf( holder.mEvent.getStarCount() ) );
+
                 holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
                 holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
                 Toast.makeText(v.getContext(), "favoured event.", Toast.LENGTH_SHORT).show();

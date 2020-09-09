@@ -11,19 +11,20 @@ import java.util.Map;
 public class SchedulePresenter implements BasePresenter<ScheduleContract.IScheduleView>, ScheduleContract.ISchedulePresenter {
 
 
-    private final String API_CODE = "0";
     private final String  SUCCESS_CODE = "1";
     private final String  SERVER_FAILURE_CODE = "-100";
 
     private String mUserFavouredEventsResponseCode = null;
     private String mUserFavouredEventsResponseMsg = null;
-    private String mEventsStarsResponseCode = "1";//TODO: change later just for testing
+    private String mEventsStarsResponseCode = null;
 
     private List<String> mUserFavouredEvents;
     private Map<String, String> mEventsStars;
 
+    private User mUser;
+
     private boolean mUserFavouredEventsRequestFinished;
-    private boolean mEventsStarsRequestFinished = true;//TODO: remove assignment later once php file is ready
+    private boolean mEventsStarsRequestFinished;
 
 
     private final ScheduleContract.IScheduleModel mScheduleModel = ScheduleModel.newInstance(this);
@@ -32,8 +33,9 @@ public class SchedulePresenter implements BasePresenter<ScheduleContract.ISchedu
 
     @Override
     public void onViewCreated(User user) {
+        mUser = user;
         mScheduleModel.getUserFavouredEvents(user);
-        //mScheduleModel.getEventsStars();
+        mScheduleModel.getEventsStars();
     }
 
 
@@ -58,8 +60,9 @@ public class SchedulePresenter implements BasePresenter<ScheduleContract.ISchedu
             if (mScheduleView != null) {
 
                 // if there's a failure to contact the server in one of the requests
+                String API_CODE = "0";
                 if( mUserFavouredEventsResponseCode.equals(SERVER_FAILURE_CODE) || mEventsStarsResponseCode.equals(SERVER_FAILURE_CODE) ) {
-                    mScheduleView.showServerErrorResponse("failed to correctly update schedule, please refresh page.");
+                    mScheduleView.showServerErrorResponse("failed to correctly update schedule, please swipe to refresh page.");
                 }
 
                 // if the user has not favoured any events but there exists favoured events in the DB for which we can get
@@ -71,7 +74,9 @@ public class SchedulePresenter implements BasePresenter<ScheduleContract.ISchedu
                 }
 
                 // if the user has favoured some events then obviously we can retrieve the star counts
-                // NOTE: stars for events can only be retrieved if there are favoured events
+                // NOTE: stars for events can only be retrieved if there are favoured events.
+                // reason for checking if stars response code is SUCCESS_CODE is because the request can fail which we handle
+                // above
                 else if ( mUserFavouredEventsResponseCode.equals(SUCCESS_CODE) && mEventsStarsResponseCode.equals(SUCCESS_CODE)  ) {
                     mScheduleView.updateEventsSchedule(mUserFavouredEvents, mEventsStars);
                 }
@@ -85,20 +90,21 @@ public class SchedulePresenter implements BasePresenter<ScheduleContract.ISchedu
 
     @Override
     public void registerUserFavouredEvents(User user, List<String> favouredEvents) {
-        mScheduleModel.updateUserFavouredEvents(user, favouredEvents);
+        mScheduleModel.registerFavouredEvents(user, favouredEvents);
     }
 
 
     @Override
     public void unRegisterUserFavouredEvents(User user, List<String> unFavouredEvents) {
-        mScheduleModel.updateUserFavouredEvents(user, unFavouredEvents);
+        mScheduleModel.unRegisterFavouredEvents(user, unFavouredEvents);
+
     }
 
 
     @Override
     public void onRequestUpdateUserFavouredEventsFinished() {
 
-        if ( mUserFavouredEventsResponseCode.equals(SUCCESS_CODE) ){
+        if ( mUserFavouredEventsResponseCode.equals(SUCCESS_CODE) ) {
             mScheduleView.showUserFavouredEventsStatus(mUserFavouredEventsResponseMsg);
         }
 

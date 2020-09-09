@@ -1,11 +1,18 @@
 package com.codefusiongroup.gradshub.authentication.registration;
 
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
 import com.codefusiongroup.gradshub.authentication.AuthenticationAPI;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -17,6 +24,7 @@ import retrofit2.Callback;
 public class RegisterModel implements RegisterContract.IRegisterModel{
 
 
+    private static final String TAG = "FCM";
     private static RegisterModel registerModel = null;
     private final RegisterContract.IRegisterPresenter mPresenter;
 
@@ -45,6 +53,7 @@ public class RegisterModel implements RegisterContract.IRegisterModel{
         params.put("phone_no", user.getPhoneNumber());
         params.put("acad_status", user.getAcademicStatus());
         params.put("password", user.getPassword());
+        params.put("fcm_token",user.getFCMToken());
 
         AuthenticationAPI authenticationAPI = ApiProvider.getAuthApiService();
 
@@ -75,6 +84,5 @@ public class RegisterModel implements RegisterContract.IRegisterModel{
         });
 
     }
-
 
 }

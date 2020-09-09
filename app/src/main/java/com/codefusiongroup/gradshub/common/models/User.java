@@ -29,14 +29,17 @@ public class User implements Parcelable {
 
     private String password;
 
+    private String fcmToken;
 
-    public User(String firstName, String lastName, String email, String phoneNumber, String academicStatus, String password) {
+
+    public User(String firstName, String lastName, String email, String phoneNumber, String academicStatus, String password, String fcmToken) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.academicStatus = academicStatus;
         this.password = password;
+        this.fcmToken = fcmToken;
     }
 
     // we provide the default constructor so that we can also be able to set fields on a user object if needed.
@@ -90,6 +93,8 @@ public class User implements Parcelable {
     public String getUserID() {return userID;}
 
     public String getFullName() {return firstName + " " + lastName;}
+
+    public String getFCMToken(){ return fcmToken;}
 
 
     protected User(Parcel in) {
