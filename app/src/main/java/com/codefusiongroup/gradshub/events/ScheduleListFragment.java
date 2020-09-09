@@ -49,9 +49,6 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
     // listener that keeps track of which event is unfavoured by the user
     private ScheduleListRecyclerViewAdapter.OnScheduleItemUnFavouredListener onScheduleItemUnFavouredListener;
 
-    // keys are events IDs and values are number of stars for corresponding event ID
-    private static Map<String, String> mEventsStars = new HashMap<>();
-
     private static List<String> userPreviouslyFavouredEvents = new ArrayList<>();
     private static List<String> userCurrentlyFavouredEvents = new ArrayList<>();
     private static List<String> userUnFavouredEvents = new ArrayList<>();
@@ -122,15 +119,16 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
 
             if ( keyCode == KeyEvent.KEYCODE_BACK ) {
 
-                if( userCurrentlyFavouredEvents.size() > 0 ) {
+                if ( userCurrentlyFavouredEvents.size() > 0 ) {
                     mPresenter.registerUserFavouredEvents(mUser, userCurrentlyFavouredEvents);
                     userCurrentlyFavouredEvents.clear();
+                    mAdapter.notifyDataSetChanged();
                 }
 
-                //TODO: needs a php file for testing
-                if( userUnFavouredEvents.size() > 0 ) {
+                if ( userUnFavouredEvents.size() > 0 ) {
                     mPresenter.unRegisterUserFavouredEvents(mUser, userUnFavouredEvents);
                     userUnFavouredEvents.clear();
+                    mAdapter.notifyDataSetChanged();
                 }
 
             }
@@ -198,18 +196,7 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
 
 
     // following methods called in ScheduleListRecyclerViewAdapter
-    //=====================================================================================
-
-    public static Map<String, String> getEventsStars() {
-
-        if ( mEventsStars != null ) {
-            return mEventsStars;
-        } else {
-            return null;
-        }
-
-    }
-
+    //====================================================================================
 
     public static List<String> getUserCurrentlyFavouredEvents() {
 
@@ -255,8 +242,53 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
     @Override
     public void updateEventsSchedule(List<String> userFavouriteEvents, Map<String, String> eventsStars) {
         //TODO: fix changes not showing immediately when user has favoured event
-        userPreviouslyFavouredEvents = userFavouriteEvents;
-        mEventsStars = eventsStars;
+
+        // set events that have been favoured by the user if there are any
+        if (userFavouriteEvents != null) {
+            userPreviouslyFavouredEvents.addAll(userFavouriteEvents);
+
+            for (Schedule event: eventsSchedule) {
+                String event_id = event.getId();
+                // search for the event id in the userFavouriteEvents list
+                for (String eventID: userFavouriteEvents) {
+
+                    if ( eventID.equals(event_id) ) {
+                        event.setFavouredByUser(true);
+                        // remove the processed event id from the userFavouredEvents list to reduce the size
+                        // NOTE: this event id is removed after userPreviouslyFavouredEvents has been assigned
+                        userFavouriteEvents.remove(eventID);
+                        // break out of inner loop to prevent further checking of other events since we have
+                        // already found an event with this ID.
+                        break;
+                    }
+
+                }
+            }
+
+        }
+
+
+        // set star counts for each event if there are favoured events in the DB
+        if (eventsStars != null) {
+
+            for ( Map.Entry<String, String> entry: eventsStars.entrySet() ) {
+                String eventID = entry.getKey();
+
+                for (Schedule event: eventsSchedule) {
+                    // skip events that have already been assigned their star counts
+                    if ( event.getStarCount() == 0 && event.getId().equals(eventID) ) {
+                        event.setStarCount( Integer.parseInt( entry.getValue() ) );
+                        // break out of inner loop to prevent further checking of other events since we have
+                        // already found an event with this ID.
+                        break;
+                    }
+
+                }
+
+            }
+        }
+
+
         mAdapter.notifyDataSetChanged();
     }
 
