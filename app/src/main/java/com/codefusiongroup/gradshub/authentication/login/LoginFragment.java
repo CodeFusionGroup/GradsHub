@@ -19,8 +19,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
+import com.codefusiongroup.gradshub.common.Preference;
 import com.codefusiongroup.gradshub.common.models.User;
 
 
@@ -78,6 +80,22 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
         loginBtn.setOnClickListener(this);
         registerBtn.setOnClickListener(this);
         forgotPasswordBtn.setOnClickListener(this);
+
+        // Check if user is already logged in
+        if( Preference.getLoggedIn(AuthenticationActivity.getContext()) ){
+
+            // Get the saved preferences
+            String id = Preference.getID(AuthenticationActivity.getContext());
+            String fname = Preference.getFName(AuthenticationActivity.getContext());
+            String lname = Preference.getLName(AuthenticationActivity.getContext());
+            String email = Preference.getEmail(AuthenticationActivity.getContext());
+            String acad_status = Preference.getAcadStatus(AuthenticationActivity.getContext());
+            String phone_no = Preference.getPhoneNo(AuthenticationActivity.getContext());
+
+            //Create a new user
+            mUser = new User(id,fname,lname,email,phone_no,acad_status);
+            this.startMainActivity();
+        }
 
     }
 
