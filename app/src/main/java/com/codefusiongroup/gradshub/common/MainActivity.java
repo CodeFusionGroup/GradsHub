@@ -222,6 +222,9 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         switch (item.getItemId()) {
             case R.id.action_logout:
 
+                // Set the login Shared Preferences to false
+                Preference.setLoggedOut(AuthenticationActivity.getContext());
+
                 Intent intent = new Intent(MainActivity.this, AuthenticationActivity.class);
                 startActivity(intent);
                 finish(); // finish MainActivity

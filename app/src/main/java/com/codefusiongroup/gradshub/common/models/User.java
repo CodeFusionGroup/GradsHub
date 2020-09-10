@@ -42,6 +42,15 @@ public class User implements Parcelable {
         this.fcmToken = fcmToken;
     }
 
+    public User(String id,String firstName, String lastName, String email, String phoneNumber, String academicStatus) {
+        this.userID = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.academicStatus = academicStatus;
+    }
+
     // we provide the default constructor so that we can also be able to set fields on a user object if needed.
     public User() {}
 
