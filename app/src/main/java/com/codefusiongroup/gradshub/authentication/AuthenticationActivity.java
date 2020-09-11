@@ -2,6 +2,7 @@ package com.codefusiongroup.gradshub.authentication;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -14,6 +15,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
 
     private static final String CHANNEL_ID = "0";
+    private static Context context;
 
 
     @Override
@@ -21,6 +23,11 @@ public class AuthenticationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
         createNotificationChannel();
+        AuthenticationActivity.context = this;
+    }
+
+    public static Context getContext(){
+        return AuthenticationActivity.context;
     }
 
 
