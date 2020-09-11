@@ -1,9 +1,7 @@
-package com.codefusiongroup.gradshub.mainUnitTests.createpost;
+package com.codefusiongroup.gradshub.posts;
 
 import android.content.Intent;
 import android.net.Uri;
-
-import com.codefusiongroup.gradshub.main.createpost.CreatePostFragment;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,19 +10,17 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import static android.app.Activity.RESULT_OK;
+ import android.content.Intent;
+import android.net.Uri;
 
-public class createpostUnitTest {
+import com.codefusiongroup.gradshub.posts.createpost.CreatePostFragment;
+
+public class createPostUnitTest {
     @Mock
     CreatePostFragment createPostFragment;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
-/*
-    @Test
-    public void someTest(){
-        ClassToTest t = new ClassToTest
-    }
-*/
     @Test
     public void onActivityResutTest(){
         CreatePostFragment createPost = new CreatePostFragment();
