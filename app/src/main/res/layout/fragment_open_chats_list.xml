@@ -23,8 +23,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".messaging.chats.ChatsListFragment"
-        tools:listitem="@layout/fragment_chat_item" />
+        tools:context=".messaging.openChats.OpenChatsFragment"
+        tools:listitem="@layout/fragment_open_chat_item" />
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

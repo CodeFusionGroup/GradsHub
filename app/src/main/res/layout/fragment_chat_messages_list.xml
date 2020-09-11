@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/chat_messages"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".messaging.chats.ChatMessagesFragment">
+    tools:context=".messaging.chatMessages.ChatMessagesFragment">
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -23,7 +23,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".messaging.chats.ChatMessagesFragment" />
+        tools:context=".messaging.chatMessages.ChatMessagesFragment" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -59,6 +59,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </RelativeLayout>

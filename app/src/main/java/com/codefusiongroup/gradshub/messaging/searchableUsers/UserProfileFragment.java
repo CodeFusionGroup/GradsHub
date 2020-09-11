@@ -1,4 +1,4 @@
-package com.codefusiongroup.gradshub.messaging.users;
+package com.codefusiongroup.gradshub.messaging.searchableUsers;
 
 import android.os.Bundle;
 
@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.codefusiongroup.gradshub.R;
-import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.models.User;
 
 

@@ -1,25 +1,40 @@
 package com.codefusiongroup.gradshub.common.models;
 
+
+import com.google.gson.annotations.SerializedName;
+
 public class Chat {
 
-    private String contactName;
+    @SerializedName("CORRESPONDENT_NAME")
+    private String correspondentName;
+
+    @SerializedName("LATEST_MESSAGE")
     private String latestMessage;
-    private String latestMessageTime;
+
+    @SerializedName("MESSAGE_TIMESTAMP")
+    private String messageTimeStamp;
+
+    @SerializedName("CORRESPONDENT_ID")
+    private String correspondentID;
 
 
-    public Chat(String contactName, String latestMessage, String latestMessageTime) {
-        this.contactName = contactName;
+    public Chat(String correspondentName, String latestMessage, String messageTimeStamp) {
+        this.correspondentName = correspondentName;
         this.latestMessage = latestMessage;
-        this.latestMessageTime = latestMessageTime;
+        this.messageTimeStamp = messageTimeStamp;
+    }
+
+    public Chat() {
+        // empty constructor
     }
 
 
-    public String getContactName() {
-        return contactName;
+    public String getCorrespondentName() {
+        return correspondentName;
     }
 
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
+    public void setCorrespondentName(String correspondentName) {
+        this.correspondentName = correspondentName;
     }
 
     public String getLatestMessage() {
@@ -30,12 +45,16 @@ public class Chat {
         this.latestMessage = latestMessage;
     }
 
-    public String getLatestMessageTime() {
-        return latestMessageTime;
+    public String getMessageTimeStamp() {
+        return messageTimeStamp;
     }
 
-    public void setLatestMessageTime(String latestMessageTime) {
-        this.latestMessageTime = latestMessageTime;
+    public void setMessageTimeStamp(String messageTimeStamp) {
+        this.messageTimeStamp = messageTimeStamp;
     }
+
+    public void setCorrespondentID(String correspondentID){ this.correspondentID = correspondentID; }
+
+    public String getCorrespondentID() { return correspondentID; }
 
 }

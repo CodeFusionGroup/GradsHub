@@ -1,4 +1,4 @@
-package com.codefusiongroup.gradshub.messaging.chats;
+package com.codefusiongroup.gradshub.messaging.chatMessages;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.models.ChatMessage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,10 +41,10 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter {
 
         ChatMessage message = (ChatMessage) chatMessagesList.get(position);
 
-        if (message.getMessageCreatorID().equals(mCurrentUserID)) {
+        if (message.getCorrespondentID().equals(mCurrentUserID)) {
             // if the current user id is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
-        } else{
+        } else {
             // if some other user sent the message
             return VIEW_TYPE_MESSAGE_RECEIVED;
         }

@@ -20,13 +20,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.groups.searchGroups.exploreGroupsList.ExploreGroupsFragment;
-import com.codefusiongroup.gradshub.messaging.chats.ChatsListFragment;
+import com.codefusiongroup.gradshub.messaging.openChats.OpenChatsFragment;
 import com.codefusiongroup.gradshub.events.ScheduleListFragment;
 import com.codefusiongroup.gradshub.groups.userGroups.userGroupsList.MyGroupsListFragment;
 import com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment;
 import com.codefusiongroup.gradshub.posts.postcomments.Comment;
 import com.codefusiongroup.gradshub.posts.postcomments.GroupPostCommentsFragment;
-import com.codefusiongroup.gradshub.messaging.users.UsersListFragment;
+import com.codefusiongroup.gradshub.messaging.searchableUsers.UsersListFragment;
 import com.codefusiongroup.gradshub.common.models.Chat;
 import com.codefusiongroup.gradshub.common.models.Post;
 import com.codefusiongroup.gradshub.common.models.ResearchGroup;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         MyGroupsProfileFragment.OnPostsListFragmentInteractionListener,
         GroupPostCommentsFragment.OnCommentsListFragmentInteractionListener,
         ScheduleListFragment.OnScheduleListFragmentInteractionListener,
-        ChatsListFragment.OnChatsListFragmentInteractionListener,
+        OpenChatsFragment.OnOpenChatsFragmentInteractionListener,
         UsersListFragment.OnUsersListFragmentInteractionListener {
 
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                         // TESTING NOTIFICATION with dummy event
                         Schedule event = new Schedule();
                         event.setTitle("Robotics");
-                        event.setDate("date: September 14, 2020"); // adjust month/date appropriately & leave formatting as it is.
+                        event.setDate("date: September 20, 2020"); // adjust month/date appropriately & leave formatting as it is.
                         event.setPlace("place: Vancouver, Canada");
                         //***************************************
 
@@ -299,12 +299,13 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
 
     @Override
-    public void onChatsListFragmentInteraction(Chat chat) {
+    public void onOpenChatsFragmentInteraction(Chat chat) {
 
-//        Bundle bundle = new Bundle();
-//        bundle.putString("selected_chat", chat.getContactName());
-//        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
-//        navController.navigate(R.id.action_chatsListFragment_to_chatMessagesFragment, bundle);
+        Bundle bundle = new Bundle();
+        bundle.putString("name", chat.getCorrespondentName());
+        bundle.putString("id", chat.getCorrespondentID());
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_chatsListFragment_to_chatMessagesFragment, bundle);
 
     }
 
@@ -555,9 +556,9 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
         */
 
-        Intent authActivityIntent = new Intent(context, AuthenticationActivity.class);
-        authActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent authPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
+//        Intent authActivityIntent = new Intent(context, AuthenticationActivity.class);
+//        authActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        PendingIntent authPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
 
         String eventTitle = event.getTitle();
 
@@ -579,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 .setShowWhen(false) // doesn't show notification timestamp
 
                 // Set the intent that will fire when the user taps the notification
-                .setContentIntent(authPendingIntent)
+                //.setContentIntent(authPendingIntent)
 
                 // automatically removes the notification when the user taps it.
                 .setAutoCancel(true);

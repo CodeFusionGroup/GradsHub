@@ -1,4 +1,4 @@
-package com.codefusiongroup.gradshub.messaging.users;
+package com.codefusiongroup.gradshub.messaging.searchableUsers;
 
 import android.content.Context;
 import android.os.Bundle;

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -66,7 +67,7 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
         initViewComponents(view);
         initialiseSpinner(mSpinner);
 
-        mRegisterPresenter.subscribe((RegisterContract.IRegisterView) this);
+        mRegisterPresenter.subscribe(this);
         Log.i(TAG, "register presenter has subscribed to RegisterFragment");
 
         mSubmitBtn.setOnClickListener(v -> {
@@ -105,30 +106,37 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
 
     }
 
-    // Retrieve the FCM registration token
-    public void registrationWithToken(){
+
+    // Retrieve the FCM registration token and register the user
+    public void registrationWithToken() {
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
+
+                        if ( !task.isSuccessful() ) {
+                            GradsHubApplication.showToast("failed to register, please try again later.");
                             Log.w(TAG, "getInstanceId failed", task.getException());
                             return;
                         }
 
-                        // Get new Instance ID token
-                        mToken = task.getResult().getToken();
-                        Log.d(TAG, mToken);
+                        // Get new Instance ID token and register user
+                        if ( task.getResult() != null ) {
+                            mToken = task.getResult().getToken();
+                            Log.i(TAG, "register user with token: " + mToken);
+                            mRegisterPresenter.registerUser( new User( mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mToken ) );
+                        }
+                        else {
+                            GradsHubApplication.showToast("failed to register, please try again later.");
+                            Log.w(TAG, "task.getResult() is null");
+                        }
 
-                        //Register User
-                        mRegisterPresenter.registerUser( new User( mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mToken ) );
-
-                        //Log and toast
-//                        String msg = getString(R.string.msg_token_fmt, mToken);
-//                        Log.d(TAG, mToken);
-//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
+
                 });
+
     }
 
 

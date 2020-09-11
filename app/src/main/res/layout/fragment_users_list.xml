@@ -23,7 +23,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
-            tools:context=".messaging.users.UsersListFragment"
+            tools:context=".messaging.searchableUsers.UsersListFragment"
             tools:listitem="@layout/fragment_users_list_item" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
