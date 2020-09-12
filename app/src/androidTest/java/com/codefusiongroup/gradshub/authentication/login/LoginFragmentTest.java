@@ -1,43 +1,34 @@
 package com.codefusiongroup.gradshub.authentication.login;
 
-import android.view.Display;
-
-import androidx.navigation.testing.TestNavHostController;
-import androidx.test.core.app.ApplicationProvider;
 //import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
-import com.codefusiongroup.gradshub.common.MainActivity;
+import com.codefusiongroup.gradshub.utils.MonthsConstants;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.AfterClass;
+        import org.junit.Rule;
 import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static androidx.test.espresso.action.ViewActions.click;
+        import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
-import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
+        import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withInputType;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
+        import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.codefusiongroup.gradshub.authentication.AuthenticationActivityTest.waitForResources;
-import static com.codefusiongroup.gradshub.common.AssisterMethods.clickAt;
+import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
-import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.state;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class LoginFragmentTest {
@@ -84,20 +75,22 @@ public class LoginFragmentTest {
     }
 
     @Test
-    public void testUserLogin() throws InterruptedException {
-        if(state == 1){
-            logUserOut();
-        }
-        onView(withId(R.id.emailET)).perform(typeText(username));
-        closeSoftKeyboard();
-        onView(withId(R.id.passwordET)).perform(typeText(password));
-        closeSoftKeyboard();
-        onView(withId(R.id.loginBtn)).perform(click());
-        waitForResources(4000);
-        state = 1;
+    public void testUserLogin() throws InterruptedException, UiObjectNotFoundException {
+        logInUser();
         onView(withId(R.id.toolbar)).check(matches(isDisplayed()));       //This is the first view that should be visible after the user logs in.
         //Log the user out after this login
         logUserOut();
+    }
+
+    /*----------------------------------------------------------------Unit Test---------------------------------------------*/
+    private String[] months = {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
+            "OCTOBER", "NOVEMBER", "DECEMBER"};
+    @Test
+    public void setMonthsTest() {
+        for(int i = 0;i<12;i++){
+            int actual = MonthsConstants.setMonths(months[i]);
+            assertEquals(i, actual);
+        }
     }
 
 }

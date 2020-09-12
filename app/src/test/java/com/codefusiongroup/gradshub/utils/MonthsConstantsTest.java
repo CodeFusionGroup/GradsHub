@@ -7,7 +7,6 @@ import static org.junit.Assert.*;
 
 public class MonthsConstantsTest {
 
-    private int[] monthNumber = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
     private String[] months = {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
                                 "OCTOBER", "NOVEMBER", "DECEMBER"};
     @Test

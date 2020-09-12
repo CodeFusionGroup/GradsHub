@@ -2,6 +2,7 @@ package com.codefusiongroup.gradshub.groups.creategroup;
 
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
@@ -20,6 +21,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.codefusiongroup.gradshub.authentication.AuthenticationActivityTest.waitForResources;
+import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
+import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
 import static org.junit.Assert.*;
 
@@ -29,20 +32,13 @@ public class CreateGroupFragmentTest {
 
     //User must login before accessing the feed
     @Before
-    public void logUserIn() throws InterruptedException {
-        try {
-            onView(withId(R.id.emailET)).perform(typeText("testuser@gmail.com"));
-            closeSoftKeyboard();
-            onView(withId(R.id.passwordET)).perform(typeText("simple1"));
-            closeSoftKeyboard();
-            onView(withId(R.id.loginBtn)).perform(click());
-            waitForResources(6000);
-        }
-        catch(NoMatchingViewException e){
-            //There login screen views were not found
-            //this means the user is already logged in
-            //continue with the tests
-        }
+    public void logIn() throws InterruptedException, UiObjectNotFoundException {
+        logInUser();
+    }
+
+    @After
+    public void logOut(){
+        logUserOut();
     }
 
     @Test
@@ -110,9 +106,9 @@ public class CreateGroupFragmentTest {
         //Click when there no radio button option selected
         onView(withText("DONE"))
                 .perform(click());
-
         //Checks if the toast is showing a correct error message
-
     }
+
+    //TODO: Edit a php file to return true when a dummy group is created, then create a createGroupSuccessTest()
 
 }

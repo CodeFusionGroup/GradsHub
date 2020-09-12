@@ -33,14 +33,9 @@ public class RegisterFragmentTest {
     private String fieldError = new String("Field can't be empty!");
 
     @Before
-    public void nagivateToRegister() throws InterruptedException {
-        try {
-            //Nagivate to registration screen
-            onView(withId(R.id.registerBtn)).perform(click());
-        }
-        catch (NoMatchingViewException e){
-            logUserOut();
-        }
+    public void nagivateToRegister(){
+        //Nagivate to registration screen
+        onView(withId(R.id.registerBtn)).perform(click());
     }
 
     @Test

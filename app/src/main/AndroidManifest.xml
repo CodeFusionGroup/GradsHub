@@ -58,17 +58,8 @@
         </service> <!-- [END firebase_service] -->
 
         <!-- =========================== TEST FILES ============================= -->
-        <activity android:name=".authentication.authtests.TestingActivity" />
-        <activity android:name=".groups.searchGroups.searchGroupsTests.AvailableTestingActivity" />
-        <activity android:name=".authentication.authtests.registrationtests.FragmentRegisterActivity" />
-        <activity android:name=".authentication.authtests.logintests.ResetActivity" />
         <activity android:name=".profile.ProfileTestActivity" />
-        <activity android:name=".groups.creategroup.createGroupTests.CreateGroupActivity" />
-        <activity android:name=".posts.createpost.CreatePostActivity" />
-        <activity android:name=".groups.searchGroups.searchGroupsTests.GroupListActivity" />
-        <activity android:name=".feed.feedtests.HomeTestActivity" />
-        <activity android:name=".posts.postcomments.PostCommentActivity" /> <!-- <activity android:name=".main.mygroups.GroupListlistActivity" ></activity> -->
-        <activity android:name=".feed.feedtests.FeedListActivity" />
+        <activity android:name=".posts.postcomments.PostCommentActivity" />
     </application>
 
 </manifest>
