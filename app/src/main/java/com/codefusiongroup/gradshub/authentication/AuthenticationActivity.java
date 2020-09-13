@@ -9,27 +9,47 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.common.GradsHubApplication;
+import com.codefusiongroup.gradshub.common.MainActivity;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 
 public class AuthenticationActivity extends AppCompatActivity {
 
 
     private static final String CHANNEL_ID = "0";
-    private static Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+        checkForGPS();
         createNotificationChannel();
-        AuthenticationActivity.context = this;
     }
 
-    public static Context getContext(){
-        return AuthenticationActivity.context;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkForGPS();
     }
 
+
+    public void checkForGPS() {
+        // check if device has google play services
+        int isGooglePSAvailable = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+
+        switch (isGooglePSAvailable) {
+            case ConnectionResult.API_UNAVAILABLE:
+                GradsHubApplication.showToast("Android 4.0 or higher is required with Google Play Store installed, your device won't access Messaging for this application.");
+                break;
+
+            case ConnectionResult.SUCCESS:
+                break;
+        }
+    }
 
     private void createNotificationChannel() {
 

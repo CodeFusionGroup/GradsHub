@@ -10,33 +10,37 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.codefusiongroup.gradshub.R;
-import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
+import com.codefusiongroup.gradshub.common.BaseView;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
-import com.codefusiongroup.gradshub.common.Preference;
+import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.User;
+import com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesPresenter;
 
 
-public class LoginFragment extends Fragment implements LoginContract.ILoginView, View.OnClickListener {
+public class LoginFragment extends Fragment implements BaseView<LoginPresenter>, LoginContract.ILoginView, View.OnClickListener {
 
 
     private static String TAG = "LoginFragment"; // for debugging
 
-    private AppCompatActivity mActivity; // used as context in intent to start MainActivity
+    private AppCompatActivity mActivity; // used as context in intent to start MainActivity and Preferences
     private ProgressBar mProgressBar;
     private EditText mEmailET, mPasswordET;
 
     private User mUser;
-    private LoginPresenter mLoginPresenter;
+    private LoginPresenter mPresenter;
+    private UserPreferences mUserPreferences;
+    private View mView;
 
 
     @Override
@@ -50,20 +54,29 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLoginPresenter = new LoginPresenter();
+
+        setPresenter( new LoginPresenter() );
+        mUserPreferences = UserPreferences.getInstance();
+        if (mUserPreferences.isLoggedIn( requireActivity() ) ) {
+            mUser = mUserPreferences.getUserDetails( requireActivity() );
+            startMainActivity();
+        }
+
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_login, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment_login, container, false);
+        return mView;
     }
 
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         initViewComponents(view);
-        mLoginPresenter.subscribe(LoginFragment.this);
+        mPresenter.subscribe(LoginFragment.this);
+        Log.i(TAG, "login presenter has subscribed to view --> LoginFragment");
     }
 
 
@@ -80,23 +93,6 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
         loginBtn.setOnClickListener(this);
         registerBtn.setOnClickListener(this);
         forgotPasswordBtn.setOnClickListener(this);
-
-        // Check if user is already logged in
-        if( Preference.getLoggedIn(AuthenticationActivity.getContext()) ){
-
-            // Get the saved preferences
-            String id = Preference.getID(AuthenticationActivity.getContext());
-            String fname = Preference.getFName(AuthenticationActivity.getContext());
-            String lname = Preference.getLName(AuthenticationActivity.getContext());
-            String email = Preference.getEmail(AuthenticationActivity.getContext());
-            String acad_status = Preference.getAcadStatus(AuthenticationActivity.getContext());
-            String phone_no = Preference.getPhoneNo(AuthenticationActivity.getContext());
-
-            //Create a new user
-            mUser = new User(id,fname,lname,email,phone_no,acad_status);
-            this.startMainActivity();
-        }
-
     }
 
 
@@ -112,8 +108,8 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
                 String email = mEmailET.getText().toString().trim();
                 String password = mPasswordET.getText().toString().trim();
 
-                if ( mLoginPresenter.validateLoginInput(email, password) ) {
-                    mLoginPresenter.loginUser(email, password);
+                if ( mPresenter.validateLoginInput(email, password) ) {
+                    mPresenter.loginUser(email, password);
                 }
 
                 break;
@@ -131,6 +127,12 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
 
 
     @Override
+    public void setPresenter(LoginPresenter presenter) {
+        mPresenter = presenter;
+    }
+
+
+    @Override
     public void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
     }
@@ -138,7 +140,7 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
 
     @Override
     public void hideProgressBar() {
-        //TODO: fix progress bar not disappearing
+        //TODO: fix progress bar not disappearing if login credentials are incorrect
         mProgressBar.setVisibility(View.GONE);
     }
 
@@ -158,15 +160,22 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
 
 
     @Override
-    public void showLoginResponseMsg(String message) { GradsHubApplication.showToast(message); }
+    public void showLoginResponseMsg(String message) {
+        GradsHubApplication.showToast(message); }
 
 
     @Override
-    public void initialiseUser(User user) { mUser = user; }
+    public void initialiseUser(User user) {
+        Log.i(TAG, "initialiseUser() executed");
+        mUser = user;
+        mUserPreferences.saveUserDetails( user, mActivity );
+        mUserPreferences.setLogInState( mActivity );
+    }
 
 
     @Override
     public void startMainActivity() {
+        Log.i(TAG, "startMainActivity() executed");
         Intent intent = new Intent( mActivity, MainActivity.class );
         intent.putExtra("USER", mUser);
         mActivity.startActivity(intent);
@@ -175,8 +184,10 @@ public class LoginFragment extends Fragment implements LoginContract.ILoginView,
 
     @Override
     public void onDetach() {
-        super.onDetach();
-    }
 
+        super.onDetach();
+        //mPresenter.unsubscribe();
+        //Log.i(TAG, "login presenter has unsubscribed from view --> LoginFragment");
+    }
 
 }

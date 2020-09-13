@@ -10,31 +10,31 @@ public interface OpenChatsContract {
 
     interface IOpenChatsView {
 
-        void showUserOpenChatsResponseMsg(String message);
-
-        void updateUserOpenChats(List<Chat> openChats);
+//        void showUserOpenChatsResponseMsg(String message);
+//
+//        void updateUserOpenChats(List<Chat> openChats);
 
     }
 
 
     interface IOpenChatsPresenter {
 
-        void initialiseUserOpenChats(String userID);
-
-        void setUserOpenChatsResponseMsg(String responseMsg);
-
-        void setUserOpenChatsResponseCode(String responseCode);
-
-        void setUserOpenChatsList(List<Chat> chatsList);
-
-        void onRequestUpdateUserOpenChatsFinished();
+//        void initialiseUserOpenChats(String userID);
+//
+//        void setUserOpenChatsResponseMsg(String responseMsg);
+//
+//        void setUserOpenChatsResponseCode(String responseCode);
+//
+//        void setUserOpenChatsList(List<Chat> chatsList);
+//
+//        void onRequestUpdateUserOpenChatsFinished();
 
     }
 
 
     interface IOpenChatsModel {
 
-        void fetchUserOpenChats(String userID);
+        //void fetchUserOpenChats(String userID);
     }
 
 

@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class Chat {
 
-    @SerializedName("CORRESPONDENT_NAME")
+    @SerializedName("FULL_NAME")
     private String correspondentName;
 
-    @SerializedName("LATEST_MESSAGE")
+    @SerializedName("MESSAGE_TEXT")
     private String latestMessage;
 
     @SerializedName("MESSAGE_TIMESTAMP")
     private String messageTimeStamp;
 
-    @SerializedName("CORRESPONDENT_ID")
+    @SerializedName("USER_ID")
     private String correspondentID;
 
 

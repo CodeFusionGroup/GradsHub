@@ -16,11 +16,11 @@ public interface MessagingAPI {
     Call<JsonObject> updateUserFCMToken(@Body HashMap<String, String> params);
 
 
-    @POST("User/retrieveopenchats.php")
+    @POST("User/retrievechats.php")
     Call<JsonObject> fetchOpenChats(@Body HashMap<String, String> params);
 
 
-    @POST("User/retrievechatmessages.php")
+    @POST("Chat/retrievemessages.php")
     Call<JsonObject> fetchChatMessages(@Body HashMap<String, String> params);
 
 

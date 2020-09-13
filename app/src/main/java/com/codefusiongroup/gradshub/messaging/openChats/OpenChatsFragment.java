@@ -25,9 +25,20 @@ import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.models.Chat;
 import com.codefusiongroup.gradshub.common.BaseView;
+import com.codefusiongroup.gradshub.common.network.ApiProvider;
+import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
+import com.codefusiongroup.gradshub.messaging.MessagingAPI;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPresenter>, OpenChatsContract.IOpenChatsView {
@@ -61,7 +72,7 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setPresenter( new OpenChatsPresenter() );
+        //setPresenter( new OpenChatsPresenter() );
         setHasOptionsMenu(true);
     }
 
@@ -88,17 +99,80 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
         mSwipeRefreshLayout = view.findViewById(R.id.refresh);
         mProgressBar = view.findViewById(R.id.progress_circular);
 
-        mPresenter.attachView(this);
-        Log.i(TAG, "open chats presenter has subscribed to view");
+        //mPresenter.attachView(this);
+        //Log.i(TAG, "open chats presenter has subscribed to view");
 
         MainActivity mainActivity = (MainActivity) requireActivity();
-        mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
+        fetchUserOpenChats(mainActivity.user.getUserID());
+        //mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
 
         // if network request to fetch user's open chats fails, the user can refresh the page to
         // initiate another request
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
+            //mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
+            fetchUserOpenChats(mainActivity.user.getUserID());
             mSwipeRefreshLayout.setRefreshing(true);
+        });
+
+    }
+
+
+    public void fetchUserOpenChats(String userID) {
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", userID);
+
+        MessagingAPI messagingAPI = ApiProvider.getMessageApiService();
+        messagingAPI.fetchOpenChats(params).enqueue(new Callback<JsonObject>() {
+
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+
+                if ( response.isSuccessful() ) {
+                    hideProgressBar();
+
+                    JsonObject jsonObject = response.body();
+
+                    if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
+
+                        List<Chat> openChatsList = new ArrayList<>();
+                        JsonArray openChatsJA = jsonObject.getAsJsonArray("message");
+
+                        for (JsonElement jsonElement: openChatsJA) {
+                            JsonObject openChatJO = jsonElement.getAsJsonObject();
+                            Chat  chat = new Gson().fromJson(openChatJO, Chat.class);
+                            openChatsList.add(chat);
+                        }
+
+                        if ( mSwipeRefreshLayout.isRefreshing() ) {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                        // mAdapter must point to the same object mOpenChatsList otherwise recycler view won't update
+                        mOpenChatsList.clear();
+                        mOpenChatsList.addAll(openChatsList);
+                        mAdapter.notifyDataSetChanged();
+
+                    }
+                    // no open chats exist for the user
+                    else {
+                        GradsHubApplication.showToast("no open chats exits yet.");
+                    }
+                }
+
+                else {
+                    hideProgressBar();
+                    Log.i(TAG, "response.isSuccessful() = false");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                hideProgressBar();
+                GradsHubApplication.showToast("failed to load open chats, please swipe to refresh page or try again later.");
+                t.printStackTrace();
+            }
+
         });
 
     }
@@ -161,25 +235,25 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     }
 
 
-    @Override
-    public void showUserOpenChatsResponseMsg(String message) {
-        GradsHubApplication.showToast(message);
-    }
-
-
-    @Override
-    public void updateUserOpenChats(List<Chat> openChats) {
-
-        hideProgressBar();
-        if ( mSwipeRefreshLayout.isRefreshing() ) {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-        // mAdapter must point to the same object mOpenChatsList otherwise recycler view won't update
-        mOpenChatsList.clear();
-        mOpenChatsList.addAll(openChats);
-        mAdapter.notifyDataSetChanged();
-
-    }
+//    @Override
+//    public void showUserOpenChatsResponseMsg(String message) {
+//        GradsHubApplication.showToast(message);
+//    }
+//
+//
+//    @Override
+//    public void updateUserOpenChats(List<Chat> openChats) {
+//
+//        hideProgressBar();
+//        if ( mSwipeRefreshLayout.isRefreshing() ) {
+//            mSwipeRefreshLayout.setRefreshing(false);
+//        }
+//        // mAdapter must point to the same object mOpenChatsList otherwise recycler view won't update
+//        mOpenChatsList.clear();
+//        mOpenChatsList.addAll(openChats);
+//        mAdapter.notifyDataSetChanged();
+//
+//    }
 
 
     public interface OnOpenChatsFragmentInteractionListener {
@@ -191,8 +265,8 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mPresenter.detachView(this);
-        Log.i(TAG, "open chats presenter has unsubscribed from view");
+        //mPresenter.detachView(this);
+        //Log.i(TAG, "open chats presenter has unsubscribed from view");
     }
 
 }

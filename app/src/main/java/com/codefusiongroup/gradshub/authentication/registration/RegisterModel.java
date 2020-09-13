@@ -66,6 +66,9 @@ public class RegisterModel implements RegisterContract.IRegisterModel{
                 }
                 else {
                     Log.i(TAG, "response.isSuccessful() = false");
+                    Log.i(TAG, "response.errorBody() --> "+response.errorBody());
+                    Log.i(TAG, "response.message() = false, "+response.message());
+                    Log.i(TAG, "response.code() = false, "+response.code());
                 }
 
             }

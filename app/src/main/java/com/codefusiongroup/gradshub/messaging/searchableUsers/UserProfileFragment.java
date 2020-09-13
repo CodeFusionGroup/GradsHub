@@ -51,8 +51,10 @@ public class UserProfileFragment extends Fragment {
         messageBtn.setOnClickListener(v -> {
 
             // navigate to chat messages to start a conversation
+            Bundle userBundle = new Bundle();
+            userBundle.putParcelable("selected_user", mSelectedUser);
             Bundle bundle = new Bundle();
-            bundle.putParcelable("selected_user", mSelectedUser);
+            bundle.putBundle("user_bundle", userBundle);
             NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
             navController.navigate(R.id.action_userProfileFragment_to_chatMessagesFragment, bundle);
 

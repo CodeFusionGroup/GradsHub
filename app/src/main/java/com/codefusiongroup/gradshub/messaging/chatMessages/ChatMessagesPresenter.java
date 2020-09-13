@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.codefusiongroup.gradshub.common.BasePresenter2;
 import com.codefusiongroup.gradshub.common.models.ChatMessage;
-import com.codefusiongroup.gradshub.common.network.ApiResponseCodes;
+import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.messaging.MessagingService;
 
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContrac
 
     private static final String TAG = "ChatMessagesPresenter";
 
-    private String mFetchMessagesResponseCode = "1";//TODO: remove initialization later, just testing
-    private String mFetchMessagesResponseMsg = null;
+//    private String mFetchMessagesResponseCode = "1";
+//    private String mFetchMessagesResponseMsg = null;
 
     private String mInsertMessageResponseCode;
     private String mInsertMessageResponseMsg;
 
-    private List<ChatMessage> mChatsMessages = new ArrayList<>();//TODO: remove initialization later, just testing
+    //private List<ChatMessage> mChatsMessages = new ArrayList<>();
 
     private ChatMessagesContract.IChatMessagesView mView;
 
@@ -53,50 +53,49 @@ public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContrac
     }
 
 
-    @Override
-    public void initChatMessages(String currentUserID, String correspondentID) {
-        //messagingService.fetchChatMessages(currentUserID, correspondentID);
-        //TODO: remove below code after testing and uncomment above line
-        testMethod();
-        onRequestFetchMessagesFinished();
-    }
-
-
-    @Override
-    public void setFetchMessagesResponseCode(String responseCode) {
-        mFetchMessagesResponseCode = responseCode;
-    }
-
-
-    @Override
-    public void setFetchMessagesResponseMsg(String responseMsg) {
-        mFetchMessagesResponseMsg = responseMsg;
-    }
-
-
-    @Override
-    public void setChatMessagesList(List<ChatMessage> chatMessageList) {
-        mChatsMessages = chatMessageList;
-    }
-
-
-    @Override
-    public void onRequestFetchMessagesFinished() {
-        if (mView != null) {
-            if (mFetchMessagesResponseCode.equals(ApiResponseCodes.SERVER_FAILURE_CODE)){
-                mView.showServerFailureMsg(mFetchMessagesResponseMsg);
-            }
-
-            else if (mFetchMessagesResponseCode.equals(ApiResponseCodes.API_SUCCESS_CODE)){
-                mView.loadChatMessages(mChatsMessages);
-            }
-
-            // no chat messages exist for this chat yet
-            else {
-                mView.showFetchMessagesResponse(mFetchMessagesResponseMsg);
-            }
-        }
-    }
+//    @Override
+//    public void initChatMessages(String currentUserID, String correspondentID) {
+//        Log.i(TAG, "initChatMessages() called, ids: "+currentUserID+", "+correspondentID);
+//        messagingService.fetchChatMessages(currentUserID, correspondentID);
+//    }
+//
+//
+//    @Override
+//    public void setFetchMessagesResponseCode(String responseCode) {
+//        mFetchMessagesResponseCode = responseCode;
+//    }
+//
+//
+//    @Override
+//    public void setFetchMessagesResponseMsg(String responseMsg) {
+//        mFetchMessagesResponseMsg = responseMsg;
+//    }
+//
+//
+//    @Override
+//    public void setChatMessagesList(List<ChatMessage> chatMessageList) {
+//        mChatsMessages = chatMessageList;
+//    }
+//
+//
+//    @Override
+//    public void onRequestFetchMessagesFinished() {
+//        if (mView != null) {
+//            if (mFetchMessagesResponseCode.equals(ApiResponseConstants.SERVER_FAILURE_CODE)){
+//                mView.showServerFailureMsg(mFetchMessagesResponseMsg);
+//            }
+//
+//            else if (mFetchMessagesResponseCode.equals(ApiResponseConstants.API_SUCCESS_CODE)){
+//                Log.i(TAG, "loading chat messages");
+//                mView.loadChatMessages(mChatsMessages);
+//            }
+//
+//            // no chat messages exist for this chat yet
+//            else {
+//                mView.showFetchMessagesResponse(mFetchMessagesResponseMsg);
+//            }
+//        }
+//    }
 
 
     @Override
@@ -120,11 +119,11 @@ public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContrac
     @Override
     public void onRequestInsertMessageFinished() {
         if (mView != null) {
-            if (mInsertMessageResponseCode.equals(ApiResponseCodes.SERVER_FAILURE_CODE)){
+            if (mInsertMessageResponseCode.equals(ApiResponseConstants.SERVER_FAILURE_CODE)){
                 mView.showServerFailureMsg(mInsertMessageResponseMsg);
             }
 
-            else if (mInsertMessageResponseCode.equals(ApiResponseCodes.API_SUCCESS_CODE)){
+            else if (mInsertMessageResponseCode.equals(ApiResponseConstants.API_SUCCESS_CODE)){
                 mView.showInsertMessageResponse(mInsertMessageResponseMsg);
             }
         }
@@ -132,33 +131,23 @@ public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContrac
     }
 
     //=======================================================================
-    @Override
-    public void setChatMessage(ChatMessage message) {
-        if (mView != null) {
-            Log.i(TAG, "mView is not null");
-            mView.updateChatMessagesList(message);
-        }
-    }
-
-
-    @Override
-    public void setMessageSentState(boolean value) {
-        if (mView != null) {
-            Log.i(TAG, "mView is not null");
-            mView.setChatMessageSentStatus(value);
-        }
-    }
+//    @Override
+//    public void setChatMessage(ChatMessage message) {
+//        if (mView != null) {
+//            Log.i(TAG, "mView is not null");
+//            mView.updateChatMessagesList(message);
+//        }
+//    }
+//
+//
+//    @Override
+//    public void setMessageSentState(boolean value) {
+//        if (mView != null) {
+//            Log.i(TAG, "mView is not null");
+//            mView.setChatMessageSentStatus(value);
+//        }
+//    }
 
     //=======================================================================
-
-
-    public void testMethod() {
-
-        mChatsMessages.clear();
-        mChatsMessages.add(new ChatMessage("hi there", "10:00", "62") );
-        mChatsMessages.add(new ChatMessage( "hi how are you.", "10:10", "2"));
-        mChatsMessages.add(new ChatMessage( "did you check my paper", "10:20", "62"));
-        mChatsMessages.add(new ChatMessage( "oh its out already, i'll look at it", "10:30", "2"));
-    }
 
 }
