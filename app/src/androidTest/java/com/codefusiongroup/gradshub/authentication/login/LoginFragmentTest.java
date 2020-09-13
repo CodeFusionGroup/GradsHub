@@ -31,6 +31,7 @@ import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.state;
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class LoginFragmentTest {
 
     private String username = new String("testuser@gmail.com");
@@ -74,7 +75,6 @@ public class LoginFragmentTest {
         //onView(withText("Incorrect Password.Please try again!")).check(matches(isDisplayed()));      //Correct error message was returned
     }
      
-    @Ignore
     @Test
     public void testUserLogin() throws InterruptedException, UiObjectNotFoundException {
         logInUser();
