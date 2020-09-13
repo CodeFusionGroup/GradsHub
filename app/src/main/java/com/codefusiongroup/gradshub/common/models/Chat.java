@@ -14,7 +14,7 @@ public class Chat {
     @SerializedName("MESSAGE_TIMESTAMP")
     private String messageTimeStamp;
 
-    @SerializedName("USER_ID")
+    @SerializedName("RECIPIENT_ID")
     private String correspondentID;
 
 

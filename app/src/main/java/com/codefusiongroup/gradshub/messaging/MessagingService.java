@@ -205,7 +205,7 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
         HashMap<String, String> params = new HashMap<>();
         params.put( "sender_id", message.getCorrespondentID() );
         params.put( "message_text", message.getMessage() );
-        params.put( "date_sent", message.getMessageTimeStamp() );
+        params.put( "message_timestamp", message.getMessageTimeStamp() );
         params.put( "recipient_id",  correspondentID );
 
         MessagingAPI messagingAPI = ApiProvider.getMessageApiService();

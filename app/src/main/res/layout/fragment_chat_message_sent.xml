@@ -31,9 +31,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/messageSentTV"
-        android:layout_alignLeft="@id/messageSentTV"
-        android:layout_alignStart="@id/messageSentTV"
-        android:text="10:00"
+        android:layout_alignEnd="@id/messageSentTV"
+        android:layout_alignRight="@id/messageSentTV"
+        android:text="2020-09-13 10:00"
         android:textSize="12sp" />
 
 

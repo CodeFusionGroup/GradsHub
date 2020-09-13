@@ -181,7 +181,15 @@ public class ChatMessagesFragment extends Fragment implements BaseView<ChatMessa
                 //=================================================================================
 
                 ChatMessage message = new ChatMessage(userMessage, messageTimeStamp, currentUserID );
-                mPresenter.insertMessage( message, mSelectedUser.getUserID() );
+
+                if (mOpenChatsUserID != null ) {
+                    //mPresenter.initChatMessages(currentUserID, mOpenChatsUserID);
+                    mPresenter.insertMessage( message, mOpenChatsUserID );
+                }
+                else if (mSelectedUser != null) {
+                    //mPresenter.initChatMessages(currentUserID, mSelectedUser.getUserID());
+                    mPresenter.insertMessage( message, mSelectedUser.getUserID() );
+                }
 
                 mChatMessagesList.add(message);
                 mAdapter.notifyItemRangeInserted( sizeBeforeUpdate, mChatMessagesList.size() );

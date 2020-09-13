@@ -10,6 +10,7 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -43,12 +44,12 @@ public class UserProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        ImageButton messageBtn = view.findViewById(R.id.messageBtn);
+        Button startChatBtn = view.findViewById(R.id.startChatBtn);
         TextView userNameTV = view.findViewById(R.id.userProfileNameTV);
 
         userNameTV.setText(mSelectedUser.getFullName());
 
-        messageBtn.setOnClickListener(v -> {
+        startChatBtn.setOnClickListener(v -> {
 
             // navigate to chat messages to start a conversation
             Bundle userBundle = new Bundle();
