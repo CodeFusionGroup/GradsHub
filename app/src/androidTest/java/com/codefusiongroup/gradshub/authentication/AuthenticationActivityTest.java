@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.codefusiongroup.gradshub.R;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static org.junit.Assert.*;
 //@RunWith(AndroidJUnit4.class)
+@Ignore
 public class AuthenticationActivityTest {
     @Rule
     public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<AuthenticationActivity>(AuthenticationActivity.class);

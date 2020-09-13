@@ -14,6 +14,7 @@ import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.*;
 
+@Ignore
 public class RegisterFragmentTest {
     @Rule
     public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<AuthenticationActivity>(AuthenticationActivity.class);

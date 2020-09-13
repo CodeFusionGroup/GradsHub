@@ -7,6 +7,7 @@ import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
 import static org.junit.Assert.*;
-
+@Ignore
 public class CreatePostFragmentTest {
 
     @Rule

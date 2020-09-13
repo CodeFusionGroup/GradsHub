@@ -57,9 +57,6 @@
             </intent-filter>
         </service> <!-- [END firebase_service] -->
 
-        <!-- =========================== TEST FILES ============================= -->
-        <activity android:name=".profile.ProfileTestActivity" />
-        <activity android:name=".posts.postcomments.PostCommentActivity" />
     </application>
 
 </manifest>

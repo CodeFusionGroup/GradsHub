@@ -10,7 +10,8 @@ import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.utils.MonthsConstants;
 
 import org.junit.AfterClass;
-        import org.junit.Rule;
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
@@ -30,7 +31,7 @@ import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.state;
 import static org.junit.Assert.assertEquals;
 
-
+@Ignore
 public class LoginFragmentTest {
 
     private String username = new String("testuser@gmail.com");
