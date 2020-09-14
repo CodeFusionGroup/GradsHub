@@ -15,7 +15,7 @@ public class GradsHubApplication extends Application {
         instance = this;
     }
 
-    private static Context getContext() {
+    public static Context getContext() {
         if(instance == null) {
             instance = new GradsHubApplication();
         }
