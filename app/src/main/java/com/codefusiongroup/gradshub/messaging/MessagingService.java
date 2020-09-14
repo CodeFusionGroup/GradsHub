@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
+import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.ChatMessage;
 
 import com.codefusiongroup.gradshub.common.network.ApiBaseResponse;
@@ -45,6 +46,7 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
     private ChatMessagesContract.IChatMessagesPresenter mPresenter;
     private static MessagingService instance;
+    private UserPreferences mUserPreferences;
 
 
     public MessagingService() {
@@ -161,6 +163,11 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
     @Override
     public void onNewToken(@NonNull String token) {
         Log.i(TAG, "onNewToken() executed, new token is: " + token);
+
+        // Save the user token for later usage
+        mUserPreferences = UserPreferences.getInstance();
+        mUserPreferences.saveFCMToken(token,getApplicationContext());
+
         //updateUserToken(userID, token);
     }
 
