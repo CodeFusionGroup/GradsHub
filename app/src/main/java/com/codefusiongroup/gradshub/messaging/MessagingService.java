@@ -9,11 +9,13 @@ import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
+import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.ChatMessage;
 
 import com.codefusiongroup.gradshub.common.network.ApiBaseResponse;
@@ -45,6 +47,7 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
     private ChatMessagesContract.IChatMessagesPresenter mPresenter;
     private static MessagingService instance;
+    private UserPreferences mUserPreferences;
 
 
     public MessagingService() {
@@ -161,41 +164,15 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
     @Override
     public void onNewToken(@NonNull String token) {
         Log.i(TAG, "onNewToken() executed, new token is: " + token);
+
+        // Save the user token for later usage
+        Context ctx = GradsHubApplication.getContext();
+        mUserPreferences = UserPreferences.getInstance();
+        mUserPreferences.saveFCMToken(token,ctx);
+        Log.i(TAG, "Shared preferences token " + mUserPreferences.getFCMToken(ctx));
+        mUserPreferences.tokenChanged(ctx);
+
         //updateUserToken(userID, token);
-    }
-
-
-    private void updateUserToken(String userID, String token) {
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put("user_id", userID);
-        params.put("fcm_token", token);
-
-        MessagingAPI messagingAPI = ApiProvider.getMessageApiService();
-
-        messagingAPI.updateUserFCMToken(params).enqueue(new Callback<JsonObject>() {
-
-            @Override
-            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-
-                if ( response.isSuccessful() ) {
-                    JsonObject jsonObject = response.body();
-                    GradsHubApplication.showToast("successfully updated your token for messaging.");
-                }
-                else {
-                    Log.i(TAG, "response.isSuccessful() = false");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                GradsHubApplication.showToast("your token has been refreshed, please refresh page to continue receiving messages.");
-                t.printStackTrace();
-            }
-
-        });
-
     }
 
 
