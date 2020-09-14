@@ -21,7 +21,6 @@ import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
 
-@Ignore
 public class MyGroupsProfileFragmentTest {
     @Rule
     public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<>(AuthenticationActivity.class);

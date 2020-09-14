@@ -1,6 +1,7 @@
 package com.codefusiongroup.gradshub.authentication.login;
 
 //import androidx.test.espresso.intent.Intents;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -16,7 +17,8 @@ import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
-        import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -31,7 +33,6 @@ import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.state;
 import static org.junit.Assert.assertEquals;
 
-@Ignore
 public class LoginFragmentTest {
 
     private String username = new String("testuser@gmail.com");
@@ -80,7 +81,10 @@ public class LoginFragmentTest {
         logInUser();
         onView(withId(R.id.toolbar)).check(matches(isDisplayed()));       //This is the first view that should be visible after the user logs in.
         //Log the user out after this login
-        logUserOut();
+        openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
+        //waitForResources(5000);
+        onView(withText("logout")).perform(click());
+        //logUserOut();
     }
 
     /*----------------------------------------------------------------Unit Test---------------------------------------------*/
