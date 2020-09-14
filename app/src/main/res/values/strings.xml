@@ -7,7 +7,7 @@
     <string name="password_hint">Password</string>
     <string name="login_button">login</string>
     <string name="forgot_password_button">forgot password?</string>
-    <string name="no_account_tv">no account? click below</string>
+    <string name="no_account_tv">No account? click below</string>
     <string name="register_button">register</string>
 
     <!-- attributes for fragment_register -->
@@ -18,7 +18,7 @@
     <string name="academic_status_tv">Academic Status:</string>
     <string name="register_password_hint">Password</string>
     <string name="register_confirm_password_hint"> Re-enter password</string>
-    <string name="submit_button">submit</string>
+    <string name="submit_button">Submit</string>
 
     <string-array name="ACADEMIC_STATUS">
         <item>Select your academic status here</item>
@@ -34,7 +34,7 @@
     <string name="new_password_hint">Password</string>
     <string name="confirm_password_tv">Confirm password</string>
     <string name="confirm_password_hint">Re-enter password</string>
-    <string name="reset_password_button">reset password</string>
+    <string name="reset_password_button">Reset password</string>
 
 
     <!-- THE FOLLOWING BELONG TO THE MAIN ACTIVITY -->
