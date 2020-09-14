@@ -38,7 +38,7 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
     public boolean validateLoginInput(String email, String password) {
 
             String emptyFieldErrorMsg = "Field can't be empty.";
-            String emailPatternErrorMsg = "check that your email address is entered correctly!";
+            String emailPatternErrorMsg = "Check that your email address is entered correctly!";
 
             if( email.isEmpty() ) {
                 if(mView != null) {

@@ -1,9 +1,14 @@
-package com.codefusiongroup.gradshub.posts.postcomments;
+package com.codefusiongroup.gradshub.events;
 
+import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.UiDevice;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
+import com.codefusiongroup.gradshub.common.MyViewAction;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,12 +16,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.codefusiongroup.gradshub.authentication.AuthenticationActivityTest.waitForResources;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
@@ -24,8 +25,7 @@ import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
 import static org.junit.Assert.*;
 
-
-public class GroupPostCommentsFragmentTest {
+public class ScheduleListFragmentTest {
     @Rule
     public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<AuthenticationActivity>(AuthenticationActivity.class);
 
@@ -40,31 +40,16 @@ public class GroupPostCommentsFragmentTest {
     }
 
     @Test
-    public void testPostComments() throws InterruptedException {
+    public void testTaskScheduler() throws InterruptedException {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
         openDrawer();
-        onView(withText("My Groups"))
-                .perform(click());
-        waitForResources(2500);
-        //Like post first
-        onView(withText("Tutoring Science"))
-                .perform(click());
-        waitForResources(2500);
-        onView(withId(R.id.postLikeBtn)).perform(click());
-
-        onView(withId(R.id.commentBtn)).perform(click());
-        waitForResources(2500);
-
-        //Invalid comment
-        onView(withId(R.id.submitCommentBtn)).perform(click());
-
-        //Post Our comment
-        String comment =  "We are 100% Happy";
-
-        onView(withId(R.id.typeCommentET)).perform(typeText(comment));
-        onView(withId(R.id.submitCommentBtn)).perform(click());
-
+        onView(withText("Schedule")).perform(click());
         waitForResources(3000);
-        closeSoftKeyboard();
-        pressBack();
+        onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.favouriteBtn)));//Start event
+        onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.favouriteBtn)));//Unstar even
+
+        onView(withText("WMT")).perform(click());
+        device.pressBack();
     }
 }

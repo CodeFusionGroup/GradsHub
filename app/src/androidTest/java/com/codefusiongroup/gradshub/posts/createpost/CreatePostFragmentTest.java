@@ -1,64 +1,72 @@
 package com.codefusiongroup.gradshub.posts.createpost;
 
-import android.view.View;
-import android.widget.RelativeLayout;
-
-import androidx.test.rule.ActivityTestRule;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.codefusiongroup.gradshub.authentication.AuthenticationActivityTest.waitForResources;
+import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
+import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
+import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
 import static org.junit.Assert.*;
 
-//@RunWith(AndroidJUnit4::class)
-public class CreatePostFragmentTest {
-    public CreatePostFragmentTest() {
 
-    }
+public class CreatePostFragmentTest {
 
     @Rule
-    public ActivityTestRule<CreatePostActivity> activityTestRule = new ActivityTestRule<CreatePostActivity>(CreatePostActivity.class);
-    private CreatePostActivity mActivity = null;
+    public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<AuthenticationActivity>(AuthenticationActivity.class);
 
     @Before
     public void setUp() throws Exception {
-        mActivity = activityTestRule.getActivity();
-        
+        logInUser();
     }
 
     @Test
-    public void CreatePostFragmentLaunching()
-    {
-        RelativeLayout rlContainer = (RelativeLayout) mActivity.findViewById(R.id.postcreator_testing);
-        assertNotNull(rlContainer);
-        CreatePostFragment Fragment = new CreatePostFragment();
-        mActivity.getSupportFragmentManager().beginTransaction().add(rlContainer.getId(),Fragment).commitAllowingStateLoss();
-        getInstrumentation().waitForIdleSync();
-        View view = Fragment.getView().findViewById(R.id.postTitleTV);
-        assertNotNull(view);
-        View view1 = Fragment.getView().findViewById(R.id.postSubjectContainer);
-        assertNotNull(view1);
-        View view2 = Fragment.getView().findViewById(R.id.postSubjectET);
-        assertNotNull(view2);
-        View view3 = Fragment.getView().findViewById(R.id.descriptionTV);
-        assertNotNull(view3);
+    public void createPostTest() throws InterruptedException {
+        openDrawer();
+        onView(withText("My Groups"))
+                .perform(click());
 
-        View view5 = Fragment.getView().findViewById(R.id.postDescriptionET);
-        assertNotNull(view5);
-        View view6 = Fragment.getView().findViewById(R.id.postBtn);
-        assertNotNull(view6);
+        waitForResources(2500);
 
+        onView(withText("The_Private_Group")).perform(click());
+        waitForResources(2500);
+
+        onView(withId(R.id.fab)).perform(click());
+
+        //Invalid operation
+        onView(withId(R.id.postBtn)).perform(click());
+        onView(withId(R.id.postSubjectET)).check(matches(hasErrorText("Not a valid post subject!")));
+        onView(withId(R.id.postSubjectET)).perform(typeText("testPost"), closeSoftKeyboard());
+
+        //Another invalid operation
+        onView(withId(R.id.postBtn)).perform(click());
+        onView(withId(R.id.postDescriptionET)).check(matches(hasErrorText("Not a valid post description!")));
+
+        //Finally a valid operation
+        onView(withId(R.id.postDescriptionET)).perform(typeText("wwww.google.com"), closeSoftKeyboard());
+        onView(withId(R.id.postBtn)).perform(click());
+        waitForResources(2500);
+        onView(withId(R.id.fab)).check(matches(isDisplayed()));                 //Check that the create post button is now visible for successful post created
     }
-
     @After
     public void tearDown() throws Exception {
-        mActivity = null;
+        logUserOut();
     }
 }
