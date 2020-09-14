@@ -129,16 +129,16 @@
 
     <fragment
         android:id="@+id/chatMessagesFragment"
-        android:name="com.codefusiongroup.gradshub.messaging.chats.ChatMessagesFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesFragment"
         android:label="Messages"
         tools:layout="@layout/fragment_chat_messages_list" />
 
 
     <fragment
         android:id="@+id/chatsListFragment"
-        android:name="com.codefusiongroup.gradshub.messaging.chats.ChatsListFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.openChats.OpenChatsFragment"
         android:label="Open Chats"
-        tools:layout="@layout/fragment_chats_list" >
+        tools:layout="@layout/fragment_open_chats_list" >
 
         <action
             android:id="@+id/action_chatsListFragment_to_chatMessagesFragment"
@@ -148,7 +148,7 @@
 
     <fragment
         android:id="@+id/usersListFragment"
-        android:name="com.codefusiongroup.gradshub.messaging.users.UsersListFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.searchableUsers.UsersListFragment"
         android:label="Users"
         tools:layout="@layout/fragment_users_list" >
         <argument
@@ -163,7 +163,7 @@
 
     <fragment
         android:id="@+id/userProfileFragment"
-        android:name="com.codefusiongroup.gradshub.messaging.users.UserProfileFragment"
+        android:name="com.codefusiongroup.gradshub.messaging.searchableUsers.UserProfileFragment"
         android:label="User Profile"
         tools:layout="@layout/fragment_user_profile">
 

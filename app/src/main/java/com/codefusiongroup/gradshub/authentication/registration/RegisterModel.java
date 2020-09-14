@@ -3,16 +3,12 @@ package com.codefusiongroup.gradshub.authentication.registration;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
 import com.codefusiongroup.gradshub.authentication.AuthenticationAPI;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -24,7 +20,7 @@ import retrofit2.Callback;
 public class RegisterModel implements RegisterContract.IRegisterModel{
 
 
-    private static final String TAG = "FCM";
+    private static final String TAG = "RegisterModel";
     private static RegisterModel registerModel = null;
     private final RegisterContract.IRegisterPresenter mPresenter;
 
@@ -67,6 +63,12 @@ public class RegisterModel implements RegisterContract.IRegisterModel{
                     mPresenter.setRegistrationResponseCode( jsonObject.get("success").getAsString() );
                     mPresenter.setRegistrationResponseMsg( jsonObject.get("message").getAsString() );
                     mPresenter.onRegistrationRequestFinished();
+                }
+                else {
+                    Log.i(TAG, "response.isSuccessful() = false");
+                    Log.i(TAG, "response.errorBody() --> "+response.errorBody());
+                    Log.i(TAG, "response.message() = false, "+response.message());
+                    Log.i(TAG, "response.code() = false, "+response.code());
                 }
 
             }

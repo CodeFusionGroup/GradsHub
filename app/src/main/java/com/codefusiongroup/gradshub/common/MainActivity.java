@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,13 +21,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.groups.searchGroups.exploreGroupsList.ExploreGroupsFragment;
-import com.codefusiongroup.gradshub.messaging.chats.ChatsListFragment;
+import com.codefusiongroup.gradshub.messaging.openChats.OpenChatsFragment;
 import com.codefusiongroup.gradshub.events.ScheduleListFragment;
 import com.codefusiongroup.gradshub.groups.userGroups.userGroupsList.MyGroupsListFragment;
 import com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment;
 import com.codefusiongroup.gradshub.posts.postcomments.Comment;
 import com.codefusiongroup.gradshub.posts.postcomments.GroupPostCommentsFragment;
-import com.codefusiongroup.gradshub.messaging.users.UsersListFragment;
+import com.codefusiongroup.gradshub.messaging.searchableUsers.UsersListFragment;
 import com.codefusiongroup.gradshub.common.models.Chat;
 import com.codefusiongroup.gradshub.common.models.Post;
 import com.codefusiongroup.gradshub.common.models.ResearchGroup;
@@ -35,6 +36,8 @@ import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
 import com.codefusiongroup.gradshub.utils.EventNotificationPublisher;
 import com.codefusiongroup.gradshub.utils.MonthsConstants;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.core.app.NotificationCompat;
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         MyGroupsProfileFragment.OnPostsListFragmentInteractionListener,
         GroupPostCommentsFragment.OnCommentsListFragmentInteractionListener,
         ScheduleListFragment.OnScheduleListFragmentInteractionListener,
-        ChatsListFragment.OnChatsListFragmentInteractionListener,
+        OpenChatsFragment.OnOpenChatsFragmentInteractionListener,
         UsersListFragment.OnUsersListFragmentInteractionListener {
 
 
@@ -102,71 +105,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         getUserFavouredEvents();
 
-        // NOTIFICATION HANDLING
-        rightNow = Calendar.getInstance();
-        int currentYear = rightNow.get(Calendar.YEAR);
-        int currentMonth = rightNow.get(Calendar.MONTH);
-        int currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
-
-        //===============================================================
-        // IMPORTANT READ FOR TESTING NOTIFICATION YOURSELF.
-        // You can test the notification with one event id added to userPreviouslyFavouredEvents. However this
-        // approach might mean waiting for days or months :( since the corresponding event with that id in Schedule-data.txt
-        // might have a date that's far in the future. So instead use the approach BELOW where a dummy event is
-        // created (NOTE: certain sections of the code below are commented out for this approach to work).
-        // ADJUST the DATE and/or MONTH in the event.setDate() method BELOW so that when you subtract 7 days from it,
-        // (for the DATE part) it brings you to the present day. The notification is set to appear approximately
-        // 5 minutes after the current time for testing purposes only.
-        //===============================================================
-
-        // if the user has any favourite event(s)
-//        if ( userPreviouslyFavouredEvents.size() > 0 ) {
-//
-//            for (String event_id : userPreviouslyFavouredEvents) {
-//                // check for the event id in schedules
-//                for (Schedule event : schedules) {
-//
-//                    if (event.getId().equals(event_id)) {
-
-                        //***************************************
-                        // TESTING NOTIFICATION with dummy event
-                        Schedule event = new Schedule();
-                        event.setTitle("Robotics");
-                        event.setDate("date: September 14, 2020"); // adjust month/date appropriately & leave formatting as it is.
-                        event.setPlace("place: Vancouver, Canada");
-                        //***************************************
-
-                        String dateStr = event.getDate();
-                        String eventDate = dateStr.substring( dateStr.indexOf(":") + 2 );
-                        String[] dateComponents = eventDate.split(" ");
-
-                        int eventYear = Integer.parseInt(dateComponents[2]);
-                        int eventMonth = MonthsConstants.setMonths(dateComponents[0]);
-                        String eventDuration = dateComponents[1];
-
-                        int eventStartDay;
-                        if (eventDuration.length() > 2) {
-                            eventStartDay = Integer.parseInt( eventDuration.substring(0, 2) );
-                        } else {
-                            eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
-                        }
-
-                        // build notifications only for valid dates of events
-                        if ( eventYear >= currentYear) {
-                            if( eventMonth > currentMonth || eventMonth == currentMonth && eventStartDay > currentDay ) {
-                                int notificationId = 0;
-                                scheduleNotification(this.getApplicationContext(), notificationId, event, eventYear, eventMonth, eventStartDay);
-                            }
-                        }
-
-//                    }
-//
-//                }
-//
-//            }
-//
-//        }
-
+        //performEventDateChecksForNotification();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -206,6 +145,77 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     }
 
 
+    private void performEventDateChecksForNotification() {
+
+        // NOTIFICATION HANDLING
+        rightNow = Calendar.getInstance();
+        int currentYear = rightNow.get(Calendar.YEAR);
+        int currentMonth = rightNow.get(Calendar.MONTH);
+        int currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
+
+        //===============================================================
+        // IMPORTANT READ FOR TESTING NOTIFICATION YOURSELF.
+        // You can test the notification with one event id added to userPreviouslyFavouredEvents. However this
+        // approach might mean waiting for days or months :( since the corresponding event with that id in Schedule-data.txt
+        // might have a date that's far in the future. So instead use the approach BELOW where a dummy event is
+        // created (NOTE: certain sections of the code below are commented out for this approach to work).
+        // ADJUST the DATE and/or MONTH in the event.setDate() method BELOW so that when you subtract 7 days from it,
+        // (for the DATE part) it brings you to the present day. The notification is set to appear approximately
+        // 5 minutes after the current time for testing purposes only.
+        //===============================================================
+
+        // if the user has any favourite event(s)
+//        if ( userPreviouslyFavouredEvents.size() > 0 ) {
+//
+//            for (String event_id : userPreviouslyFavouredEvents) {
+//                // check for the event id in schedules
+//                for (Schedule event : schedules) {
+//
+//                    if (event.getId().equals(event_id)) {
+
+                //***************************************
+                // TESTING NOTIFICATION with dummy event
+                Schedule event = new Schedule();
+                event.setTitle("Robotics");
+                event.setDate("date: September 18, 2020"); // adjust month/date appropriately & leave formatting as it is.
+                event.setPlace("place: Vancouver, Canada");
+                //***************************************
+
+                String dateStr = event.getDate();
+                String eventDate = dateStr.substring( dateStr.indexOf(":") + 2 );
+                String[] dateComponents = eventDate.split(" ");
+
+                int eventYear = Integer.parseInt(dateComponents[2]);
+                int eventMonth = MonthsConstants.setMonths(dateComponents[0]);
+                String eventDuration = dateComponents[1];
+
+                int eventStartDay;
+                if (eventDuration.length() > 2) {
+                    eventStartDay = Integer.parseInt( eventDuration.substring(0, 2) );
+                } else {
+                    eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
+                }
+
+                // build notifications only for valid dates of events
+                if ( eventYear >= currentYear) {
+                    if( eventMonth > currentMonth || eventMonth == currentMonth && eventStartDay > currentDay ) {
+                        int notificationId = 0;
+                        scheduleNotification(this.getApplicationContext(), notificationId, event, eventYear, eventMonth, eventStartDay);
+                    }
+                }
+
+//                    }
+//
+//                }
+//
+//            }
+//
+//        }
+
+
+    }
+
+
     // the options menu is the primary collection of menu items for an activity.
     // initialise the contents of the Activity's standard menu.
     @Override
@@ -219,12 +229,12 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
+        switch ( item.getItemId() ) {
+
             case R.id.action_logout:
 
                 // Set the login Shared Preferences to false
-                Preference.setLoggedOut(AuthenticationActivity.getContext());
-
+                UserPreferences.getInstance().setLogOutState(MainActivity.this);
                 Intent intent = new Intent(MainActivity.this, AuthenticationActivity.class);
                 startActivity(intent);
                 finish(); // finish MainActivity
@@ -302,12 +312,13 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
 
     @Override
-    public void onChatsListFragmentInteraction(Chat chat) {
+    public void onOpenChatsFragmentInteraction(Chat chat) {
 
-//        Bundle bundle = new Bundle();
-//        bundle.putString("selected_chat", chat.getContactName());
-//        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
-//        navController.navigate(R.id.action_chatsListFragment_to_chatMessagesFragment, bundle);
+        Bundle bundle = new Bundle();
+        bundle.putString("name", chat.getCorrespondentName());
+        bundle.putString("id", chat.getCorrespondentID());
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_chatsListFragment_to_chatMessagesFragment, bundle);
 
     }
 
@@ -527,49 +538,15 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     // notificationId is unique int for each notification that you must define
     public void scheduleNotification(Context context, int notificationId, Schedule event, int eventYear, int eventMonth, int eventStartDay) {
 
-        /*
-        Set the notification's tap action:
-        Every notification should respond to a tap, usually to open an activity in your app
-        that corresponds to the notification. To do so, you must specify a content intent
-        defined with a PendingIntent object and pass it to setContentIntent().
-        PendingIntent wraps the Intent that you want to launch when the user taps on the
-        notification.
-
-        NOTE: In our case there's no activity we want to launch when the user taps the notification. Ideally we would
-        want to launch MainActivity but MainActivity requires initialisation of a User object obtained from the
-        AuthenticationActivity. We can maybe launch the AuthenticationActivity if the user is not currently logged in
-        on the app but what happens when they are currently using the app and launching AuthenticationActivity when
-        they tap the notification might mean referring them to the login screen which is not what we want if they're
-        already logged in. So for these reasons we won't launch any activity.
-
-        If we were to launch one say MainActivity then we do the following:
-        Create an explicit intent for an Activity in your app
-        //Intent mainActivityIntent = new Intent(context, MainActivity.class);
-
-        When creating your Intent, you need to take into account the back state, i.e., what happens after your
-        Activity launches and the user presses the back button. In this case it sets the Activity to start in a
-        new, empty task.
-        //mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        Wrap the Intent in a PendingIntent object
-        NOTE: 2nd argument is the requestCode which is used for later cancelling this PendingIntent and
-        4th argument can be PendingIntent.FLAG_UPDATE_CURRENT which means that if this intent already exits
-        and we create a new one, it will get updated with the new values. Can also pass 0 for the 4th argument
-        PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
-        */
-
         Intent authActivityIntent = new Intent(context, AuthenticationActivity.class);
         authActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent authPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
 
         String eventTitle = event.getTitle();
-
         String dateStr = event.getDate();
         String eventDate = dateStr.substring(dateStr.indexOf(":") + 2);
-
         String placeStr = event.getPlace();
         String eventPlace = placeStr.substring(placeStr.indexOf(":") + 2);
-
 
         // set notification properties
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -580,12 +557,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 .setContentText("held on " + eventDate + " at " + eventPlace)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setShowWhen(false) // doesn't show notification timestamp
-
-                // Set the intent that will fire when the user taps the notification
-                .setContentIntent(authPendingIntent)
-
-                // automatically removes the notification when the user taps it.
-                .setAutoCancel(true);
+                .setAutoCancel(true)// automatically removes the notification when the user taps it.
+                .setContentIntent(authPendingIntent);
 
         // builder.build() returns the notification to be published
         Notification notification = builder.build();
@@ -666,7 +639,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         // ALWAYS recompute the calendar after using add, set, roll
         Date date = notificationCalendar.getTime();
-
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;

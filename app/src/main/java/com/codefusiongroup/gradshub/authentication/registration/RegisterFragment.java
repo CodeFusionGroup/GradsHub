@@ -23,8 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -66,7 +68,7 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
         initViewComponents(view);
         initialiseSpinner(mSpinner);
 
-        mRegisterPresenter.subscribe((RegisterContract.IRegisterView) this);
+        mRegisterPresenter.subscribe(this);
         Log.i(TAG, "register presenter has subscribed to RegisterFragment");
 
         mSubmitBtn.setOnClickListener(v -> {
@@ -84,6 +86,7 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
             if ( mRegisterPresenter.validateRegistrationInput(mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword) ) {
                 // Register User with FCM Token
                 registrationWithToken();
+                //mRegisterPresenter.registerUser( new User( mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null ) );
             }
 
         });
@@ -105,30 +108,44 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
 
     }
 
-    // Retrieve the FCM registration token
-    public void registrationWithToken(){
+
+    // Retrieve the FCM registration token and register the user
+    public void registrationWithToken() {
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
-                            return;
+
+                        if ( task.isSuccessful() ) {
+
+                            Log.i(TAG, "task.isSuccessful() = true");
+                            // Get new Instance ID token and register user
+                            if (task.getResult() != null) {
+                                mToken = task.getResult().getToken();
+                                Log.d(TAG, "token generated, mToken --->"+mToken);
+                                mRegisterPresenter.registerUser(new User(mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mToken));
+                            } else {
+                                GradsHubApplication.showToast("failed to register, please try again later.");
+                                Log.d(TAG, "task.getResult() is null");
+                            }
+                        }
+                        else {
+                            Log.i(TAG, "task.isSuccessful() = false");
+                            Log.d( TAG, "getInstanceId failed", task.getException() );
                         }
 
-                        // Get new Instance ID token
-                        mToken = task.getResult().getToken();
-                        Log.d(TAG, mToken);
-
-                        //Register User
-                        mRegisterPresenter.registerUser( new User( mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mToken ) );
-
-                        //Log and toast
-//                        String msg = getString(R.string.msg_token_fmt, mToken);
-//                        Log.d(TAG, mToken);
-//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
-                });
+
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                GradsHubApplication.showToast("failed to register, please try again later.");
+                Log.d( TAG, "FCM onFailure() executed", e );
+            }
+        });
+
     }
 
 

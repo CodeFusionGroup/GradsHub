@@ -1,4 +1,4 @@
-package com.codefusiongroup.gradshub.messaging.users;
+package com.codefusiongroup.gradshub.messaging.searchableUsers;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codefusiongroup.gradshub.R;
-import com.codefusiongroup.gradshub.messaging.users.UsersListFragment.OnUsersListFragmentInteractionListener;
+import com.codefusiongroup.gradshub.messaging.searchableUsers.UsersListFragment.OnUsersListFragmentInteractionListener;
 import com.codefusiongroup.gradshub.common.models.User;
 
 import java.util.ArrayList;

@@ -44,18 +44,6 @@ public class FeedListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        // prevents activity from being destroyed when user presses back button from home fragment
-        // without explicitly logging out (keeps user logged in if they haven't explicitly logged out)
-        view.setFocusableInTouchMode(true);
-        view.setOnKeyListener((v, keyCode, event) -> {
-
-            if ( keyCode == KeyEvent.KEYCODE_BACK ) {
-                requireActivity().moveTaskToBack(false);
-            }
-            return false;
-        });
-
-
     }
 
 

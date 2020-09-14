@@ -1,51 +1,50 @@
 package com.codefusiongroup.gradshub.common.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ChatMessage {
 
-    private String currentUserID;
+
+    @SerializedName("MESSAGE_TEXT")
+    private String message;
+
+    @SerializedName("MESSAGE_TIMESTAMP")
     private String messageTimeStamp;
-    private String messageBody;
-    private String recipientUserID;
+
+    @SerializedName("USER_ID")
+    private String correspondentID;
 
 
-    public ChatMessage(String currentUserID, String messageTimeStamp, String messageBody, String recipientUserID) {
-        this.currentUserID = currentUserID;
+    public ChatMessage(String message, String messageTimeStamp, String correspondentID) {
+        this.message = message;
         this.messageTimeStamp = messageTimeStamp;
-        this.messageBody = messageBody;
-        this.recipientUserID = recipientUserID;
+        this.correspondentID = correspondentID;
     }
 
 
-    public ChatMessage() {}
+    public String getCorrespondentID() { return correspondentID; }
 
 
-    public String getMessageCreatorID() {
-        return currentUserID;
+    public void setCorrespondentID(String correspondentID) { this.correspondentID = correspondentID; }
+
+
+    public String getMessage() {
+        return message;
     }
 
-    public void setMessageCreatorID(String currentUserID) {
-        this.currentUserID = currentUserID;
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getRecipientUserID() { return recipientUserID; }
 
-    public void setRecipientUserID(String recipientUserID) { this.recipientUserID = recipientUserID; }
-
-    public String getMessageTime() {
+    public String getMessageTimeStamp() {
         return messageTimeStamp;
     }
 
-    public void setMessageTime(String messageTimeStamp) {
+
+    public void setMessageTimeStamp(String messageTimeStamp) {
         this.messageTimeStamp = messageTimeStamp;
     }
-
-    public String getMessageBody() {
-        return messageBody;
-    }
-
-    public void setMessageBody(String messageBody) {
-        this.messageBody = messageBody;
-    }
-
 
 }

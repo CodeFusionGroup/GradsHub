@@ -1,4 +1,4 @@
-package com.codefusiongroup.gradshub.messaging.chats;
+package com.codefusiongroup.gradshub.messaging.chatMessages;
 
 import android.view.View;
 import android.widget.TextView;
@@ -12,20 +12,20 @@ import com.codefusiongroup.gradshub.common.models.ChatMessage;
 
 public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
 
-    TextView messageTV, messageTimeTV;
+    TextView messageTV, messageTimeStampTV;
 
     public ReceivedMessageHolder(@NonNull View itemView) {
         super(itemView);
 
-        messageTV = (TextView) itemView.findViewById(R.id.messageReceivedTV);
-        messageTimeTV = (TextView) itemView.findViewById(R.id.messageReceivedTimeTV);
+        messageTV = itemView.findViewById(R.id.messageReceivedTV);
+        messageTimeStampTV = itemView.findViewById(R.id.messageReceivedTimeTV);
 
     }
 
     void bind(ChatMessage message) {
 
-        messageTV.setText(message.getMessageBody());
-        messageTimeTV.setText(message.getMessageTime());
+        messageTV.setText(message.getMessage());
+        messageTimeStampTV.setText(message.getMessageTimeStamp());
 
     }
 

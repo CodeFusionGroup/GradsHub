@@ -11,12 +11,8 @@ public interface LoginContract {
     // The interface the LoginPresenter uses to communicate with the View (LoginFragment).
     interface ILoginView {
 
-        // invoked by presenter on view to display a progress bar on the ui as an indication to the
-        // user that there's some background process running (request for login been processed in the server)
         void showProgressBar();
 
-        // invoked by presenter on view to hide the progress bar after a background process
-        // has completed.(request for login has returned a response from the server)
         void hideProgressBar();
 
         // invoked by presenter on view when the email field is empty

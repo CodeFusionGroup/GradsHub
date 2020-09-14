@@ -5,11 +5,11 @@ import android.util.Log;
 import androidx.annotation.VisibleForTesting;
 
 import com.codefusiongroup.gradshub.authentication.AuthenticationAPI;
-import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
-import com.codefusiongroup.gradshub.common.Preference;
+import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.network.ApiBaseResponse;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.models.User;
+import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -54,12 +54,12 @@ public class LoginModel implements LoginContract.ILoginModel {
 
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-
-                if (response.isSuccessful()) {
-
+                Log.i(TAG, "onResponse() executed");
+                if ( response.isSuccessful() ) {
+                    Log.i(TAG, "response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
 
-                    if ( jsonObject.get("success").getAsString().equals(SUCCESS_CODE) ) {
+                    if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
 
                         JsonObject userJO = jsonObject.getAsJsonObject("user");
                         User user = new Gson().fromJson(userJO, User.class);
@@ -67,17 +67,6 @@ public class LoginModel implements LoginContract.ILoginModel {
                         mPresenter.setLoginResponseCode(SUCCESS_CODE);
                         mPresenter.setLoginResponseMessage(jsonObject.get("message").getAsString());
                         mPresenter.setCurrentUser(user);
-
-                        // Save user details to Preferences
-                        Preference.saveID(user.getUserID(), AuthenticationActivity.getContext());
-                        Preference.saveFName(user.getFirstName(), AuthenticationActivity.getContext());
-                        Preference.saveLName(user.getLastName(), AuthenticationActivity.getContext());
-                        Preference.saveEmail(user.getEmail(), AuthenticationActivity.getContext());
-                        Preference.savePhoneNo(user.getPhoneNumber(), AuthenticationActivity.getContext());
-                        Preference.saveAcadStatus(user.getAcademicStatus(), AuthenticationActivity.getContext());
-                        // Set logged in
-                        Preference.setLoggedIn(AuthenticationActivity.getContext());
-
                     }
                     else {
                         ApiBaseResponse apiDefault = new Gson().fromJson(jsonObject, ApiBaseResponse.class);
@@ -88,17 +77,18 @@ public class LoginModel implements LoginContract.ILoginModel {
                     mPresenter.onLoginRequestFinished();
                 }
                 else {
-                    Log.i(TAG, "response.isSuccessful = false");
+                    Log.i(TAG, "response.isSuccessful() = false");
+                    // wouldn't normally show this to the user, but its for debugging purposes only and will be removed
+                    GradsHubApplication.showToast(ApiResponseConstants.RESOURCE_LOCATION_FAILED);
                 }
 
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                String  SERVER_FAILURE_CODE = "-100";
-                String  SERVER_FAILURE_MSG = "Connection failed, please try again later.";
-                mPresenter.setLoginResponseCode(SERVER_FAILURE_CODE);
-                mPresenter.setLoginResponseMessage(SERVER_FAILURE_MSG);
+                Log.i(TAG, "onFailure() executed");
+                mPresenter.setLoginResponseCode(ApiResponseConstants.SERVER_FAILURE_CODE);
+                mPresenter.setLoginResponseMessage(ApiResponseConstants.SERVER_FAILURE_MSG);
                 mPresenter.onLoginRequestFinished();
                 t.printStackTrace();
             }

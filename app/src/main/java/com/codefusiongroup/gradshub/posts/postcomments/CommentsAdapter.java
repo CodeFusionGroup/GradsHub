@@ -26,7 +26,7 @@ package com.codefusiongroup.gradshub.posts.postcomments;
 //    @Override
 //    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 //        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_my_groups_comment_item, parent, false);
-//        return new ChatsListRecyclerViewAdapter.ViewHolder(view);
+//        return new OpenChatsRecyclerViewAdapter.ViewHolder(view);
 //    }
 //
 //    @Override

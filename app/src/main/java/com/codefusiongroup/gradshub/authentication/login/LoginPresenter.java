@@ -1,9 +1,13 @@
 package com.codefusiongroup.gradshub.authentication.login;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import com.codefusiongroup.gradshub.common.BasePresenter;
+import com.codefusiongroup.gradshub.common.BasePresenter2;
 import com.codefusiongroup.gradshub.common.models.User;
+import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
+import com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesContract;
 
 
 public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, LoginContract.ILoginPresenter {
@@ -15,7 +19,19 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
     private User mUser = null;
 
     private final LoginContract.ILoginModel mLoginModel = LoginModel.newInstance(this);
-    private LoginContract.ILoginView mLoginView;
+    private LoginContract.ILoginView mView;
+
+
+    @Override
+    public void subscribe(LoginContract.ILoginView view) {
+        mView = view;
+    }
+
+
+    @Override
+    public void unsubscribe() {
+        mView = null;
+    }
 
 
     @Override
@@ -25,22 +41,22 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
             String emailPatternErrorMsg = "Check that your email address is entered correctly!";
 
             if( email.isEmpty() ) {
-                if(mLoginView != null) {
-                    mLoginView.showEmailInputError(emptyFieldErrorMsg);
+                if(mView != null) {
+                    mView.showEmailInputError(emptyFieldErrorMsg);
                     return false;
                 }
             }
 
             if( !Patterns.EMAIL_ADDRESS.matcher(email).matches() ) {
-                if(mLoginView != null) {
-                    mLoginView.showEmailInputError(emailPatternErrorMsg);
+                if(mView != null) {
+                    mView.showEmailInputError(emailPatternErrorMsg);
                     return false;
                 }
             }
 
             if ( password.isEmpty() ) {
-                if(mLoginView != null) {
-                    mLoginView.showPasswordInputError(emptyFieldErrorMsg);
+                if(mView != null) {
+                    mView.showPasswordInputError(emptyFieldErrorMsg);
                     return false;
                 }
             }
@@ -50,8 +66,12 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
 
     @Override
     public void loginUser(String email, String password) {
+        Log.i(TAG, "loginUser() executed");
         mLoginModel.requestUserLogin(email, password);
-        if (mLoginView != null) mLoginView.showProgressBar();
+        if (mView != null) {
+            Log.i(TAG, "mView not null, showing progress bar...");
+            mView.showProgressBar();
+        }
     }
 
 
@@ -66,7 +86,6 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
         mResponseMessage = responseMessage;
     }
 
-
     @Override
     public void setCurrentUser(User user) {
         mUser = user;
@@ -75,28 +94,19 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
 
     @Override
     public void onLoginRequestFinished() {
+        Log.i(TAG, "onLoginRequestFinished() executed");
 
-        if (mLoginView != null) {
-            mLoginView.hideProgressBar();
-            String SUCCESS_CODE = "1";
-            if ( mResponseCode.equals(SUCCESS_CODE) ) {
-                mLoginView.initialiseUser(mUser);
-                mLoginView.startMainActivity();
+        if (mView != null) {
+            Log.d(TAG, "mView not null, hide progress bar");
+            mView.hideProgressBar();
+
+            if ( mResponseCode.equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
+                mView.initialiseUser(mUser);
+                mView.startMainActivity();
             }
-            mLoginView.showLoginResponseMsg(mResponseMessage);
+            mView.showLoginResponseMsg(mResponseMessage);
         }
 
     }
-
-
-    @Override
-    public void subscribe(LoginContract.ILoginView loginView) { mLoginView = loginView; }
-
-
-    @Override
-    public void unsubscribe() {
-        mLoginView = null;
-    }
-
 
 }
