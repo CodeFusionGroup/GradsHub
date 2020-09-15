@@ -96,6 +96,7 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
 
         if ( mainActivity.getScheduleList() != null ) {
             eventsSchedule = mainActivity.getScheduleList();
+
         }
 
     }
@@ -105,6 +106,7 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView executed");
         mView = inflater.inflate(R.layout.fragment_schedule_item_list, container, false);
+
         return mView;
     }
 
@@ -114,15 +116,24 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
         Log.i(TAG, "onViewCreated executed");
         mPresenter.subscribe(this);
 
-        getEventsStars();
-        getUserFavouredEvents(mUser);
-
         onScheduleItemFavouredListener = (item) -> userCurrentlyFavouredEvents.add( item.getId() );
 
         onScheduleItemUnFavouredListener = (item) -> userUnFavouredEvents.add( item.getId() );
+        // called after setting the listeners above
+        if (mView instanceof RelativeLayout) {
+
+            Context context = mView.getContext();
+            RecyclerView recyclerView = mView.findViewById(R.id.scheduleList);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            mAdapter = new ScheduleListRecyclerViewAdapter(eventsSchedule, mListener, onScheduleItemFavouredListener, onScheduleItemUnFavouredListener);
+            recyclerView.setAdapter(mAdapter);
+
+        }
+
+        getEventsStars();
+        getUserFavouredEvents(mUser);
 
 
-        // called after setting listeners like above
         //mPresenter.onViewCreated(mUser);
 
         // listen for when user presses back button from the ScheduleListFragment and use that as an
@@ -280,6 +291,14 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
 
                         }
 
+                        if (mAdapter != null ) {
+                            Log.i(TAG, "from getEventsStars --> mAdapter not null, notify adapter");
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        else{
+
+                        }
+
                     }
 
                 }
@@ -350,22 +369,16 @@ public class ScheduleListFragment extends Fragment implements ScheduleContract.I
                             }
                         }
 
-
-                        if (mView instanceof RelativeLayout) {
-
-                            Context context = mView.getContext();
-                            RecyclerView recyclerView = mView.findViewById(R.id.scheduleList);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                            mAdapter = new ScheduleListRecyclerViewAdapter(eventsSchedule, mListener, onScheduleItemFavouredListener, onScheduleItemUnFavouredListener);
-                            recyclerView.setAdapter(mAdapter);
-
+                        if (mAdapter != null ) {
+                            Log.i(TAG, "from getUserFavouredEvents --> mAdapter not null, notify adapter");
+                            mAdapter.notifyDataSetChanged();
                         }
 
                     }
                     else {
                         // user has not favoured any events yet
                         ApiBaseResponse apiDefault = new Gson().fromJson(jsonObject, ApiBaseResponse.class);
-                        GradsHubApplication.showToast( apiDefault.getStatusCode() );
+                        GradsHubApplication.showToast( apiDefault.getMessage() );
                     }
                 }
                 else {
