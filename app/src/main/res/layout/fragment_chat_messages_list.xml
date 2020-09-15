@@ -50,6 +50,8 @@
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/typeMessageET"
         android:layout_toEndOf="@id/typeMessageET"
+        android:background="@drawable/register_rounded_button"
+        android:textColor="@color/colorWhite"
         android:text="SEND"
         android:gravity="center" />
 
