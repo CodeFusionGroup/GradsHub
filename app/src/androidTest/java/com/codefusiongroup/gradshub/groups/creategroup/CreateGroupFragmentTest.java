@@ -57,7 +57,7 @@ public class CreateGroupFragmentTest {
                 .perform(click());
 
         //Give enough time delay to get server response
-        waitForResources(1500);
+        waitForResources(3000);
     }
 
     @Test
