@@ -1,17 +1,25 @@
 package com.codefusiongroup.gradshub.groups.searchGroups.exploreGroupsList;
 
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiSelector;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -36,7 +44,10 @@ public class ExploreGroupsFragmentTest {
     }
 
     @Test
-    public void testSearchGroups(){
+    public void testSearchGroups() throws InterruptedException {
+        openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
+        onView(withText("Refresh")).perform(click());
+        waitForResources(2000);
         onView(withId(R.id.list)).check(matches(isDisplayed()));
     }
 
@@ -47,6 +58,7 @@ public class ExploreGroupsFragmentTest {
         onView(withText("CONFIRM")).perform(click());
     }
 
+    @Ignore
     @Test
     public void testJoinGroupValid(){
         //TODO: Edit php file to allow dummy joining of groups(Private/Public)

@@ -52,4 +52,10 @@ public class OpenChatsFragmentTest {
         onView(withId(R.id.chatMessagesList)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void testLoadReceivedText() throws InterruptedException {
+        onView(withId(R.id.chatsList)).perform(RecyclerViewActions.actionOnItemAtPosition(2,click()));
+        waitForResources(1500);
+    }
+
 }

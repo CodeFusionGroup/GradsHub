@@ -46,9 +46,10 @@ public class ScheduleListFragmentTest {
         openDrawer();
         onView(withText("Schedule")).perform(click());
         waitForResources(3000);
-        onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.favouriteBtn)));//Start event
+        onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.favouriteBtn)));//Star event
+        waitForResources(1500);
         onView(ViewMatchers.withId(R.id.scheduleList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, MyViewAction.clickChildWithId(R.id.favouriteBtn)));//Unstar even
-
+        waitForResources(1500);
         onView(withText("WMT")).perform(click());
         device.pressBack();
     }
