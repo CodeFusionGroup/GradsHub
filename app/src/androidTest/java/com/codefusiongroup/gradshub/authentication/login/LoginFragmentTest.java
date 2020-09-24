@@ -66,7 +66,7 @@ public class LoginFragmentTest {
     }
 
     @Test
-    public void inValiedLogInDetails() throws InterruptedException {
+    public void inValidLogInDetails() throws InterruptedException {
         onView(withId(R.id.emailET)).perform(typeText(username));
         closeSoftKeyboard();
         onView(withId(R.id.passwordET)).perform(typeText("wrongpass"));
@@ -83,7 +83,7 @@ public class LoginFragmentTest {
         //Log the user out after this login
         openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
         //waitForResources(5000);
-        onView(withText("logout")).perform(click());
+        onView(withText("Logout")).perform(click());
         //logUserOut();
     }
 

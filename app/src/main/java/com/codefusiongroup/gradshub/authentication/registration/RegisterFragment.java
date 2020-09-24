@@ -281,8 +281,8 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
 
 
     // ==================== TESTING CODE ===================================
-    // setters for testing purposes
 
+/*
     public void setFirstName(String firstName) {
         mFirstName = firstName;
     }
@@ -310,6 +310,6 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
     public void setConfirmPassword(String confirmPassword) { mConfirmPassword = confirmPassword; }
 
     // =====================================================================
-
+*/
 
 }

@@ -18,7 +18,7 @@
         <item
             android:id="@+id/action_refresh"
             android:orderInCategory="100"
-            android:title="refresh"
+            android:title="Refresh"
             app:showAsAction="never" />
     </group>
 
@@ -34,7 +34,7 @@
         <item
             android:id="@+id/action_logout"
             android:orderInCategory="300"
-            android:title="logout"
+            android:title="Logout"
             app:showAsAction="never" />
     </group>
 

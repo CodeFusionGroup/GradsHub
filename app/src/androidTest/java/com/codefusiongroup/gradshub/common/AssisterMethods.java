@@ -65,7 +65,7 @@ public class AssisterMethods {
 
     public static void logUserOut(){
         openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
-        onView(withText("logout")).perform(click());
+        onView(withText("Logout")).perform(click());
     }
 
 
@@ -143,4 +143,3 @@ public class AssisterMethods {
     }
 
 }
-

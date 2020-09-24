@@ -16,6 +16,8 @@ public class UserPreferences {
     private final String ACADEMIC_STATUS = "academic_status";
     private final String LOGIN_STATE = "is_loggedIn";
     private final String PREF_NAME = "com.codefusiongroup.gradshub.PREFERENCE_FILE_KEY";
+    private final String FCM_TOKEN = "fcm_token";
+    private final String FCM_TOKEN_CHANGED = "fcm_token_changed";
 
     private SharedPreferences.Editor editor;
     private static UserPreferences instance;
@@ -76,6 +78,23 @@ public class UserPreferences {
     public void setLogOutState(Context context) {
         editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean(LOGIN_STATE, false);
         editor.apply();
+    }
+
+    // FCM TOKEN
+    public void saveFCMToken(String fcmToken, Context context){
+        editor = context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE).edit();
+        editor.putString(FCM_TOKEN,fcmToken);
+        editor.apply();
+    }
+    public String getFCMToken(Context context){
+        return context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE).getString(FCM_TOKEN,"Token Not Found");
+    }
+    public void tokenChanged(Context context) {
+        editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean(FCM_TOKEN_CHANGED, true);
+        editor.apply();
+    }
+    public boolean isTokenChanged(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).getBoolean(FCM_TOKEN_CHANGED, false);
     }
 
 }
