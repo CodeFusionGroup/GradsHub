@@ -19,6 +19,11 @@
             android:title="@string/menu_profile" />
 
         <item
+            android:id="@+id/friendsListFragment"
+            android:icon="@drawable/ic_menu_my_groups"
+            android:title="Friends" />
+
+        <item
             android:id="@+id/myGroupsListFragment"
             android:icon="@drawable/ic_menu_my_groups"
             android:title="@string/menu_myGroups" />
