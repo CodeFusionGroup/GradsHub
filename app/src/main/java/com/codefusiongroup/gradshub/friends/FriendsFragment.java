@@ -46,9 +46,8 @@ public class FriendsFragment extends Fragment {
     private static final String TAG = "FriendsFragment";
 
     private final String  SUCCESS_CODE = "1";
-    private final String  SERVER_FAILURE_MSG = "failed to load friends, please swipe to refresh page";
+    private final String  SERVER_FAILURE_MSG = "Failed to load friends, please try again later or refresh page.";
     private final FriendsAPI friendsAPI = ApiProvider.getFriendsApiService();
-
 
     private View mRootView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -88,38 +87,37 @@ public class FriendsFragment extends Fragment {
         //=============================================================================
         // TODO: remove below code once feature is complete
         // NOTE: implementation for friends feature prototype
-        mFriendsList.clear();
-        User user1 = new User();
-        user1.setUserID("000");
-        user1.setFirstName("Joe");
-        user1.setLastName("Doe");
-        user1.setBlockedStatus(true);
-        mFriendsList.add(user1);
+//        mFriendsList.clear();
+//        User user1 = new User();
+//        user1.setUserID("000");
+//        user1.setFirstName("Joe");
+//        user1.setLastName("Doe");
+//        user1.setBlockedStatus(true);
+//        mFriendsList.add(user1);
+//
+//        User user2 = new User();
+//        user2.setUserID("000");
+//        user2.setFirstName("Thato");
+//        user2.setLastName(" Thato");
+//        user2.setFriendStatus(true);
+//        mFriendsList.add(user2);
+//
+//        User user3 = new User();
+//        user3.setUserID("000");
+//        user3.setFirstName("Kamo");
+//        user3.setLastName("Kamo");
+//        user3.setFriendStatus(false);
+//        mFriendsList.add(user3);
 
-        User user2 = new User();
-        user2.setUserID("000");
-        user2.setFirstName("Thato");
-        user2.setLastName(" Thato");
-        user2.setFriendStatus(true);
-        mFriendsList.add(user2);
-
-        User user3 = new User();
-        user3.setUserID("000");
-        user3.setFirstName("Kamo");
-        user3.setLastName("Kamo");
-        user3.setFriendStatus(false);
-        mFriendsList.add(user3);
-
-        if (mRootView instanceof ConstraintLayout) {
-            mProgressBar = mRootView.findViewById(R.id.progress_circular);
-            mProgressBar.setVisibility(View.GONE);
-            mRecyclerView = mRootView.findViewById(R.id.list);
-            Context context = mRootView.getContext();
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-            mAdapter = new FriendsListRecyclerViewAdapter(mFriendsList, mListener);
-            mRecyclerView.setAdapter(mAdapter);
-        }
-        //=============================================================================
+//        if (mRootView instanceof ConstraintLayout) {
+//            mProgressBar = mRootView.findViewById(R.id.progress_circular);
+//            mProgressBar.setVisibility(View.GONE);
+//            mRecyclerView = mRootView.findViewById(R.id.list);
+//            Context context = mRootView.getContext();
+//            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+//            mAdapter = new FriendsListRecyclerViewAdapter(mFriendsList, mListener);
+//            mRecyclerView.setAdapter(mAdapter);
+//        }
 
         return mRootView;
     }
@@ -129,14 +127,14 @@ public class FriendsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         mSwipeRefreshLayout = view.findViewById(R.id.refresh);
-        //mProgressBar = view.findViewById(R.id.progress_circular);
+        mProgressBar = view.findViewById(R.id.progress_circular);
 
-        //MainActivity mainActivity = (MainActivity) requireActivity();
-        //getUserFriends( mainActivity.user.getUserID() );
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        getUserFriends( mainActivity.user.getUserID() );
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            //getUserFriends(mainActivity.user.getUserID());
-            //mSwipeRefreshLayout.setRefreshing(true);
+            getUserFriends( mainActivity.user.getUserID() );
+            mSwipeRefreshLayout.setRefreshing(true);
         });
 
     }
@@ -185,7 +183,6 @@ public class FriendsFragment extends Fragment {
     }
 
 
-    // takes user ID cause we want to exclude those groups the user belongs to already
     public void getUserFriends(String userID) {
 
         Map<String, String> params = new HashMap<>();
@@ -195,6 +192,11 @@ public class FriendsFragment extends Fragment {
 
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+
+                mProgressBar.setVisibility(View.GONE);
+                if ( mSwipeRefreshLayout.isRefreshing() ) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
 
                 if ( response.isSuccessful() ) {
 
@@ -217,16 +219,12 @@ public class FriendsFragment extends Fragment {
                             user.setUserID(userID);
                             user.setFirstName(firstName);
                             user.setLastName(lastName);
+                            user.setFriendStatus(true);
 
                             mFriendsList.add(user);
                         }
 
-                        if (mSwipeRefreshLayout.isRefreshing()) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-
                         if (mRootView instanceof ConstraintLayout) {
-                            mProgressBar.setVisibility(View.GONE);
                             mRecyclerView = mRootView.findViewById(R.id.list);
                             Context context = mRootView.getContext();
                             mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -237,26 +235,28 @@ public class FriendsFragment extends Fragment {
                     }
                     else {
                         // user has no friends
-                        if (mRootView instanceof ConstraintLayout) {
-                            mProgressBar.setVisibility(View.GONE);
-                        }
                         ApiBaseResponse apiDefault = new Gson().fromJson(jsonObject, ApiBaseResponse.class);
-                        GradsHubApplication.showToast(apiDefault.getMessage());
+                        GradsHubApplication.showToast( apiDefault.getMessage() );
                     }
 
                 }
                 else {
-                    Log.i(TAG, "response.isSuccessful = false");
+                    GradsHubApplication.showToast( SERVER_FAILURE_MSG );
+                    Log.i(TAG, "getUserFriends() --> response.isSuccessful() = false");
+                    Log.i(TAG, "error code: " +response.code() );
+                    Log.i(TAG, "error message: " +response.message() );
                 }
 
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                if (mSwipeRefreshLayout.isRefreshing()) {
+                if ( mSwipeRefreshLayout.isRefreshing() ) {
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
-                GradsHubApplication.showToast(SERVER_FAILURE_MSG);
+                mProgressBar.setVisibility(View.GONE);
+                GradsHubApplication.showToast( SERVER_FAILURE_MSG );
+                Log.i(TAG, "getUserFriends() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 

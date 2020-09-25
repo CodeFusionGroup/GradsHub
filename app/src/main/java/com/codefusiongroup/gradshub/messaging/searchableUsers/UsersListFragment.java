@@ -173,6 +173,8 @@ public class UsersListFragment extends Fragment {
                     String email = userJO.getString("USER_EMAIL");
                     String phoneNo = userJO.getString("USER_PHONE_NO");
                     String acadStatus = userJO.getString("USER_ACAD_STATUS");
+                    boolean friendStatus = Boolean.parseBoolean( userJO.getString("FRIEND") );
+                    boolean blockedStatus = Boolean.parseBoolean( userJO.getString("BLOCKED") );
 
                     User user = new User();
                     user.setUserID(userID);
@@ -181,6 +183,8 @@ public class UsersListFragment extends Fragment {
                     user.setAcademicStatus(acadStatus);
                     user.setEmail(email);
                     user.setPhoneNumber(phoneNo);
+                    user.setFriendStatus(friendStatus);
+                    user.setBlockedStatus(blockedStatus);
 
                     mUsersList.add(user);
 

@@ -155,14 +155,14 @@ public class EditProfileFragment extends Fragment {
                     // user included a profile picture for this profile update. We check the mFirebaseImageUri
                     // to know what information to include in the profile update of the user.
                     if (mFirebaseImageUri != null) {
-                        Log.i(TAG, "profile updated with profile picture upload");
+                        Log.i(TAG, "profile updated with profile picture");
                         // for this case we don't call updateProfileWithImage() since that will go through the process
                         // of uploading the image to firebase again
                         updateUserProfile( mMainActivity.user.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mFirebaseImageUri.toString() );
                     }
                     // user did not include a profile picture for this profile update
                     else {
-                        Log.i(TAG, "profile updated without profile picture upload");
+                        Log.i(TAG, "profile updated without profile picture");
                         updateUserProfile( mMainActivity.user.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
                     }
                     mProgressBar.setVisibility(View.VISIBLE);
@@ -175,12 +175,12 @@ public class EditProfileFragment extends Fragment {
                     if ( validateInput() ) {
 
                         if (mSelectedImageUri != null) {
-                            Log.i(TAG, "first attempt --> profile updated with profile picture upload");
+                            Log.i(TAG, "first attempt --> profile updated with profile picture");
                             updateProfileWithImage();
                         }
                         // user did not include a profile picture for this profile update
                         else {
-                            Log.i(TAG, "first attempt --> profile updated without profile picture upload");
+                            Log.i(TAG, "first attempt --> profile updated without profile picture");
                             updateUserProfile( mMainActivity.user.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
                         }
 
@@ -295,14 +295,14 @@ public class EditProfileFragment extends Fragment {
                         cursor.close();
                     }
                     else {
-                        Log.w( TAG, " onActivityResult() --> cursor is null");
+                        Log.i( TAG, " onActivityResult() --> cursor is null");
                     }
 
                 }
             }
 
             else {
-                Toast.makeText(requireActivity(), "You have not selected an image.", Toast.LENGTH_SHORT).show();
+                GradsHubApplication.showToast("You have not selected an image.");
             }
 
         }
@@ -384,12 +384,12 @@ public class EditProfileFragment extends Fragment {
         }
         HashMap<String, String> params = new HashMap<>();
 
-        // among these fields password and firebaseImageUrl call be null
+        // among these fields password and firebaseImageUrl can be null
         params.put("user_id", userID);
         params.put("user_name", username);
         params.put("email", email);
         params.put("phone_no", phoneNo);
-        params.put("academic_status", academicStatus);
+        params.put("acad_status", academicStatus);
         params.put("password", password);
         params.put("profile_picture", firebaseImageUrl);
 
@@ -409,7 +409,6 @@ public class EditProfileFragment extends Fragment {
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
 
                         GradsHubApplication.showToast( "successfully updated profile." );
-                       // onProfileUpdateSuccessful(true);
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("profile_updated", true);
                         // navigate to Profile screen
@@ -425,7 +424,7 @@ public class EditProfileFragment extends Fragment {
                 }
 
                 else {
-                    //internal server failure or something. Response is received but not necessarily a successful one.
+                    // internal server failure or something. Response is received but not necessarily a successful one.
                     GradsHubApplication.showToast( "Failed to update profile information, please try again later." );
                     mUserProfileUpdateFailed = true;
                     Log.i(TAG, "updateUserProfile() --> response.isSuccessful() = false");

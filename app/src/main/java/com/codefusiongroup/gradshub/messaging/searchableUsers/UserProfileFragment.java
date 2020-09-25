@@ -32,12 +32,14 @@ import retrofit2.Callback;
 
 public class UserProfileFragment extends Fragment implements View.OnClickListener{
 
-
     private static final String TAG = "UserProfileFragment";
-    private User mSelectedUser;
-    private MainActivity mainActivity;
 
     private ProgressBar mProgressBar;
+    private Button mFriendStatusBtn;
+    private Button mBlockUserStatusBtn;
+
+    private User mSelectedUser;
+    private MainActivity mainActivity;
 
 
     @Override
@@ -63,22 +65,33 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
         mProgressBar = view.findViewById(R.id.progress_circular);
         Button startChatBtn = view.findViewById(R.id.startChatBtn);
-        Button friendStatusBtn = view.findViewById(R.id.friendStatusBtn);
-        Button blockUserStatusBtn = view.findViewById(R.id.blockStatusBtn);
+        mFriendStatusBtn = view.findViewById(R.id.friendStatusBtn);
+        mBlockUserStatusBtn = view.findViewById(R.id.blockStatusBtn);
 
         startChatBtn.setOnClickListener(this);
-        friendStatusBtn.setOnClickListener(this);
-        blockUserStatusBtn.setOnClickListener(this);
+        mFriendStatusBtn.setOnClickListener(this);
+        mBlockUserStatusBtn.setOnClickListener(this);
 
         TextView userNameTV = view.findViewById(R.id.userProfileNameTV);
         userNameTV.setText( mSelectedUser.getFullName() );
 
         if ( mSelectedUser.isBlocked() ) {
-            blockUserStatusBtn.setText(R.string.unblock_button_text);
+            mBlockUserStatusBtn.setText(R.string.unblock_button_text);
+            // shouldn't be able to add this user as a friend or chat with them since they have been blocked
+            mFriendStatusBtn.setVisibility(View.GONE);
+            startChatBtn.setVisibility(View.GONE);
+        }
+        else {
+            mBlockUserStatusBtn.setText(R.string.block_button_text);
         }
 
         if ( mSelectedUser.isAFriend() ) {
-            friendStatusBtn.setText(R.string.unfriend_button_text);
+            mFriendStatusBtn.setText(R.string.unfriend_button_text);
+            // shouldn't be able to block this user but instead remove them from the friends list
+            mBlockUserStatusBtn.setVisibility(View.GONE);
+        }
+        else {
+            mFriendStatusBtn.setText(R.string.friend_button_text);
         }
 
     }
@@ -105,9 +118,11 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             case R.id.friendStatusBtn:
 
                 if ( mSelectedUser.isAFriend() ) {
+                    Log.i(TAG, "executed: removeUserFromFriendsList() since this user was already a friend");
                     removeUserFromFriendsList( mainActivity.user.getUserID(), mSelectedUser.getUserID() );
                 }
                 else {
+                    Log.i(TAG, "executed: addUserToFriendsList() since this user was not a friend");
                     addUserToFriendsList( mainActivity.user.getUserID(), mSelectedUser.getUserID() );
                 }
 
@@ -117,17 +132,16 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
             case R.id.blockStatusBtn:
 
-//                if ( mSelectedUser.isBlocked() ) {
-//                    //unblockUser( mainActivity.user.getUserID(), mSelectedUser.getUserID() );
-//                }
-//                else {
-//                    blockUser( mainActivity.user.getUserID(), mSelectedUser.getUserID() );
-//                    mProgressBar.setVisibility(View.VISIBLE);
-//                }
+                if ( mSelectedUser.isBlocked() ) {
+                    Log.i(TAG, "executed: unblockUser() since this user was blocked already");
+                    unblockUser( mainActivity.user.getUserID(), mSelectedUser.getUserID() );
+                }
+                else {
+                    Log.i(TAG, "executed: blockUser() since this user was not blocked already.");
+                    blockUser( mainActivity.user.getUserID(), mSelectedUser.getUserID() );
+                }
 
-                blockUser( mainActivity.user.getUserID(), mSelectedUser.getUserID() );
                 mProgressBar.setVisibility(View.VISIBLE);
-
 
                 break;
         }
@@ -148,21 +162,21 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
                 mProgressBar.setVisibility(View.GONE);
+
                 if ( response.isSuccessful() ) {
+                    Log.i(TAG, " addUserToFriendsList() --> response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
-
-                    if (jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-                        //GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
-                        GradsHubApplication.showToast("Added to friends.");
-                    }
-                    else {
-                        GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
-                    }
-
+                    GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
+                    //change text of button when request is successful
+                    mFriendStatusBtn.setText(R.string.unfriend_button_text);
                 }
 
                 else {
+                    // internal server failure or something. Response is received but not necessarily a successful one.
+                    GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
                     Log.i(TAG, " addUserToFriendsList() --> response.isSuccessful() = false");
+                    Log.i(TAG, "error code: " +response.code() );
+                    Log.i(TAG, "error message: " +response.message() );
                 }
 
             }
@@ -171,6 +185,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
+                Log.i(TAG, "addUserToFriendsList() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 
@@ -191,14 +206,19 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
+                mProgressBar.setVisibility(View.GONE);
+
                 if ( response.isSuccessful() ) {
+                    Log.i(TAG, " removeUserFromFriendsList() --> response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
                     GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
+                    //change text of button when request is successful
+                    mFriendStatusBtn.setText(R.string.friend_button_text);
                 }
 
                 else {
-                    //internal server failure or something. Response is received but not necessarily a successful one.
-                    GradsHubApplication.showToast( "Failed to process request, please try again later." );
+                    // internal server failure or something. Response is received but not necessarily a successful one.
+                    GradsHubApplication.showToast( ApiResponseConstants.SERVER_FAILURE_MSG );
                     Log.i(TAG, " removeUserFromFriendsList() --> response.isSuccessful() = false");
                     Log.i(TAG, "error code: " +response.code() );
                     Log.i(TAG, "error message: " +response.message() );
@@ -208,8 +228,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.i(TAG, " removeUserFromFriendsList() --> onFailure executed");
+                mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
+                Log.i(TAG, "removeUserFromFriendsList() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 
@@ -230,15 +251,19 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
+                mProgressBar.setVisibility(View.GONE);
+
                 if ( response.isSuccessful() ) {
                     Log.i(TAG, " blockUser() --> response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
                     GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
+                    //change text of button when request is successful
+                    mBlockUserStatusBtn.setText(R.string.unblock_button_text);
                 }
 
                 else {
-                    //internal server failure or something. Response is received but not necessarily a successful one.
-                    GradsHubApplication.showToast( "Failed to process request, please try again later." );
+                    // internal server failure or something. Response is received but not necessarily a successful one.
+                    GradsHubApplication.showToast( ApiResponseConstants.SERVER_FAILURE_MSG );
                     Log.i(TAG, " blockUser() --> response.isSuccessful() = false");
                     Log.i(TAG, "error code: " +response.code() );
                     Log.i(TAG, "error message: " +response.message() );
@@ -248,8 +273,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.i(TAG, " blockUser() --> onFailure executed");
+                mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
+                Log.i(TAG, "blockUser() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 
@@ -262,28 +288,40 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
         HashMap<String, String> params = new HashMap<>();
         params.put( "user_id", currentUserID );
-        params.put( "unblock_user_id", selectedUserID );
+        params.put( "blocked_user_id", selectedUserID );
 
         FriendsAPI friendsAPI = ApiProvider.getFriendsApiService();
-        friendsAPI.blockUser(params).enqueue(new Callback<JsonObject>() {
+        friendsAPI.unblockUser(params).enqueue(new Callback<JsonObject>() {
 
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
+                mProgressBar.setVisibility(View.GONE);
+
                 if ( response.isSuccessful() ) {
+                    Log.i(TAG, " unblockUser() --> response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
                     GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
+                    //change text of button when request is successful
+                    mBlockUserStatusBtn.setText(R.string.block_button_text);
                 }
 
                 else {
-                    Log.i(TAG, " removeUserFromFriendsList() --> response.isSuccessful() = false");
+                    // internal server failure or something. Response is received but not necessarily a successful one.
+                    GradsHubApplication.showToast( ApiResponseConstants.SERVER_FAILURE_MSG );
+                    Log.i(TAG, " unblockUser() --> response.isSuccessful() = false");
+                    Log.i(TAG, "error code: " +response.code() );
+                    Log.i(TAG, "error message: " +response.message() );
+
                 }
 
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
+                Log.i(TAG, "unblockUser() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 

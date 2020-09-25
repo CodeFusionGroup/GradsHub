@@ -10,11 +10,11 @@ import retrofit2.http.POST;
 
 public interface ProfileAPI {
 
-    @POST("User/updateUserProfile.php")
+    @POST("User/updateProfile.php")
     Call<JsonObject> updateUserProfile(@Body HashMap<String, String> params);
 
 
-    @POST("User/getUserUpdatedProfile.php")
+    @POST("User/getProfile.php")
     Call<JsonObject> getUserUpdatedProfile(@Body HashMap<String, String> params);
 
 

@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
+import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
@@ -79,7 +80,7 @@ public class ProfileFragment extends Fragment {
         mAcademicStatusTV = view.findViewById(R.id.academicStatusTV);
         Button editProfileBnt = view.findViewById(R.id.editProfileBtn);
 
-        //TODO: needs php script for testing
+        //TODO: need correct implementation
 //        if ( profileUpdatedSuccessfully ) {
 //            getUpdatedUserProfile( mUser.getUserID() );
 //        }
@@ -132,6 +133,17 @@ public class ProfileFragment extends Fragment {
                         JsonObject userJO = jsonObject.getAsJsonObject("user");
                         mUser = new Gson().fromJson(userJO, User.class);
 
+                        // save details to preferences
+//                        UserPreferences mUserPreferences = UserPreferences.getInstance();
+//                        mUserPreferences.saveUserDetails( mUser, requireActivity() );
+//
+//                        Log.i(TAG, "updated profile information:");
+//                        Log.i(TAG, "username: " +mUser.getUsername() );
+//                        Log.i(TAG, "phone_no: " +mUser.getPhoneNumber()  );
+//                        Log.i(TAG, "email: " +mUser.getEmail()  );
+//                        Log.i(TAG, "academic status: " +mUser.getAcademicStatus() );
+//                        Log.i(TAG, "profile_picture: " +mUser.getProfilePicture()  );
+
                         Uri uri = Uri.parse( mUser.getProfilePicture() );
                         Glide.with( requireActivity() ).load(uri).into(mImageView);
 
@@ -149,7 +161,7 @@ public class ProfileFragment extends Fragment {
                 }
 
                 else {
-                    //internal server failure or something. Response is received but not necessarily a successful one.
+                    // internal server failure or something. Response is received but not necessarily a successful one.
                     GradsHubApplication.showToast( "Failed to load updated profile, please try again later." );
                     Log.i(TAG, "getUpdatedUserProfile() --> response.isSuccessful() = false");
                     Log.i(TAG, "error code: " +response.code() );
