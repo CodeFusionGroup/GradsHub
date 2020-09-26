@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,8 @@ public class ResetPasswordFragment extends Fragment {
 
     private static final String TAG = "ResetPasswordFragment";
 
+    private ProgressBar mProgressBar;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class ResetPasswordFragment extends Fragment {
 
         EditText emailET = view.findViewById(R.id.emailET);
         Button resetPasswordBtn = view.findViewById(R.id.sendRequestBtn);
+        mProgressBar = view.findViewById(R.id.progress_circular);
 
         resetPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +63,7 @@ public class ResetPasswordFragment extends Fragment {
 
                 if ( isValidInput(email, emailET) ) {
                     requestPasswordReset(email);
+                    mProgressBar.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -89,7 +94,7 @@ public class ResetPasswordFragment extends Fragment {
     private void requestPasswordReset(String email) {
 
         Map<String, String> params = new HashMap<>();
-        params.put("email", email);
+        params.put("user_email", email);
 
         AuthenticationAPI authenticationAPI = ApiProvider.getAuthApiService();
         authenticationAPI.requestPasswordReset(params).enqueue(new Callback<JsonObject>() {
@@ -97,31 +102,37 @@ public class ResetPasswordFragment extends Fragment {
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
+                mProgressBar.setVisibility(View.GONE);
                 if ( response.isSuccessful() ) {
+                    Log.i(TAG, " requestPasswordReset() --> response.isSuccessful = true");
 
                     JsonObject jsonObject = response.body();
 
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-                        GradsHubApplication.showToast("An email has been sent to you to reset your password");
-
+                        GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
                         // navigate back to LoginFragment
                         NavController navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
                         navController.navigate(R.id.action_resetPasswordFragment_to_loginFragment);
                     }
                     else {
-                        GradsHubApplication.showToast("incorrect email address.");
+                        GradsHubApplication.showToast( jsonObject.get("message").getAsString() );
                     }
 
                 }
                 else {
+                    GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
                     Log.i(TAG, " requestPasswordReset() --> response.isSuccessful = false");
+                    Log.i(TAG, "error code: " +response.code() );
+                    Log.i(TAG, "error message: " +response.message() );
                 }
 
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
+                Log.i(TAG, "requestPasswordReset() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 

@@ -11,7 +11,6 @@ public class UserPreferences {
 
     private static final String TAG = "UserPreferences";
 
-
     private final String USER_ID = "user_id";
     private final String FIRST_NAME = "first_name";
     private final String LAST_NAME = "last_name";
@@ -43,15 +42,6 @@ public class UserPreferences {
 
     public void saveUserDetails(User user, Context context) {
 
-//        Log.i(TAG, "updating preferences with new profile information:");
-//        Log.i(TAG, "first_names: " +user.getFirstName() );
-//        Log.i(TAG, "last_names: " +user.getFirstName() );
-//        Log.i(TAG, "username: " +user.getUsername() );
-//        Log.i(TAG, "phone_no: " +user.getPhoneNumber()  );
-//        Log.i(TAG, "email: " +user.getEmail()  );
-//        Log.i(TAG, "academic status: " +user.getAcademicStatus() );
-//        Log.i(TAG, "profile_picture: " +user.getProfilePicture()  );
-
         editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
                 .putString( USER_ID, user.getUserID() )
                 .putString( FIRST_NAME, user.getFirstName() )
@@ -79,7 +69,12 @@ public class UserPreferences {
         String profilePicture = mPreferences.getString(PROFILE_PICTURE, "no profilePicture set");
         String username = mPreferences.getString(USER_NAME, "no username set");
 
-        return new User(userID, firstName, lastName, email, phoneNumber, academicStatus, profilePicture, username);
+        User user = new User(firstName, lastName, email, phoneNumber, academicStatus, null, null);
+        user.setUserID(userID);
+        user.setProfilePicture(profilePicture);
+        user.setUsername(username);
+
+        return user;
 
     }
 
@@ -100,10 +95,9 @@ public class UserPreferences {
         editor.apply();
     }
 
-    // FCM TOKEN
+
     public void saveFCMToken(String fcmToken, Context context) {
-        editor = context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE).edit();
-        editor.putString(FCM_TOKEN,fcmToken);
+        editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putString(FCM_TOKEN, fcmToken);;
         editor.apply();
     }
 

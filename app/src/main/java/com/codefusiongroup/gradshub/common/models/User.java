@@ -49,20 +49,10 @@ public class User implements Parcelable {
         this.fcmToken = fcmToken;
     }
 
-    public User(String id,String firstName, String lastName, String email, String phoneNumber, String academicStatus, String profilePicture, String username) {
-        this.userID = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.academicStatus = academicStatus;
-        this.profilePicture = profilePicture;
-        this.username = username;
 
+    public User() {
+        // default constructor needed
     }
-
-    // we provide the default constructor so that we can also be able to set fields on a user object if needed.
-    public User() {}
 
 
     public void setUsername(String username) { this.username = username; }
@@ -139,6 +129,8 @@ public class User implements Parcelable {
         phoneNumber = in.readString();
         academicStatus = in.readString();
         userID = in.readString();
+        username = in.readString();
+        profilePicture = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -167,6 +159,8 @@ public class User implements Parcelable {
         dest.writeString(phoneNumber);
         dest.writeString(academicStatus);
         dest.writeString(userID);
+        dest.writeString(username);
+        dest.writeString(profilePicture);
     }
 
 }

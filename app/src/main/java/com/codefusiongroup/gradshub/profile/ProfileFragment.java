@@ -35,7 +35,6 @@ import retrofit2.Callback;
 
 public class ProfileFragment extends Fragment {
 
-
     private static final String TAG = "ProfileFragment";
 
     private ProgressBar mProgressBar;
@@ -46,14 +45,17 @@ public class ProfileFragment extends Fragment {
     private TextView mAcademicStatusTV;
 
     private User mUser;
+    private UserPreferences mUserPreferences;
+
     private boolean profileUpdatedSuccessfully = false;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        mUser = mainActivity.user;
+
+        mUserPreferences = UserPreferences.getInstance();
+        mUser = mUserPreferences.getUserDetails( requireActivity() );
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -80,10 +82,9 @@ public class ProfileFragment extends Fragment {
         mAcademicStatusTV = view.findViewById(R.id.academicStatusTV);
         Button editProfileBnt = view.findViewById(R.id.editProfileBtn);
 
-        //TODO: need correct implementation
-//        if ( profileUpdatedSuccessfully ) {
-//            getUpdatedUserProfile( mUser.getUserID() );
-//        }
+        if ( profileUpdatedSuccessfully ) {
+            getUpdatedUserProfile( mUser.getUserID() );
+        }
 
         if (mUser.getProfilePicture() != null) {
             Uri uri = Uri.parse( mUser.getProfilePicture() );
@@ -134,15 +135,7 @@ public class ProfileFragment extends Fragment {
                         mUser = new Gson().fromJson(userJO, User.class);
 
                         // save details to preferences
-//                        UserPreferences mUserPreferences = UserPreferences.getInstance();
-//                        mUserPreferences.saveUserDetails( mUser, requireActivity() );
-//
-//                        Log.i(TAG, "updated profile information:");
-//                        Log.i(TAG, "username: " +mUser.getUsername() );
-//                        Log.i(TAG, "phone_no: " +mUser.getPhoneNumber()  );
-//                        Log.i(TAG, "email: " +mUser.getEmail()  );
-//                        Log.i(TAG, "academic status: " +mUser.getAcademicStatus() );
-//                        Log.i(TAG, "profile_picture: " +mUser.getProfilePicture()  );
+                        mUserPreferences.saveUserDetails( mUser, requireActivity() );
 
                         Uri uri = Uri.parse( mUser.getProfilePicture() );
                         Glide.with( requireActivity() ).load(uri).into(mImageView);
@@ -181,5 +174,6 @@ public class ProfileFragment extends Fragment {
         });
 
     }
+
 
 }

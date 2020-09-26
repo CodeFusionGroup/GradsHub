@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -25,22 +23,21 @@ import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.User;
-import com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesPresenter;
 
 
 public class LoginFragment extends Fragment implements BaseView<LoginPresenter>, LoginContract.ILoginView, View.OnClickListener {
 
 
-    private static String TAG = "LoginFragment"; // for debugging
+    private static String TAG = "LoginFragment";
 
-    private AppCompatActivity mActivity; // used as context in intent to start MainActivity and Preferences
+    private View mView;
     private ProgressBar mProgressBar;
+    private AppCompatActivity mActivity; // used as context in intent to start MainActivity and pass to Preferences
     private EditText mEmailET, mPasswordET;
 
     private User mUser;
     private LoginPresenter mPresenter;
     private UserPreferences mUserPreferences;
-    private View mView;
 
 
     @Override
@@ -57,6 +54,7 @@ public class LoginFragment extends Fragment implements BaseView<LoginPresenter>,
 
         setPresenter( new LoginPresenter() );
         mUserPreferences = UserPreferences.getInstance();
+
         if (mUserPreferences.isLoggedIn( requireActivity() ) ) {
             mUser = mUserPreferences.getUserDetails( requireActivity() );
             startMainActivity();
@@ -128,25 +126,29 @@ public class LoginFragment extends Fragment implements BaseView<LoginPresenter>,
 
     @Override
     public void setPresenter(LoginPresenter presenter) {
+        Log.d(TAG, "setPresenter() executed");
         mPresenter = presenter;
     }
 
 
     @Override
     public void showProgressBar() {
+        Log.d(TAG, "showProgressBar() executed");
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
 
     @Override
     public void hideProgressBar() {
-        //TODO: fix progress bar not disappearing if login credentials are incorrect
+        Log.d(TAG, "hideProgressBar() executed");
+        //TODO: fix progress bar not disappearing if login credentials are incorrect upon login out and login in again
         mProgressBar.setVisibility(View.GONE);
     }
 
 
     @Override
     public void showEmailInputError(String message) {
+        Log.d(TAG, "showEmailInputError() executed");
         mEmailET.setError(message);
         mEmailET.requestFocus();
     }
@@ -154,6 +156,7 @@ public class LoginFragment extends Fragment implements BaseView<LoginPresenter>,
 
     @Override
     public void showPasswordInputError(String message) {
+        Log.d(TAG, "showPasswordInputError() executed");
         mPasswordET.setError(message);
         mPasswordET.requestFocus();
     }
@@ -161,12 +164,14 @@ public class LoginFragment extends Fragment implements BaseView<LoginPresenter>,
 
     @Override
     public void showLoginResponseMsg(String message) {
-        GradsHubApplication.showToast(message); }
+        Log.d(TAG, "showLoginResponseMsg() executed");
+        GradsHubApplication.showToast(message);
+    }
 
 
     @Override
     public void initialiseUser(User user) {
-        Log.i(TAG, "initialiseUser() executed");
+        Log.d(TAG, "initialiseUser() executed");
         mUser = user;
         mUserPreferences.saveUserDetails( user, mActivity );
         mUserPreferences.setLogInState( mActivity );
@@ -175,7 +180,7 @@ public class LoginFragment extends Fragment implements BaseView<LoginPresenter>,
 
     @Override
     public void startMainActivity() {
-        Log.i(TAG, "startMainActivity() executed");
+        Log.d(TAG, "startMainActivity() executed");
         Intent intent = new Intent( mActivity, MainActivity.class );
         intent.putExtra("USER", mUser);
         mActivity.startActivity(intent);
@@ -184,10 +189,9 @@ public class LoginFragment extends Fragment implements BaseView<LoginPresenter>,
 
     @Override
     public void onDetach() {
-
         super.onDetach();
         //mPresenter.unsubscribe();
-        //Log.i(TAG, "login presenter has unsubscribed from view --> LoginFragment");
+        //Log.d(TAG, "login presenter has unsubscribed from view --> LoginFragment");
     }
 
 }

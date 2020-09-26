@@ -4,22 +4,20 @@ import android.util.Log;
 import android.util.Patterns;
 
 import com.codefusiongroup.gradshub.common.BasePresenter;
-import com.codefusiongroup.gradshub.common.BasePresenter2;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
-import com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesContract;
 
 
 public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, LoginContract.ILoginPresenter {
 
-    private static String TAG = "LoginPresenter"; // for debugging
+    private static String TAG = "LoginPresenter";
 
+    private User mUser = null;
     private String mResponseCode = null;
     private String mResponseMessage = null;
-    private User mUser = null;
 
-    private final LoginContract.ILoginModel mLoginModel = LoginModel.newInstance(this);
     private LoginContract.ILoginView mView;
+    private final LoginContract.ILoginModel mLoginModel = LoginModel.newInstance(this);
 
 
     @Override
@@ -69,7 +67,7 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
         Log.i(TAG, "loginUser() executed");
         mLoginModel.requestUserLogin(email, password);
         if (mView != null) {
-            Log.i(TAG, "mView not null, showing progress bar...");
+            Log.i(TAG, "mView not null, show progress bar");
             mView.showProgressBar();
         }
     }
@@ -95,6 +93,10 @@ public class LoginPresenter implements BasePresenter<LoginContract.ILoginView>, 
     @Override
     public void onLoginRequestFinished() {
         Log.i(TAG, "onLoginRequestFinished() executed");
+
+        if (mView==null){
+            Log.d(TAG, "mView is null, unable to hide progress bar");
+        }
 
         if (mView != null) {
             Log.d(TAG, "mView not null, hide progress bar");

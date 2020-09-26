@@ -32,6 +32,8 @@ import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
+import com.codefusiongroup.gradshub.common.UserPreferences;
+import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -65,7 +67,7 @@ public class EditProfileFragment extends Fragment {
     private String mUploadedImageName;
     private StorageReference mStorageRef;
 
-    private MainActivity mMainActivity;
+    private User mUser;
     private String mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword;
 
     private boolean mImageUrlRetrievalFailed = false;
@@ -76,7 +78,8 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMainActivity = (MainActivity) requireActivity();
+        UserPreferences userPreferences = UserPreferences.getInstance();
+        mUser = userPreferences.getUserDetails( requireActivity() );
     }
 
 
@@ -90,20 +93,19 @@ public class EditProfileFragment extends Fragment {
 
         initViewComponents(view);
 
-        mUsernameTV.setText( mMainActivity.user.getFullName() );
-        mUsernameET.setText( mMainActivity.user.getFullName() );
-        mPhoneNoET.setText( mMainActivity.user.getPhoneNumber() );
-        mEmailET.setText( mMainActivity.user.getEmail() );
-        mAcademicStatusET.setText( mMainActivity.user.getAcademicStatus() );
+        mUsernameTV.setText( mUser.getUsername() );
+        mUsernameET.setText( mUser.getUsername() );
+        mPhoneNoET.setText( mUser.getPhoneNumber() );
+        mEmailET.setText( mUser.getEmail() );
+        mAcademicStatusET.setText( mUser.getAcademicStatus() );
 
-        if (mMainActivity.user.getProfilePicture() != null) {
-            Uri uri = Uri.parse( mMainActivity.user.getProfilePicture() );
+        if (mUser.getProfilePicture() != null) {
+            Uri uri = Uri.parse( mUser.getProfilePicture() );
             Glide.with( requireActivity() ).load(uri).into(mImageView);
         }
         else {
             Glide.with( requireActivity() ).load(R.drawable.ic_account_circle).into(mImageView);
         }
-
 
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,12 +160,12 @@ public class EditProfileFragment extends Fragment {
                         Log.i(TAG, "profile updated with profile picture");
                         // for this case we don't call updateProfileWithImage() since that will go through the process
                         // of uploading the image to firebase again
-                        updateUserProfile( mMainActivity.user.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mFirebaseImageUri.toString() );
+                        updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mFirebaseImageUri.toString() );
                     }
                     // user did not include a profile picture for this profile update
                     else {
                         Log.i(TAG, "profile updated without profile picture");
-                        updateUserProfile( mMainActivity.user.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
+                        updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
                     }
                     mProgressBar.setVisibility(View.VISIBLE);
                 }
@@ -181,7 +183,7 @@ public class EditProfileFragment extends Fragment {
                         // user did not include a profile picture for this profile update
                         else {
                             Log.i(TAG, "first attempt --> profile updated without profile picture");
-                            updateUserProfile( mMainActivity.user.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
+                            updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
                         }
 
                         mProgressBar.setVisibility(View.VISIBLE);
@@ -326,7 +328,7 @@ public class EditProfileFragment extends Fragment {
         // however the new profile image may have a different file extension than the already existing one
         // in which case it might not be replaced but nonetheless we limit too many pictures for the same user
         // existing in the storage.
-        mUploadedImageName = mMainActivity.user.getUserID() + "." + getFileExtension();
+        mUploadedImageName = mUser.getUserID() + "." + getFileExtension();
         UploadTask uploadTask = mStorageRef.child( "images/" + mUploadedImageName ).putFile(mSelectedImageUri);
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -361,7 +363,7 @@ public class EditProfileFragment extends Fragment {
                         Log.i(TAG, "getFirebaseImageURL() --> onSuccess executed");
                         mFirebaseImageUri = uri;
                         mImageUrlRetrievalFailed = false;
-                        updateUserProfile( mMainActivity.user.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, uri.toString() );
+                        updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, uri.toString() );
                     }
 
                 }).addOnFailureListener(new OnFailureListener() {
