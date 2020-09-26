@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -28,6 +30,7 @@ import com.codefusiongroup.gradshub.common.BaseView;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.messaging.MessagingAPI;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -110,8 +113,15 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
         // initiate another request
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             //mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
-            fetchUserOpenChats(mainActivity.user.getUserID());
+            fetchUserOpenChats( mainActivity.user.getUserID() );
             mSwipeRefreshLayout.setRefreshing(true);
+        });
+
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(view1 -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+            navController.navigate(R.id.action_chatsListFragment_to_friendsListFragment);
         });
 
     }

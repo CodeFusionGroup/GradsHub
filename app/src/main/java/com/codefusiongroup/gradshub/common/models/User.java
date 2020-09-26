@@ -27,9 +27,16 @@ public class User implements Parcelable {
     @SerializedName("USER_ACAD_STATUS")
     private String academicStatus;
 
-    private String password;
+    @SerializedName("USER_PROFILE_PICTURE")
+    private String profilePicture;
 
+    @SerializedName("USER_NAME")
+    private String username;
+
+    private String password;
     private String fcmToken;
+    private boolean isBlocked = false;
+    private boolean isAFriend = false;
 
 
     public User(String firstName, String lastName, String email, String phoneNumber, String academicStatus, String password, String fcmToken) {
@@ -42,18 +49,25 @@ public class User implements Parcelable {
         this.fcmToken = fcmToken;
     }
 
-    public User(String id,String firstName, String lastName, String email, String phoneNumber, String academicStatus) {
+    public User(String id,String firstName, String lastName, String email, String phoneNumber, String academicStatus, String profilePicture, String username) {
         this.userID = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.academicStatus = academicStatus;
+        this.profilePicture = profilePicture;
+        this.username = username;
+
     }
 
     // we provide the default constructor so that we can also be able to set fields on a user object if needed.
     public User() {}
 
+
+    public void setUsername(String username) { this.username = username; }
+
+    public String getUsername() { return username; }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -101,9 +115,21 @@ public class User implements Parcelable {
 
     public String getUserID() {return userID;}
 
+    public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
+
+    public String getProfilePicture() { return profilePicture; }
+
     public String getFullName() {return firstName + " " + lastName;}
 
     public String getFCMToken(){ return fcmToken;}
+
+    public void setBlockedStatus(boolean value) { isBlocked = value; }
+
+    public boolean isBlocked() { return isBlocked; }
+
+    public void setFriendStatus(boolean value) { isAFriend = value; }
+
+    public boolean isAFriend() { return isAFriend; }
 
 
     protected User(Parcel in) {

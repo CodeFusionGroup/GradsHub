@@ -30,11 +30,9 @@
     <string name="spinnerErrorMsg">please select valid academic status</string>
 
     <!-- attributes for fragment_reset_password-->
-    <string name="new_password_tv">Enter new password</string>
-    <string name="new_password_hint">Password</string>
-    <string name="confirm_password_tv">Confirm password</string>
-    <string name="confirm_password_hint">Re-enter password</string>
-    <string name="reset_password_button">Reset password</string>
+    <string name="password_reset_request_tv">Enter your email address to request for password reset</string>
+    <string name="email_address_hint">Email</string>
+    <string name="send_request">SEND REQUEST</string>
 
 
     <!-- THE FOLLOWING BELONG TO THE MAIN ACTIVITY -->
@@ -82,5 +80,13 @@
     <string name="subject">Subject</string>
     <string name="description">Description</string>
     <string name="post_hint">add link and/or attach a pdf file</string>
+
+    <!-- string values for UserProfileFragment -->
+    <string name="user_profile_name">USERNAME</string>
+    <string name="chat_button_text">START CHAT</string>
+    <string name="block_button_text">BLOCK</string>
+    <string name="unblock_button_text">UN-BLOCK</string>
+    <string name="friend_button_text">ADD FRIEND</string>
+    <string name="unfriend_button_text">REMOVE FRIEND</string>
 
 </resources>

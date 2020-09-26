@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -20,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
+import com.codefusiongroup.gradshub.friends.FriendsFragment;
 import com.codefusiongroup.gradshub.groups.searchGroups.exploreGroupsList.ExploreGroupsFragment;
 import com.codefusiongroup.gradshub.messaging.openChats.OpenChatsFragment;
 import com.codefusiongroup.gradshub.events.ScheduleListFragment;
@@ -79,13 +81,15 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         GroupPostCommentsFragment.OnCommentsListFragmentInteractionListener,
         ScheduleListFragment.OnScheduleListFragmentInteractionListener,
         OpenChatsFragment.OnOpenChatsFragmentInteractionListener,
-        UsersListFragment.OnUsersListFragmentInteractionListener {
+        UsersListFragment.OnUsersListFragmentInteractionListener,
+        FriendsFragment.OnFriendsListFragmentInteractionListener {
 
 
     public User user; // used in other fragments, so has public access.
     private AppBarConfiguration mAppBarConfiguration;
 
     private Calendar rightNow;
+    private int currentYear, currentMonth, currentDay;
     private static final String CHANNEL_ID = "0";
     private List<Schedule> eventsSchedule = new ArrayList<>();
 
@@ -100,6 +104,11 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         Intent intent = getIntent();
         user = intent.getParcelableExtra("USER");
+
+        rightNow = Calendar.getInstance();
+        currentYear = rightNow.get(Calendar.YEAR);
+        currentMonth = rightNow.get(Calendar.MONTH);
+        currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
 
         readScheduleFromFile();
 
@@ -148,10 +157,10 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     private void performEventDateChecksForNotification() {
 
         // NOTIFICATION HANDLING
-        rightNow = Calendar.getInstance();
-        int currentYear = rightNow.get(Calendar.YEAR);
-        int currentMonth = rightNow.get(Calendar.MONTH);
-        int currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
+//        rightNow = Calendar.getInstance();
+//        currentYear = rightNow.get(Calendar.YEAR);
+//        currentMonth = rightNow.get(Calendar.MONTH);
+//        currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
 
         //===============================================================
         // IMPORTANT READ FOR TESTING NOTIFICATION YOURSELF.
@@ -181,6 +190,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 event.setPlace("place: Vancouver, Canada");
                 //***************************************
 
+                //=================================================================================
+                //TODO: remove this logic and replace it with the one implemented in readScheduleFromFile()
                 String dateStr = event.getDate();
                 String eventDate = dateStr.substring( dateStr.indexOf(":") + 2 );
                 String[] dateComponents = eventDate.split(" ");
@@ -195,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 } else {
                     eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
                 }
+                //======================================================================================
 
                 // build notifications only for valid dates of events
                 if ( eventYear >= currentYear) {
@@ -334,6 +346,15 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     }
 
 
+    @Override
+    public void onFriendsListFragmentInteraction(User user) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("selected_user", user);
+        NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
+        navController.navigate(R.id.action_friendsListFragment_to_userProfileFragment, bundle);
+    }
+
+
     // this method gets schedule from website and writes the schedules to a file (Schedule-data.txt)
     // NOTE: method is not called anywhere to avoid making multiple request to the website for data
     // still have to schedule the requests since data on the website can change
@@ -405,33 +426,78 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
             String[] temp = contents.toString().split("\n\n");
 
             // from temp we take each event and form an object of type Schedule
-            for (String s : temp) {
+            int i=0;
+            List<String> list = new ArrayList<>();
+            for (String eventStr : temp) {
 
+                i++;
                 String title = null, id = null, link = null, deadline = null, timezone = null, date = null, place = null;
-                String[] scheduleItem = s.split("\n");
+                String[] eventComponents = eventStr.split("\n");
 
-                for (String value : scheduleItem) {
+                for (String component : eventComponents) {
 
                     // select only relevant parts of the schedule item
-                    String substring = value.substring(value.indexOf(":") + 2); // for title, id and link
-                    if (value.startsWith("- title")) {
-                        title = substring;
-                    } else if (value.startsWith("id")) {
-                        id = substring;
-                    } else if (value.startsWith("link")) {
-                        link = substring;
-                    } else if (value.startsWith("deadline")) {
-                        deadline = value;
-                    } else if (value.startsWith("timezone")) {
-                        timezone = value;
-                    } else if (value.startsWith("date")) {
-                        date = value;
-                    } else if (value.startsWith("place")) {
-                        place = value;
+                    String compSubstring = component.substring( component.indexOf(":") + 2 ); // for title, id and link
+
+                    if ( component.startsWith("- title") ) {
+                        title = compSubstring;
+
+                    } else if ( component.startsWith("id") ) {
+                        id = compSubstring;
+
+                    } else if ( component.startsWith("link") ) {
+                        link = compSubstring;
+
+                    } else if ( component.startsWith("deadline") ) {
+                        deadline = component;
+
+                    } else if ( component.startsWith("timezone") ) {
+                        timezone = component;
+
+                    } else if ( component.startsWith("date") ) {
+
+                        // check if date is relevant
+                        String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
+                        String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
+                        String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
+
+                        int eventStartMonth = MonthsConstants.setMonths(month);
+                        int eventYear = Integer.parseInt(year);
+
+                        int eventStartDay;
+                        if (eventDuration.length() == 1) {
+                            eventStartDay = Integer.parseInt(eventDuration);
+                        }
+                        else {
+                            // check if second character is a number
+                            if ( Character.isDigit( eventDuration.charAt(1) ) ) {
+                                eventStartDay = Integer.parseInt( eventDuration.substring(0, 2) );
+                            }
+                            else {
+                                // must be a hyphen
+                                eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
+                            }
+                        }
+
+                        //Log.i("MainActivity", "eventYear: "+eventYear+", eventStartMonth: "+eventStartMonth+", eventStartDay: "+eventStartDay+", event no: "+i);
+
+                        if (eventYear > currentYear) {
+                            date = component;
+                        }
+                        else if( eventYear == currentYear && (eventStartMonth > currentMonth || (eventStartMonth == currentMonth && eventStartDay > currentDay)) ) {
+                            date = component;
+                        }
+
+                    } else if ( component.startsWith("place") ) {
+                        place = component;
                     }
+
                 }
 
-                eventsSchedule.add(new Schedule(id, title, link, deadline, timezone, date, place));
+                // filter based on date
+                if (date != null) {
+                    eventsSchedule.add(new Schedule(id, title, link, deadline, timezone, date, place));
+                }
 
             }
 

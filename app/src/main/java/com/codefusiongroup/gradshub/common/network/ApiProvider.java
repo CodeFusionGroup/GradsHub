@@ -2,8 +2,10 @@ package com.codefusiongroup.gradshub.common.network;
 
 import com.codefusiongroup.gradshub.authentication.AuthenticationAPI;
 import com.codefusiongroup.gradshub.events.EventsAPI;
+import com.codefusiongroup.gradshub.friends.FriendsAPI;
 import com.codefusiongroup.gradshub.groups.GroupsAPI;
 import com.codefusiongroup.gradshub.messaging.MessagingAPI;
+import com.codefusiongroup.gradshub.profile.ProfileAPI;
 
 
 // class provides the various APIs interfaces
@@ -29,5 +31,13 @@ public class ApiProvider {
         return RetrofitClient.getClient().create(MessagingAPI.class);
     }
 
+    public static FriendsAPI getFriendsApiService() {
+        return RetrofitClient.getClient().create(FriendsAPI.class);
+    }
+
+
+    public static ProfileAPI getProfileApiService() {
+        return RetrofitClient.getClient().create(ProfileAPI.class);
+    }
 
 }
