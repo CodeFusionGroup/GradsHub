@@ -20,7 +20,7 @@ public interface AuthenticationAPI {
     Call<JsonObject> registerUser(@Body HashMap<String, String> params);
 
 
-    @POST("User/resetpassword.php")
+    @POST("User/changePassword.php")
     Call<JsonObject> requestPasswordReset(@Body Map<String, String> params);
 
 }

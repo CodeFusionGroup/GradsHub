@@ -69,7 +69,6 @@ public class OpenChatsRecyclerViewAdapter extends RecyclerView.Adapter<OpenChats
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public final View mView;
-        public final ImageView mUserImageView;
         public final TextView mContactNameView;
         public final TextView mLatestMessageView;
         public final TextView mLatestMessageTimeView;
@@ -79,7 +78,6 @@ public class OpenChatsRecyclerViewAdapter extends RecyclerView.Adapter<OpenChats
 
             super(view);
             mView = view;
-            mUserImageView = view.findViewById(R.id.userImageView);
             mContactNameView = view.findViewById(R.id.contactNameTV);
             mLatestMessageView = view.findViewById(R.id.latestMessageTV);
             mLatestMessageTimeView = view.findViewById(R.id.latestMessageTimeTV);
@@ -111,7 +109,7 @@ public class OpenChatsRecyclerViewAdapter extends RecyclerView.Adapter<OpenChats
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 mValues.clear();
-                mValues.addAll((List)results.values);
+                mValues.addAll( (List)results.values );
                 notifyDataSetChanged();
             }
         };

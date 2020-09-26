@@ -35,18 +35,16 @@ import com.google.firebase.iid.InstanceIdResult;
 public class RegisterFragment extends Fragment implements RegisterContract.IRegisterView, AdapterView.OnItemSelectedListener {
 
 
-    private static String TAG = "RegisterFragment"; // for debugging
+    private static String TAG = "RegisterFragment";
 
-    private ProgressBar mProgressBar;
     private Spinner mSpinner;
-    private EditText mFirstNameET, mLastNameET, mEmailET, mPhoneNoET, mPasswordET, mConfirmPasswordET;
     private Button mSubmitBtn;
+    private ProgressBar mProgressBar;
+    private EditText mFirstNameET, mLastNameET, mEmailET, mPhoneNoET, mPasswordET, mConfirmPasswordET;
 
-    private String mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword;
+    private String mToken; // Used for Firebase Cloud Messaging
     private RegisterPresenter mRegisterPresenter;
-
-    // Used for Firebase Cloud Messaging
-    private String mToken;
+    private String mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword;
 
 
     @Override
@@ -86,7 +84,6 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
             if ( mRegisterPresenter.validateRegistrationInput(mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword) ) {
                 // Register User with FCM Token
                 registrationWithToken();
-                //mRegisterPresenter.registerUser( new User( mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null ) );
             }
 
         });
@@ -132,6 +129,7 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
                             }
                         }
                         else {
+                            GradsHubApplication.showToast("failed to register, please try again later.");
                             Log.i(TAG, "task.isSuccessful() = false");
                             Log.d( TAG, "getInstanceId failed", task.getException() );
                         }

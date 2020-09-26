@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.codefusiongroup.gradshub.authentication.AuthenticationAPI;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
@@ -25,14 +24,11 @@ import retrofit2.Callback;
 
 public class LoginModel implements LoginContract.ILoginModel {
 
-    private static String TAG = "LoginModel"; // for debugging
+    private static String TAG = "LoginModel";
 
     private final String  SUCCESS_CODE = "1";
     private static LoginModel loginModel = null;
     private final LoginContract.ILoginPresenter mPresenter;
-
-    private AppCompatActivity mActivity;
-    private UserPreferences mUserPreferences;
 
     private LoginModel(LoginContract.ILoginPresenter presenter) {
         mPresenter = presenter;
@@ -60,9 +56,10 @@ public class LoginModel implements LoginContract.ILoginModel {
 
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-                Log.i(TAG, "onResponse() executed");
+
                 if ( response.isSuccessful() ) {
-                    Log.i(TAG, "response.isSuccessful() = true");
+                    Log.i(TAG, "requestUserLogin() --> response.isSuccessful() = true");
+
                     JsonObject jsonObject = response.body();
 
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
@@ -74,11 +71,11 @@ public class LoginModel implements LoginContract.ILoginModel {
                         mPresenter.setLoginResponseMessage(jsonObject.get("message").getAsString());
                         mPresenter.setCurrentUser(user);
 
-                        mUserPreferences = UserPreferences.getInstance();
+                        UserPreferences userPreferences = UserPreferences.getInstance();
                         Context ctx = GradsHubApplication.getContext();
-                        if(mUserPreferences.isTokenChanged(ctx)){
+                        if( userPreferences.isTokenChanged(ctx) ) {
                             // Update the FCM token
-                            String token = mUserPreferences.getFCMToken(ctx);
+                            String token = userPreferences.getFCMToken(ctx);
                             updateUserToken(user.getUserID(),token);
                         }
 
@@ -92,9 +89,10 @@ public class LoginModel implements LoginContract.ILoginModel {
                     mPresenter.onLoginRequestFinished();
                 }
                 else {
-                    Log.i(TAG, "response.isSuccessful() = false");
-                    // wouldn't normally show this to the user, but its for debugging purposes only and will be removed
-                    GradsHubApplication.showToast(ApiResponseConstants.RESOURCE_LOCATION_FAILED);
+                    GradsHubApplication.showToast(ApiResponseConstants.SERVER_FAILURE_MSG);
+                    Log.i(TAG, "requestUserLogin() --> response.isSuccessful() = false");
+                    Log.i(TAG, "error code: " +response.code() );
+                    Log.i(TAG, "error message: " +response.message() );
                 }
 
             }
@@ -102,10 +100,10 @@ public class LoginModel implements LoginContract.ILoginModel {
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.i(TAG, "onFailure() executed");
                 mPresenter.setLoginResponseCode(ApiResponseConstants.SERVER_FAILURE_CODE);
                 mPresenter.setLoginResponseMessage(ApiResponseConstants.SERVER_FAILURE_MSG);
                 mPresenter.onLoginRequestFinished();
+                Log.i(TAG, "requestUserLogin() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 
@@ -121,26 +119,30 @@ public class LoginModel implements LoginContract.ILoginModel {
         params.put("fcm_token", token);
 
         MessagingAPI messagingAPI = ApiProvider.getMessageApiService();
-
         messagingAPI.updateUserFCMToken(params).enqueue(new Callback<JsonObject>() {
 
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
                 if ( response.isSuccessful() ) {
+                    Log.i(TAG, "updateUserToken --> response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
 //                    GradsHubApplication.showToast("successfully updated your token for messaging.");
-                    Log.i(TAG, " update user fcm token response.isSuccessful() = true");
+
                 }
                 else {
-                    Log.i(TAG, "response.isSuccessful() = false");
+                    GradsHubApplication.showToast( ApiResponseConstants.SERVER_FAILURE_MSG );
+                    Log.i(TAG, "updateUserToken --> response.isSuccessful() = false");
+                    Log.i(TAG, "error code: " +response.code() );
+                    Log.i(TAG, "error message: " +response.message() );
                 }
 
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                GradsHubApplication.showToast("your token has been refreshed, please refresh page to continue receiving messages.");
+                GradsHubApplication.showToast( ApiResponseConstants.SERVER_FAILURE_MSG );
+                Log.i(TAG, "updateUserToken() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 

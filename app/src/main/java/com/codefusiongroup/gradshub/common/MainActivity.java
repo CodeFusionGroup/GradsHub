@@ -85,14 +85,17 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         FriendsFragment.OnFriendsListFragmentInteractionListener {
 
 
-    public User user; // used in other fragments, so has public access.
+    private static final String TAG = "MainActivity";
+
+    private static final String CHANNEL_ID = "0";
+
     private AppBarConfiguration mAppBarConfiguration;
 
+    public User user; // used in other fragments, so has public access.
     private Calendar rightNow;
     private int currentYear, currentMonth, currentDay;
-    private static final String CHANNEL_ID = "0";
-    private List<Schedule> eventsSchedule = new ArrayList<>();
 
+    private List<Schedule> eventsSchedule = new ArrayList<>();
     // used to form notifications for the current user's favourite events
     private ArrayList<String> userPreviouslyFavouredEvents = new ArrayList<>();
 
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         getUserFavouredEvents();
 
-//        performEventDateChecksForNotification();
+        performEventDateChecksForNotification(userPreviouslyFavouredEvents);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -154,13 +157,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     }
 
 
-    private void performEventDateChecksForNotification() {
-
-        // NOTIFICATION HANDLING
-//        rightNow = Calendar.getInstance();
-//        currentYear = rightNow.get(Calendar.YEAR);
-//        currentMonth = rightNow.get(Calendar.MONTH);
-//        currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
+    // method ensures that only upcoming events are scheduled for notifications by checking event date
+    private void performEventDateChecksForNotification(ArrayList<String> userPreviouslyFavouredEvents) {
 
         //===============================================================
         // IMPORTANT READ FOR TESTING NOTIFICATION YOURSELF.
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         // 5 minutes after the current time for testing purposes only.
         //===============================================================
 
-        // if the user has any favourite event(s)
 //        if ( userPreviouslyFavouredEvents.size() > 0 ) {
 //
 //            for (String event_id : userPreviouslyFavouredEvents) {
@@ -186,33 +183,41 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 // TESTING NOTIFICATION with dummy event
                 Schedule event = new Schedule();
                 event.setTitle("Robotics");
-                event.setDate("date: September 22, 2020"); // adjust month/date appropriately & leave formatting as it is.
+                event.setDate("date: October 03, 2020"); // adjust month/date appropriately & leave formatting as it is.
                 event.setPlace("place: Vancouver, Canada");
                 //***************************************
 
-                //=================================================================================
-                //TODO: remove this logic and replace it with the one implemented in readScheduleFromFile()
+                // check if date is relevant
                 String dateStr = event.getDate();
-                String eventDate = dateStr.substring( dateStr.indexOf(":") + 2 );
-                String[] dateComponents = eventDate.split(" ");
+                String compSubstring = dateStr.substring( dateStr.indexOf(":") + 2 );
+                String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
+                String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
+                String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
 
-                int eventYear = Integer.parseInt(dateComponents[2]);
-                int eventMonth = MonthsConstants.setMonths(dateComponents[0]);
-                String eventDuration = dateComponents[1];
+                int eventStartMonth = MonthsConstants.setMonths(month);
+                int eventYear = Integer.parseInt(year);
 
                 int eventStartDay;
-                if (eventDuration.length() > 2) {
-                    eventStartDay = Integer.parseInt( eventDuration.substring(0, 2) );
-                } else {
-                    eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
+                if (eventDuration.length() == 1) {
+                    eventStartDay = Integer.parseInt(eventDuration);
                 }
-                //======================================================================================
+                else {
+                    // check if second character is a number
+                    if ( Character.isDigit( eventDuration.charAt(1) ) ) {
+                        eventStartDay = Integer.parseInt( eventDuration.substring(0, 2) );
+                    }
+                    else {
+                        // must be a hyphen
+                        eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
+                    }
+                }
 
-                // build notifications only for valid dates of events
+                Log.d(TAG, "event title: "+event.getTitle()+", eventYear: "+eventYear+", eventStartMonth: "+eventStartMonth+", eventStartDay: "+eventStartDay);
+
                 if ( eventYear >= currentYear) {
-                    if( eventMonth > currentMonth || eventMonth == currentMonth && eventStartDay > currentDay ) {
+                    if( eventStartMonth > currentMonth || (eventStartMonth == currentMonth && eventStartDay > currentDay) ) {
                         int notificationId = 0;
-                        scheduleNotification(this.getApplicationContext(), notificationId, event, eventYear, eventMonth, eventStartDay);
+                        scheduleNotification(this.getApplicationContext(), notificationId, event, eventYear, eventStartMonth, eventStartDay);
                     }
                 }
 
@@ -273,76 +278,72 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
 
     @Override
-    public void onMyGroupsListFragmentInteraction(ResearchGroup item) {
-
+    public void onMyGroupsListFragmentInteraction(ResearchGroup group) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("group_item", item);
+        bundle.putParcelable("group_item", group);
         bundle.putParcelable("user", user);
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_myGroupsFragment_to_myGroupProfileFragment, bundle);
-
     }
 
 
     @Override
-    public void onExploreGroupsFragmentInteraction(ResearchGroup item) {
-
+    public void onExploreGroupsFragmentInteraction(ResearchGroup group) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("group_item", item);
+        bundle.putParcelable("group_item", group);
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_exploreGroupsFragment_to_exploredGroupProfileFragment, bundle);
-
     }
 
 
     @Override
-    public void onPostsListFragmentInteraction(Post item) {
-        // not implemented
+    public void onPostsListFragmentInteraction(Post post) {
+        // empty on purpose
     }
 
 
     @Override
-    public void onCommentsListFragmentInteraction(Comment comment) {}
+    public void onCommentsListFragmentInteraction(Comment comment) {
+        // empty on purpose
+    }
 
 
     @Override
-    public void onScheduleListFragmentInteraction(Schedule item) {
+    public void onScheduleListFragmentInteraction(Schedule event) {
 
-        if (!item.getLink().startsWith("https://") && !item.getLink().startsWith("http://")) {
-            String link = "http://" + item.getLink();
+        if ( !event.getLink().startsWith("https://") && !event.getLink().startsWith("http://") ) {
+
+            String link = "http://" + event.getLink();
             Uri uri = Uri.parse(link);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(Intent.createChooser(intent, "dialogTitle"));
-        } else {
-            Uri uri = Uri.parse(item.getLink());
+            startActivity( Intent.createChooser(intent, "choose Browser") );
+        }
+        else {
+            Uri uri = Uri.parse( event.getLink() );
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(Intent.createChooser(intent, "dialogTitle"));
+            startActivity(Intent.createChooser( intent, "choose Browser") );
         }
 
-        Toast.makeText(this, "selected: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "selected: " + event.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void onOpenChatsFragmentInteraction(Chat chat) {
-
         Bundle bundle = new Bundle();
         bundle.putString("name", chat.getCorrespondentName());
         bundle.putString("id", chat.getCorrespondentID());
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_chatsListFragment_to_chatMessagesFragment, bundle);
-
     }
 
 
     @Override
     public void onUsersListFragmentInteraction(User user) {
-
         Bundle bundle = new Bundle();
         bundle.putParcelable("selected_user", user);
         NavController navController = Navigation.findNavController(this, R.id.main_nav_host_fragment);
         navController.navigate(R.id.action_usersListFragment_to_userProfileFragment, bundle);
-
     }
 
 
@@ -365,39 +366,65 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
             Document document = Jsoup.connect("https://github.com/abhshkdz/ai-deadlines/blob/gh-pages/_data/conferences.yml").get();
             Elements scheduleData = document.getElementsByTag("tr");
 
-            // Create a new file
-            File file = new File("Schedule-data.txt");
+            // Create a new file to store the events
+            //File scheduleFile = new File("Schedule-data.txt");
+            File scheduleFile = new File("test.txt");
 
-            // File writer for the new file
-            FileWriter fileWriter = new FileWriter("Schedule-data.txt");
+            if ( scheduleFile.exists() ) {
+                Log.d(TAG, "schedule file exits, name is: "+ scheduleFile.getName() );
+            }
+            else {
+                Log.d(TAG, "schedule file test.txt does not exist");
+            }
+
+
+            // write the events to the specified file
+            FileWriter fileWriter = new FileWriter( scheduleFile.getName() );
+            //FileWriter fileWriter = new FileWriter( "Schedule-data.txt" );
+
             int count = 0;
             for (Element data : scheduleData) {
                 count++;
+
                 if (count < 3) {
                     continue;
                 }
-                fileWriter.write(data.text());
+
+                fileWriter.write( data.text() );
                 //fileWriter.write(System.lineSeparator()); // lineSeparator() giving error when uncommented
+
+                //==========================================================
+                String lineSeparator = System.getProperty("line.separator");
+                assert lineSeparator != null;
+                fileWriter.write(lineSeparator);
+                //==========================================================
             }
+
+            // must check for null
             fileWriter.close();
 
+            //====================================================================================
             // Parse the file
             FileReader fileReader = new FileReader("Schedule-data.txt");
             Scanner scanner = new Scanner(fileReader);
 
             while (scanner.hasNext()) {
                 String scanLine = scanner.nextLine();
+
+                // skips empty lines
                 if (scanLine.length() == 0) {
                     continue;
                 }
+                else {
+                    Log.d(TAG, "scanLine: "+ scanLine);
+                }
 
-                //System.out.println(scanLine);
             }
             scanner.close();
-
+            //====================================================================================
 
         } catch (IOException e) {
-            System.out.println("Error connecting to url");
+            Log.e(TAG, "Error connecting to url: "+ "https://github.com/abhshkdz/ai-deadlines/blob/gh-pages/_data/conferences.yml", e.getCause());
             e.printStackTrace();
         }
 
@@ -426,11 +453,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
             String[] temp = contents.toString().split("\n\n");
 
             // from temp we take each event and form an object of type Schedule
-            int i=0;
-            List<String> list = new ArrayList<>();
             for (String eventStr : temp) {
 
-                i++;
                 String title = null, id = null, link = null, deadline = null, timezone = null, date = null, place = null;
                 String[] eventComponents = eventStr.split("\n");
 
@@ -624,6 +648,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setShowWhen(false) // doesn't show notification timestamp
                 .setAutoCancel(true)// automatically removes the notification when the user taps it.
+                .setOngoing(false) // dismiss notification on swipe gesture
                 .setContentIntent(authPendingIntent);
 
         // builder.build() returns the notification to be published

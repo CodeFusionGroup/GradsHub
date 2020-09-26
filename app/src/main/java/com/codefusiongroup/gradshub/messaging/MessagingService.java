@@ -47,7 +47,6 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
     private ChatMessagesContract.IChatMessagesPresenter mPresenter;
     private static MessagingService instance;
-    private UserPreferences mUserPreferences;
 
 
     public MessagingService() {
@@ -112,8 +111,8 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
     @Override
     public void onMessageSent(@NonNull String messageID) {
-
         //mPresenter.setMessageSentState(true);
+        Log.i(TAG, "message id: "+messageID);
     }
 
 
@@ -138,10 +137,10 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(authPendingIntent)
-
+                // dismiss notification on swipe gesture
+                .setOngoing(false)
                 // automatically removes the notification when the user taps it.
                 .setAutoCancel(true);
 
@@ -167,11 +166,10 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
         // Save the user token for later usage
         Context ctx = GradsHubApplication.getContext();
-        mUserPreferences = UserPreferences.getInstance();
-        mUserPreferences.saveFCMToken(token,ctx);
-        Log.i(TAG, "Shared preferences token " + mUserPreferences.getFCMToken(ctx));
-        mUserPreferences.tokenChanged(ctx);
-
+        UserPreferences userPreferences = UserPreferences.getInstance();
+        userPreferences.tokenChanged(ctx);
+        userPreferences.saveFCMToken(token,ctx);
+        Log.i(TAG, "Shared preferences token " + userPreferences.getFCMToken(ctx) );
         //updateUserToken(userID, token);
     }
 
@@ -208,7 +206,10 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
                 }
 
                 else {
+                    mPresenter.setInsertMessageResponseCode(ApiResponseConstants.SERVER_FAILURE_CODE);
                     Log.i(TAG, "response.isSuccessful() = false");
+                    Log.i(TAG, "error code: " +response.code() );
+                    Log.i(TAG, "error message: " +response.message() );
                 }
 
             }
