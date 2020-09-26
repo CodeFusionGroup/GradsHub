@@ -57,8 +57,9 @@ before_script:
 
 script:
 
- # - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
+#  - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
+  - ./gradlew connectedCheck --scan
   - ./gradlew build --scan
 
-#after_success:
-#  - bash <(curl -s https://codecov.io/bash)
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
