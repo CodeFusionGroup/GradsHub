@@ -33,7 +33,6 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.*;
-@Ignore
 public class RegisterFragmentTest {
     @Rule
     public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<AuthenticationActivity>(AuthenticationActivity.class);
@@ -55,7 +54,7 @@ public class RegisterFragmentTest {
     @Test
     public void registerUserTest() throws InterruptedException {
         onView(withId(R.id.firstNameET)).perform(typeText("f_nameSelf"));
-        onView(withId(R.id.lastNameET)).perform(typeText("lname"));
+        onView(withId(R.id.lastNameET)).perform(typeText("lname"), closeSoftKeyboard());
         onView(withId(R.id.emailET)).perform(typeText("tester141414fhfvbd@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.phoneNumberET)).perform(typeText(String.valueOf("123456789")), closeSoftKeyboard());
         onView(withId(R.id.spinner)).perform(click());
@@ -86,7 +85,7 @@ public class RegisterFragmentTest {
     public void testInvalidEmail(){
         //first test is for no email was provided
         onView(withId(R.id.firstNameET)).perform(typeText("f_name"));
-        onView(withId(R.id.lastNameET)).perform(typeText("lname"));
+        onView(withId(R.id.lastNameET)).perform(typeText("lname"), closeSoftKeyboard());
         //second test is for checking if correct error is shown when incorrect email is provided
         onView(withId(R.id.emailET)).perform(typeText("tester141414fhfvbdcom"), closeSoftKeyboard());
         onView(withId(R.id.submitBtn)).perform(scrollTo(), click());
@@ -108,7 +107,7 @@ public class RegisterFragmentTest {
     @Test
     public void testNoAccademicStatusSelected(){
         onView(withId(R.id.firstNameET)).perform(typeText("f_name"));
-        onView(withId(R.id.lastNameET)).perform(typeText("lname"));
+        onView(withId(R.id.lastNameET)).perform(typeText("lname"), closeSoftKeyboard());
         onView(withId(R.id.emailET)).perform(typeText("tester141414fhfvbd@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.phoneNumberET)).perform(typeText(String.valueOf("123456789")), closeSoftKeyboard());
         onView(withId(R.id.submitBtn)).perform(scrollTo(), click());
@@ -132,7 +131,7 @@ public class RegisterFragmentTest {
     public void testPasswordValidator(){
         //First test is when no password was entered.
         onView(withId(R.id.firstNameET)).perform(typeText("f_name"));
-        onView(withId(R.id.lastNameET)).perform(typeText("lname"));
+        onView(withId(R.id.lastNameET)).perform(typeText("lname"), closeSoftKeyboard());
         onView(withId(R.id.emailET)).perform(typeText("tester141414fhfvbd@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.phoneNumberET)).perform(typeText(String.valueOf("123456789")), closeSoftKeyboard());
         onView(withId(R.id.spinner)).perform(click());
