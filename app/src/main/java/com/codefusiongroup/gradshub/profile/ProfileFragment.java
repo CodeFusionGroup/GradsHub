@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment {
             getUpdatedUserProfile( mUser.getUserID() );
         }
 
-        if (mUser.getProfilePicture() != null) {
+        if ( !mUser.getProfilePicture().equals("no profilePicture set") ) {
             Uri uri = Uri.parse( mUser.getProfilePicture() );
             Glide.with( requireActivity() ).load(uri).into(mImageView);
         }
@@ -137,8 +137,11 @@ public class ProfileFragment extends Fragment {
                         // save details to preferences
                         mUserPreferences.saveUserDetails( mUser, requireActivity() );
 
-                        Uri uri = Uri.parse( mUser.getProfilePicture() );
-                        Glide.with( requireActivity() ).load(uri).into(mImageView);
+
+                        if ( !mUser.getProfilePicture().equals("no profilePicture set") ) {
+                            Uri uri = Uri.parse( mUser.getProfilePicture() );
+                            Glide.with( requireActivity() ).load(uri).into(mImageView);
+                        }
 
                         mUsernameTV.setText( mUser.getUsername() );
                         mContactNoTV.setText( mUser.getPhoneNumber() );

@@ -164,6 +164,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/passwordConfirmContainer"
             android:layout_margin="16dp"
+            android:background="@drawable/register_rounded_button"
+            android:textColor="@color/colorWhite"
             android:text="UPDATE" />
 
 
