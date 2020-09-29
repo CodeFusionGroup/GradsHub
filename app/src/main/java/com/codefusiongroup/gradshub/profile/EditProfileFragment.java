@@ -99,7 +99,7 @@ public class EditProfileFragment extends Fragment {
         mEmailET.setText( mUser.getEmail() );
         mAcademicStatusET.setText( mUser.getAcademicStatus() );
 
-        if (mUser.getProfilePicture() != null) {
+        if ( !mUser.getProfilePicture().equals("no profilePicture set") ) {
             Uri uri = Uri.parse( mUser.getProfilePicture() );
             Glide.with( requireActivity() ).load(uri).into(mImageView);
         }
