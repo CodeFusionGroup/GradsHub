@@ -26,7 +26,6 @@ import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
 import static org.junit.Assert.*;
 
-
 public class CreatePostFragmentTest {
 
     @Rule
@@ -65,7 +64,7 @@ public class CreatePostFragmentTest {
         waitForResources(2500);
         onView(withId(R.id.fab)).check(matches(isDisplayed()));                 //Check that the create post button is now visible for successful post created
 
-        waitForResources(45000);
+        waitForResources(110000);
     }
     @After
     public void tearDown() throws Exception {

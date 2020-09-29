@@ -12,11 +12,15 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.codefusiongroup.gradshub.authentication.AuthenticationActivityTest.waitForResources;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
@@ -29,6 +33,9 @@ public class ProfileFragmentTest {
     @Before
     public void setUp() throws Exception {
         logInUser();
+        openDrawer();
+        onView(withText("Profile")).perform(click());
+        onView(withId(R.id.editProfileBtn)).perform(click());
     }
 
     @After
@@ -37,10 +44,15 @@ public class ProfileFragmentTest {
     }
 
     @Test
-    public void testViewProfile(){
-        openDrawer();
-        onView(withText("Profile")).perform(click());
-        //TODO: To be completed when profile is implemented
+    public void testViewProfile() throws InterruptedException {
+        onView(withId(R.id.usernameET)).perform(clearText(), typeText("TestUser"), closeSoftKeyboard());
+        onView(withId(R.id.emailET)).perform(clearText(), typeText("testuser@gmail.com"), closeSoftKeyboard());
+        onView(withId(R.id.phoneNumberET)).perform(clearText(), typeText("01234567"), closeSoftKeyboard());
+        onView(withId(R.id.academicStatusET)).perform(clearText(), typeText("Honors"), closeSoftKeyboard());
+        onView(withId(R.id.updateBtn)).perform(click());
+        onView(withId(R.id.phoneNumberET)).perform(typeText("89"));
+        //TODO: Uncomment the following lines to test successful profile update. During this test run, the following method crashed the app.
+        //onView(withId(R.id.updateBtn)).perform(click());
     }
 
 }

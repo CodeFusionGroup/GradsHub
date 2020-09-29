@@ -11,6 +11,7 @@ import com.codefusiongroup.gradshub.common.MyViewAction;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -46,16 +47,14 @@ public class UsersListFragmentTest {
     @Test
     public void testSearchableUsersList() throws InterruptedException {
         onView(withId(R.id.usersList)).check(matches(isDisplayed()));
-    }
+        waitForResources(1500);
+        onView(withId(R.id.usersList)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+        onView(withText("ADD FRIEND")).perform(click());
+        waitForResources(1000);
+        onView(withText("REMOVE FRIEND")).perform(click());
+        onView(withText("BLOCK")).perform(click());
+        waitForResources(1000);
 
-    @Test
-    public void testUserProfileVisible() throws InterruptedException {
-        waitForResources(2000);
-        onView(withId(R.id.usersList)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));//Start event
-        onView(withText("START CHAT")).perform(click());
-        onView(withId(R.id.chatMessagesList)).check(matches(isDisplayed()));        //Checks if the message list is visible
-        onView(withId(R.id.typeMessageET)).perform(typeText("Hello World! This is a test!"),closeSoftKeyboard());
-        onView(withId(R.id.sendMessageBtn)).perform(click());
     }
 
 }

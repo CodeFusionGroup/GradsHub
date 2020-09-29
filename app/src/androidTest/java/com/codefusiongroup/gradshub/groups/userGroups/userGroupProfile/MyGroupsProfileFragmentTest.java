@@ -20,7 +20,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.openDrawer;
-
 public class MyGroupsProfileFragmentTest {
     @Rule
     public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<>(AuthenticationActivity.class);
