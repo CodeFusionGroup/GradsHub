@@ -82,43 +82,6 @@ public class FriendsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_friends_item_list, container, false);
-
-
-        //=============================================================================
-        // TODO: remove below code once feature is complete
-        // NOTE: implementation for friends feature prototype
-//        mFriendsList.clear();
-//        User user1 = new User();
-//        user1.setUserID("000");
-//        user1.setFirstName("Joe");
-//        user1.setLastName("Doe");
-//        user1.setBlockedStatus(true);
-//        mFriendsList.add(user1);
-//
-//        User user2 = new User();
-//        user2.setUserID("000");
-//        user2.setFirstName("Thato");
-//        user2.setLastName(" Thato");
-//        user2.setFriendStatus(true);
-//        mFriendsList.add(user2);
-//
-//        User user3 = new User();
-//        user3.setUserID("000");
-//        user3.setFirstName("Kamo");
-//        user3.setLastName("Kamo");
-//        user3.setFriendStatus(false);
-//        mFriendsList.add(user3);
-
-//        if (mRootView instanceof ConstraintLayout) {
-//            mProgressBar = mRootView.findViewById(R.id.progress_circular);
-//            mProgressBar.setVisibility(View.GONE);
-//            mRecyclerView = mRootView.findViewById(R.id.list);
-//            Context context = mRootView.getContext();
-//            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-//            mAdapter = new FriendsListRecyclerViewAdapter(mFriendsList, mListener);
-//            mRecyclerView.setAdapter(mAdapter);
-//        }
-
         return mRootView;
     }
 
@@ -199,6 +162,7 @@ public class FriendsFragment extends Fragment {
                 }
 
                 if ( response.isSuccessful() ) {
+                    Log.d(TAG, "getUserFriends() --> response.isSuccessful() = true");
 
                     JsonObject jsonObject = response.body();
 
@@ -242,12 +206,13 @@ public class FriendsFragment extends Fragment {
                 }
                 else {
                     GradsHubApplication.showToast( SERVER_FAILURE_MSG );
-                    Log.i(TAG, "getUserFriends() --> response.isSuccessful() = false");
-                    Log.i(TAG, "error code: " +response.code() );
-                    Log.i(TAG, "error message: " +response.message() );
+                    Log.d(TAG, "getUserFriends() --> response.isSuccessful() = false");
+                    Log.d(TAG, "error code: " +response.code() );
+                    Log.d(TAG, "error message: " +response.message() );
                 }
 
             }
+
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
@@ -256,7 +221,7 @@ public class FriendsFragment extends Fragment {
                 }
                 mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast( SERVER_FAILURE_MSG );
-                Log.i(TAG, "getUserFriends() --> onFailure executed, error: ", t);
+                Log.d(TAG, "getUserFriends() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 

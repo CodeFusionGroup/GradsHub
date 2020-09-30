@@ -4,15 +4,16 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
 
 
 public class EventNotificationPublisher extends BroadcastReceiver {
 
-    public static String NOTIFICATION_ID = "notification_id";
-    public static String NOTIFICATION = "notification";
-
+    public static final String NOTIFICATION_ID = "notification_id";
+    public static final String NOTIFICATION = "notification";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,6 +31,7 @@ public class EventNotificationPublisher extends BroadcastReceiver {
             // get intent extras from notificationIntent in MainActivity.class
             int notificationId = intent.getIntExtra(NOTIFICATION_ID, 0);
             Notification notification = intent.getParcelableExtra(NOTIFICATION);
+
             /*
              To update this notification after you've issued it, call NotificationManagerCompat.notify() again,
              passing it a notification with the same ID you used previously. If the previous notification has

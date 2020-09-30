@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">GradsHub</string>
 
+    <!-- main menu string values -->
+    <string name="logout">Logout</string>
+
+
     <!-- THE FOLLOWING BELONG TO THE AUTHENTICATION ACTIVITY -->
     <!-- attributes for fragment_login -->
     <string name="email_hint">Email</string>

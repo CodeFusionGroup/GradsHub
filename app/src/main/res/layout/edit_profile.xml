@@ -19,33 +19,41 @@
             android:layout_centerHorizontal="true" />
 
 
-        <TextView
-            android:id="@+id/usernameTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/img_container"
-            android:layout_centerHorizontal="true"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:text="username"/>
-
-
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/userNameContainer"
+            android:id="@+id/firstNameContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/usernameTV"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="16dp"
+            android:layout_below="@id/img_container" >
 
             <EditText
-                android:id="@+id/usernameET"
+                android:id="@+id/firstNameET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:hint="username"
+                android:hint="first name"
+                android:background="@null"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/lastNameContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/firstNameContainer"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/lastNameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="last name"
                 android:background="@null"
                 android:inputType="textPersonName" />
 
@@ -57,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_below="@id/userNameContainer" >
+            android:layout_below="@id/lastNameContainer" >
 
             <EditText
                 android:id="@+id/emailET"
@@ -96,32 +104,33 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/acadStatusContainer"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/academicStatusTV"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/phoneNoContainer"
             android:layout_marginTop="16dp"
-            android:layout_below="@id/phoneNoContainer" >
+            android:layout_marginStart="16dp"
+            android:text="@string/academic_status_tv"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-            <EditText
-                android:id="@+id/academicStatusET"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:hint="academic status"
-                android:background="@null"/>
 
-        </com.google.android.material.textfield.TextInputLayout>
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/academicStatusTV"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="12dp"
+            android:spinnerMode="dropdown" />
 
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_below="@id/acadStatusContainer" >
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/spinner" >
 
             <EditText
                 android:id="@+id/passwordET"
@@ -166,7 +175,7 @@
             android:layout_margin="16dp"
             android:background="@drawable/register_rounded_button"
             android:textColor="@color/colorWhite"
-            android:text="UPDATE" />
+            android:text="SAVE" />
 
 
         <ProgressBar

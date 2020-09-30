@@ -8,40 +8,12 @@
         as indicated if there's space on the action bar)
      -->
 
-    <!--
-        Settings, should always be on the overflow menu (appears on the far right of the action bar), when clicked the
-        Settings item appears) NOTE: android:orderInCategory="100" is used to order the items in the overflow menu (ascending
-        order) where 100 is used as the starting value (can be any value), an item with 200 will come after an item with 100, etc.
-     -->
-
-    <group android:id="@+id/refresh" >
-        <item
-            android:id="@+id/action_refresh"
-            android:orderInCategory="100"
-            android:title="Refresh"
-            app:showAsAction="never" />
-    </group>
-
-    <group android:id="@+id/settings" >
-        <item
-            android:id="@+id/action_settings"
-            android:orderInCategory="200"
-            android:title="@string/action_settings"
-            app:showAsAction="never" />
-    </group>
-
     <group android:id="@+id/logout" >
         <item
             android:id="@+id/action_logout"
-            android:orderInCategory="300"
-            android:title="Logout"
+            android:orderInCategory="100"
+            android:title="@string/logout"
             app:showAsAction="never" />
     </group>
 
-    <!--
-        for more items that you think should be on the overflow menu or as action buttons on the action bar add them here
-        following the Settings item example above. Note that there's limited space on the action bar so if these items
-        have top priority you can send them to the overflow menu and assign them priority accordingly by setting the
-        android:orderInCategory attribute.
-     -->
 </menu>
