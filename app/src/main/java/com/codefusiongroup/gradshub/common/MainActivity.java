@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     private AppBarConfiguration mAppBarConfiguration;
 
     public User user; // used in other fragments, so has public access.
-    private Calendar rightNow;
     private int currentYear, currentMonth, currentDay;
 
     private List<Schedule> eventsSchedule = new ArrayList<>();
@@ -108,7 +107,10 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        readScheduleFromFile();
+        Calendar rightNow = Calendar.getInstance();
+        currentYear = rightNow.get(Calendar.YEAR);
+        currentMonth = rightNow.get(Calendar.MONTH);
+        currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
 
         // user must first be initialised before calling getUserFavouredEvents()
         Intent intent = getIntent();
@@ -116,11 +118,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         getUserFavouredEvents();
 
-        rightNow = Calendar.getInstance();
-        currentYear = rightNow.get(Calendar.YEAR);
-        currentMonth = rightNow.get(Calendar.MONTH);
-        currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
-
+        Log.d(TAG, "onCreate() --> global values, currentYear: "+currentYear+", currentMonth: "+currentMonth+", currentDay: "+currentDay);
+        readScheduleFromFile(); // must be called after setting calendar date as above
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -169,90 +168,160 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     }
 
 
-    private void processesFavouredEvents(ArrayList<String> userPreviouslyFavouredEvents) {
+    private void processFavouredEvents(ArrayList<String> userPreviouslyFavouredEvents) {
 
         if ( userPreviouslyFavouredEvents.size() > 0 ) {
 
-            // get the event id from the favoured events of the user
-            for (String event_id : userPreviouslyFavouredEvents) {
-                // check for this event id in the events on the schedule and possibly schedule a notification
-                // for that event
+            for ( String favoured_event_id : userPreviouslyFavouredEvents ) {
+
+                // search for the current event id in the favoured events ids
                 for (Schedule event : eventsSchedule) {
+                    String eventID = event.getId();
 
-                    if ( event.getId().equals(event_id) ) {
+                    if ( eventID.equals(favoured_event_id) ) {
 
-                        // check if date is relevant
+                        Log.d(TAG, "processFavouredEvents() --> processing event: "+event.getTitle()+", with id: " + favoured_event_id);
+
+                        // extract the event date
                         String dateStr = event.getDate();
-                        String compSubstring = dateStr.substring( dateStr.indexOf(":") + 2 );
+                        String compSubstring = dateStr.substring(dateStr.indexOf(":") + 2);
 
                         // extract event month
-                        String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
+                        String month = compSubstring.substring(0, compSubstring.indexOf(" "));
                         int eventStartMonth = MonthsConstants.setMonths(month);
 
                         // extract event start day
                         int eventStartDay;
-                        String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
+                        String eventDuration = compSubstring.substring(compSubstring.indexOf(" ") + 1, compSubstring.indexOf(","));
                         if (eventDuration.length() == 1) {
                             eventStartDay = Integer.parseInt(eventDuration);
-                        }
-                        else {
+                        } else {
                             // check if second character is a number
-                            if ( Character.isDigit( eventDuration.charAt(1) ) ) {
-                                eventStartDay = Integer.parseInt( eventDuration.substring(0, 2) );
-                            }
-                            else {
+                            if (Character.isDigit(eventDuration.charAt(1))) {
+                                eventStartDay = Integer.parseInt(eventDuration.substring(0, 2));
+                            } else {
                                 // must be a hyphen
-                                eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
+                                eventStartDay = Integer.parseInt(eventDuration.substring(0, 1));
                             }
                         }
 
-                        // if a notification has been received a week before the event start day, then
-                        // no need to show notification for this event again.
+                        // check if the notification based on the date of this event needs to be
+                        // scheduled to appear a week before the event start day if it has already
+                        // been shown a month before the event month OR if it still needs to be scheduled
+                        // to appear a month before the event month IF it happens in the near future.
+                        // (NOTE: eventsSchedule only holds upcoming events so we are scheduling notifications
+                        // for valid dates but we want to check how soon in the near future is this event
+                        // going to happen)
 
                         //==========================================================================
-                        // for these type of events the earliest date of being notified a week before
-                        // is the 22nd of the current month
+                        // NOTE: if this condition is satisfied, then the notification that is set
+                        // to appear a week before this event day hasn't been scheduled before.
+                        // check if the notification for this event needs to be scheduled to appear
+                        // a month before.
+                        if (eventStartMonth - 2 == currentMonth && currentDay <= 28) { // feb at most 28 days long
+                            Log.d(TAG, "set notificationCalendar to show notification on the 1st of the month before event month, for the event: " + event.getTitle());
+                            setNotificationCalender(event, eventStartMonth, eventStartDay);
+                        }
+                        //==========================================================================
+
+                        // NOTE: if one of the following conditions is true, then it means the notification
+                        // that is set to appear a month before the event month for this event has already
+                        // been shown.
+                        // we check if the notification for this event needs to be scheduled to appear
+                        // a week before the event day given that the number of days that remain
+                        // between the event day and the day when the notification is set to appear are >= 7.
+
+                        //==========================================================================
+                        // for events that start on the first week of the event month but its currently
+                        // the month before the event month, then the date to be notified
+                        // is in the range of days between (22 - 28) inclusive, taking 28 as max and
+                        // 22 as the min since Feb is at most 28 days long
                         if (currentMonth + 1 == eventStartMonth && eventStartDay <= 7) {
-                            Log.d(TAG, "executed condition: ( currentMonth + 1 == eventStartMonth && eventStartDay <= 7 ) true ");
-                            if (currentDay > 22) {
-                                Log.d(TAG, "so notification already shown a week before the start day for event: "+event.getTitle());
-                                continue;
+                            Log.d(TAG, "executed condition: ( currentMonth + 1 == eventStartMonth && eventStartDay <= 7 ) true");
+
+                            // notified on the 22nd if event day is on the 1st of the event month.
+                            if (eventStartDay == 1 && currentDay < 22) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 1 && currentDay < 22 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
                             }
 
-                        }
+                            // notified on the 23rd if event day is on the 2nd of the event month.
+                            else if (eventStartDay == 2 && currentDay < 23) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 2 && currentDay < 23 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
 
-                        // for these type of events the earliest date of being notified a week before
-                        // is the 1st or the offset that remains after 7 days are subtracted from the evenStartDay
-                        else if (currentMonth == eventStartMonth && eventStartDay >= 8) {
-                            Log.d(TAG, "executed condition: ( currentMonth == eventStartMonth && eventStartDay >= 8 ) true ");
-                            if (currentDay > 1 && eventStartDay == 8) {
-                                Log.d(TAG, "executed nested condition: ( currentDay > 1 && eventStartDay == 8 ) true ");
-                                Log.d(TAG, "so notification already shown a week before the start day for event: "+event.getTitle());
-                                continue;
+                            // notified on the 24th if event day is on the 3rd of the event month.
+                            else if (eventStartDay == 3 && currentDay < 24) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 3 && currentDay < 24) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
                             }
-                            else if ( currentDay > (eventStartDay-7) ) {
-                                Log.d(TAG, "executed nested condition: ( currentDay > (eventStartDay-7) ) true ");
-                                Log.d(TAG, "so notification already shown a week before the start day for event: "+event.getTitle());
-                                continue;
+
+                            // notified on the 25th if event day is on the 4th of the event month.
+                            else if (eventStartDay == 4 && currentDay < 25) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 4 && currentDay < 25 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
                             }
+
+                            // notified on the 26th if event day is on the 5th of the event month.
+                            else if (eventStartDay == 5 && currentDay < 26) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 5 && currentDay < 26 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 27th if event day is on the 6th of the event month.
+                            else if (eventStartDay == 6 && currentDay < 27) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 6 && currentDay < 27 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 28th if event day is on the 7th of the event month.
+                            else if (eventStartDay == 7 && currentDay < 28) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 7 && currentDay < 28 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
                         }
                         //==========================================================================
 
-                        // the notification for the event hasn't been shown for the scenario where the
-                        // notification must appear a month before the event month or a week before
-                        // the event start day if it has already been shown for the first case.
-                        // NOTE: notification will be scheduled if it happens in the near future
-                        // so it might not still be shown if its far by more than 2 months or so.
-                        else {
-                            performEventDateChecksForNotification(event, eventStartMonth, eventStartDay);
+                        // for events that start on the 8th exactly of the event month but it's currently
+                        // the month before the event month, then the date to be notified is the 1st
+                        // of the event month.
+                        else if (currentMonth + 1 == eventStartMonth && eventStartDay == 8) {
+                            Log.d(TAG, "executed condition: ( currentMonth + 1 == eventStartMonth && eventStartDay == 8 ) true ");
+                            if (currentDay <= 28) { // feb is at most 28 days long.
+                                Log.d(TAG, "executed sub-condition: ( currentDay <= 28 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification on the 1st of the event month, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
                         }
+
+                        //==========================================================================
+
+                        // for events that start from the 9th onwards on the event month, the date
+                        // to be notified a week before is the offset that remains after 7 days are
+                        // subtracted from the evenStartDay
+                        else if (currentMonth == eventStartMonth && eventStartDay > 8) {
+                            Log.d(TAG, "executed condition: ( currentMonth == eventStartMonth && eventStartDay > 8 ) true ");
+                            if (currentDay < (eventStartDay - 7)) {
+                                Log.d(TAG, "executed sub-condition: ( currentDay < (eventStartDay-7) ) true ");
+                                Log.d(TAG, "set notificationCalendar to show notification 7 days before the event start day, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+                        }
+                        //==========================================================================
 
                         // break out of inner loop since we have found the matching event id and consider
                         // the next favoured event id.
                         break;
-
                     }
-
                 }
 
             }
@@ -263,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
 
     // method ensure that only events that are coming in the near future are scheduled for notification.
-    private void performEventDateChecksForNotification(Schedule event, int eventMonth, int eventStartDay) {
+    private void setNotificationCalender(Schedule event, int eventMonth, int eventStartDay) {
 
         // calendar instance for which we use to set notification date
         Calendar notificationCalendar = Calendar.getInstance();
@@ -271,35 +340,39 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         // used to check if calender properties changed so notification can be scheduled.
         boolean calendarFieldChanged = false;
 
-        int currentMonth = rightNow.get(Calendar.MONTH);
-        int currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
-
-
-        // schedule the notification to appear the month before the event month on the first day
-        // but set this scheduling approximately 10 days before
-        if (currentMonth + 2 == eventMonth && currentDay == 20) {
-            Log.d(TAG, "condition executed: ( currentMonth + 1 == eventMonth && currentDay == 1 ) true");
-            notificationCalendar.set(Calendar.MONTH, currentMonth+1);
+        // schedule the notification to appear on the 1st of the month before the event month
+        if (currentMonth + 2 == eventMonth) {
+            Log.d(TAG, "condition executed: ( currentMonth + 2 == eventMonth && currentDay <= 28 ) true");
+            notificationCalendar.set(Calendar.MONTH, currentMonth + 1);
             notificationCalendar.set(Calendar.DAY_OF_MONTH, 1);
             calendarFieldChanged = true;
         }
 
-        // events that start from the 8th onwards of the event month
-        else if (currentMonth == eventMonth && eventStartDay >= 8) {
+        // schedule the notification to appear on the 1st of the event month
+        else if (currentMonth + 1 == eventMonth && eventStartDay == 8) {
+            Log.d(TAG, "condition executed: ( currentMonth + 1 == eventMonth && eventStartDay == 8 ) true");
+            notificationCalendar.set(Calendar.MONTH, eventMonth);
+            notificationCalendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendarFieldChanged = true;
+        }
+
+        // events that start from the 9th onwards of the event month
+        else if (currentMonth == eventMonth && eventStartDay > 8) {
             Log.d(TAG, "condition executed: ( currentMonth == eventMonth && eventStartDay >= 8 ) true");
+            notificationCalendar.set(Calendar.MONTH, eventMonth);
             notificationCalendar.set(Calendar.DAY_OF_MONTH, eventStartDay - 7);
             calendarFieldChanged = true;
         }
 
         // events that start on the first week of the event month but currently its the month before the
-        // event month. No need to worry about the case: if its already the event month but the eventStartDay <= 7
+        // event month.
         else if (currentMonth + 1 == eventMonth && eventStartDay <= 7) {
-            calendarFieldChanged = true;
+
+            notificationCalendar.set(Calendar.MONTH, currentMonth);
             Log.d(TAG, "condition executed: ( currentMonth + 1 == eventMonth && eventStartDay <= 7 ) true, eventStartDay: "+eventStartDay);
 
             switch (eventStartDay) {
 
-                // not considering how many days the current month has makes things simple and might not be that important
                 case 1:
                     notificationCalendar.set(Calendar.DAY_OF_MONTH, 22);
                     break;
@@ -330,6 +403,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                     break;
             }
 
+            calendarFieldChanged = true;
+
         }
 
 
@@ -340,11 +415,11 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
             Uri uri = null;
             String link = validateEventLinkFormat( event.getLink() );
             if (link != null) {
-                Log.d(TAG, "event link: "+link);
+                Log.d(TAG, "event link is: "+link+", for event: "+event.getTitle());
                 uri = Uri.parse(link);
             }
             else {
-                Log.d(TAG, "event link is null");
+                Log.d(TAG, "event link is null for event: "+ event.getTitle());
             }
 
             // set the time when the notification should be sent
@@ -354,13 +429,16 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
             // ALWAYS recompute the calendar after using add, set, roll
             Date date = notificationCalendar.getTime();
+            Log.d(TAG, "calender fields changed, notification scheduled for event: " + event.getTitle()+" on date: "+ date);
+            Log.d(TAG, "===============================================================================================" );
             Random random = new Random();
             int notificationID = random.nextInt(Integer.MAX_VALUE); // ensure uniqueness of notifications
             scheduleNotification(this.getApplicationContext(), notificationID, event, date, uri);
 
         }
         else {
-            Log.d(TAG, "calender fields were not changed so no notification schedules for event: " + event.getTitle() );
+            Log.d(TAG, "calender fields were not changed, notification was not scheduled for event: " + event.getTitle() );
+            Log.d(TAG, "===============================================================================================" );
         }
 
     }
@@ -677,14 +755,15 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                     } else if ( component.startsWith("date") ) {
 
                         // check if date is relevant
-                        String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
-                        String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
-                        String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
 
-                        int eventStartMonth = MonthsConstants.setMonths(month);
+                        String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
                         int eventYear = Integer.parseInt(year);
 
+                        String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
+                        int eventStartMonth = MonthsConstants.setMonths(month);
+
                         int eventStartDay;
+                        String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
                         if (eventDuration.length() == 1) {
                             eventStartDay = Integer.parseInt(eventDuration);
                         }
@@ -699,13 +778,32 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                             }
                         }
 
-                        //Log.i("MainActivity", "eventYear: "+eventYear+", eventStartMonth: "+eventStartMonth+", eventStartDay: "+eventStartDay+", event no: "+i);
-
-                        if (eventYear > currentYear) {
-                            date = component;
+                        if (eventYear < currentYear) {
+                            Log.d(TAG, "readScheduleFromFile() --> event year has passed for event: "+title);
+                            break;
                         }
-                        else if( eventYear == currentYear && (eventStartMonth > currentMonth || (eventStartMonth == currentMonth && eventStartDay > currentDay)) ) {
-                            date = component;
+                        else {
+                            Log.d(TAG, "readScheduleFromFile() --> else executed since either eventYear >= currentYear for event: "+title+", eventYear:  "+eventYear+", currentYear: "+currentYear);
+
+                            if (eventYear > currentYear) {
+                                date = component;
+                            }
+                            else {
+                                Log.d(TAG, "readScheduleFromFile() --> else executed since eventYear must be equal to currentYear,  eventYear:  "+eventYear+", currentYear: "+currentYear);
+                                if (eventStartMonth > currentMonth) {
+                                    Log.d(TAG, "readScheduleFromFile() --> executed sub-condition: ( eventStartMonth > currentMonth ) true, eventStartMonth:  "+eventStartMonth+", currentMonth: "+currentMonth);
+                                    date = component;
+                                }
+                                else if (eventStartMonth == currentMonth && eventStartDay > currentDay) {
+                                    Log.d(TAG, "readScheduleFromFile() --> executed sub-condition: ( eventStartMonth == currentMonth && eventStartDay > currentDay ) true, eventStartMonth: "+eventStartMonth+", currentMonth: "+currentMonth+", eventStartDay:  "+eventStartDay+", currentDay: "+currentDay);
+                                    date = component;
+                                }
+                                else {
+                                    Log.d(TAG, "readScheduleFromFile() --> event month or day has passed for event: "+title);
+                                    break;
+                                }
+                            }
+
                         }
 
                     } else if ( component.startsWith("place") ) {
@@ -716,6 +814,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
                 // filter based on date
                 if (date != null) {
+                    Log.i("MainActivity", "readScheduleFromFile() --> added event: "+title+", with eventDate: "+date);
                     eventsSchedule.add(new Schedule(id, title, link, deadline, timezone, date, place));
                 }
 
@@ -797,7 +896,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                     }
 
                     // after receiving the favoured events then perform necessary check for scheduling notifications
-                    processesFavouredEvents(userPreviouslyFavouredEvents);
+                    processFavouredEvents(userPreviouslyFavouredEvents);
 
                     break;
 
