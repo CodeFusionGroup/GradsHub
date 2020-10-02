@@ -17,6 +17,9 @@ public class Chat {
     @SerializedName("RECIPIENT_ID")
     private String correspondentID;
 
+    @SerializedName("CHAT_ID")
+    private String chatID;
+
 
     public Chat(String correspondentName, String latestMessage, String messageTimeStamp) {
         this.correspondentName = correspondentName;
@@ -28,6 +31,9 @@ public class Chat {
         // empty constructor
     }
 
+    public void setChatID(String chatID) {this.chatID = chatID;}
+
+    public String getChatID() {return chatID;}
 
     public String getCorrespondentName() {
         return correspondentName;

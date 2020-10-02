@@ -38,6 +38,7 @@ import com.codefusiongroup.gradshub.common.models.ResearchGroup;
 import com.codefusiongroup.gradshub.common.models.Schedule;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
+import com.codefusiongroup.gradshub.profile.ProfileFragment;
 import com.codefusiongroup.gradshub.utils.EventNotificationPublisher;
 import com.codefusiongroup.gradshub.utils.MonthsConstants;
 import com.google.android.gms.common.ConnectionResult;
@@ -85,12 +86,17 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         ScheduleListFragment.OnScheduleListFragmentInteractionListener,
         OpenChatsFragment.OnOpenChatsFragmentInteractionListener,
         UsersListFragment.OnUsersListFragmentInteractionListener,
-        FriendsFragment.OnFriendsListFragmentInteractionListener {
+        FriendsFragment.OnFriendsListFragmentInteractionListener,
+        ProfileFragment.OnProfileUpdateSuccessfulListener {
 
 
     private static final String TAG = "MainActivity";
 
     private static final String CHANNEL_ID = "0";
+
+    private ImageView mImageView;
+    private TextView mFullNameTV;
+    private TextView mEmailTV;
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -150,20 +156,21 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
         // setting side menu bar with selected user profile details
         View headerView = navigationView.getHeaderView(0);
-        ImageView imageView = headerView.findViewById(R.id.img_container);
+        mImageView = headerView.findViewById(R.id.img_container);
 
         if ( !user.getProfilePicture().equals("no profilePicture set") ) {
             Uri uri = Uri.parse( user.getProfilePicture() );
-            Glide.with( this ).load(uri).into(imageView);
+            Glide.with( this ).load(uri).into(mImageView);
         }
         else {
-            Glide.with( this).load(R.drawable.ic_account_circle).into(imageView);
+            Glide.with( this).load(R.drawable.ic_account_circle).into(mImageView);
         }
 
-        TextView fullNameTV = headerView.findViewById(R.id.userFullNameTV);
-        TextView emailTV = headerView.findViewById(R.id.userEmailTV);
-        fullNameTV.setText(user.getFullName());
-        emailTV.setText(user.getEmail());
+        mFullNameTV = headerView.findViewById(R.id.userFullNameTV);
+        mEmailTV = headerView.findViewById(R.id.userEmailTV);
+
+        mFullNameTV.setText( user.getFullName() );
+        mEmailTV.setText( user.getEmail() );
 
     }
 
@@ -922,5 +929,24 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         return eventsSchedule;
     }
 
+
+    @Override
+    public void onProfileUpdateSuccessfulListener(boolean value) {
+
+        if (value) {
+            user = UserPreferences.getInstance().getUserDetails(this);
+            if ( !user.getProfilePicture().equals("no profilePicture set") ) {
+                Uri uri = Uri.parse( user.getProfilePicture() );
+                Glide.with( this ).load(uri).into(mImageView);
+            }
+            else {
+                Glide.with( this).load(R.drawable.ic_account_circle).into(mImageView);
+            }
+
+            mFullNameTV.setText( user.getFullName() );
+            mEmailTV.setText( user.getEmail() );
+        }
+
+    }
 
 }

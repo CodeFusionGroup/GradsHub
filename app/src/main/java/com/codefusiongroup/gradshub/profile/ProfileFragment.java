@@ -1,5 +1,6 @@
 package com.codefusiongroup.gradshub.profile;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,9 +21,11 @@ import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.UserPreferences;
+import com.codefusiongroup.gradshub.common.models.Schedule;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
+import com.codefusiongroup.gradshub.events.ScheduleListFragment;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -48,6 +51,8 @@ public class ProfileFragment extends Fragment {
     private UserPreferences mUserPreferences;
 
     private boolean profileUpdatedSuccessfully = false;
+
+    private ProfileFragment.OnProfileUpdateSuccessfulListener mListener;
 
 
     @Override
@@ -149,6 +154,8 @@ public class ProfileFragment extends Fragment {
                         mEmailTV.setText( mUser.getEmail() );
                         mAcademicStatusTV.setText( mUser.getAcademicStatus() );
 
+                        mListener.onProfileUpdateSuccessfulListener(true);
+
                     }
                     else {
                         // DB validation failed
@@ -179,5 +186,31 @@ public class ProfileFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+
+        super.onAttach(context);
+
+        if (context instanceof ProfileFragment.OnProfileUpdateSuccessfulListener) {
+            mListener = (ProfileFragment.OnProfileUpdateSuccessfulListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnProfileUpdateSuccessfulListener");
+        }
+
+    }
+
+
+    public interface OnProfileUpdateSuccessfulListener {
+        void onProfileUpdateSuccessfulListener(boolean value);
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
 }

@@ -8,11 +8,13 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,10 +29,13 @@ import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.models.Chat;
 import com.codefusiongroup.gradshub.common.BaseView;
+import com.codefusiongroup.gradshub.common.models.User;
+import com.codefusiongroup.gradshub.common.network.ApiBaseResponse;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.messaging.MessagingAPI;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -53,10 +58,14 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     private ProgressBar mProgressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
+    private RecyclerView mRecyclerView;
     private OpenChatsRecyclerViewAdapter mAdapter;
-    private ArrayList<Chat> mOpenChatsList = new ArrayList<>();
     private OpenChatsFragment.OnOpenChatsFragmentInteractionListener mListener;
 
+    private ArrayList<Chat> mOpenChatsList = new ArrayList<>();
+    private ArrayList<String> mChatsToBeRemoved = new ArrayList<>();
+
+    private User mUser;
     private OpenChatsPresenter mPresenter;
 
 
@@ -77,6 +86,8 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
         super.onCreate(savedInstanceState);
         //setPresenter( new OpenChatsPresenter() );
         setHasOptionsMenu(true);
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mUser = mainActivity.user;
     }
 
 
@@ -86,9 +97,10 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
 
         if (mView instanceof RelativeLayout) {
             Context context = mView.getContext();
-            RecyclerView mRecyclerView = mView.findViewById(R.id.chatsList);
+            mRecyclerView = mView.findViewById(R.id.chatsList);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             mAdapter = new OpenChatsRecyclerViewAdapter(mOpenChatsList, mListener);
+            new ItemTouchHelper(itemTouchCallback).attachToRecyclerView(mRecyclerView);
             mRecyclerView.setAdapter(mAdapter);
         }
 
@@ -104,16 +116,15 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
 
         //mPresenter.attachView(this);
         //Log.i(TAG, "open chats presenter has subscribed to view");
-
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        fetchUserOpenChats(mainActivity.user.getUserID());
         //mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
+
+        fetchUserOpenChats(mUser.getUserID());
 
         // if network request to fetch user's open chats fails, the user can refresh the page to
         // initiate another request
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             //mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
-            fetchUserOpenChats( mainActivity.user.getUserID() );
+            fetchUserOpenChats( mUser.getUserID() );
             mSwipeRefreshLayout.setRefreshing(true);
         });
 
@@ -123,6 +134,60 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
             NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
             navController.navigate(R.id.action_chatsListFragment_to_friendsListFragment);
         });
+
+
+        view.setFocusableInTouchMode(true);
+        view.setOnKeyListener( (v, keyCode, event) -> {
+
+            if ( keyCode == KeyEvent.KEYCODE_BACK ) {
+                if ( mChatsToBeRemoved.size() > 0 ) {
+                    requestToRemoveChats(mUser.getUserID(), mChatsToBeRemoved);
+                    mChatsToBeRemoved.clear();
+                }
+            }
+            return false;
+        });
+
+    }
+
+
+    ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            onItemRemoved(viewHolder, mRecyclerView);
+        }
+    };
+
+
+    private void onItemRemoved(final RecyclerView.ViewHolder viewHolder, final RecyclerView recyclerView) {
+        final int adapterPos = viewHolder.getAdapterPosition();
+        Log.d(TAG, "adapterPos: "+adapterPos);
+        final Chat chat = mOpenChatsList.get(adapterPos);
+        String chatID = chat.getChatID();
+        Log.d(TAG, "chat to be removed--> correspondentName: "+chat.getCorrespondentName()+", message: "+chat.getLatestMessage()+", timestamp: "+chat.getMessageTimeStamp());
+        mChatsToBeRemoved.add(chatID);
+        Log.d(TAG, "after swipe(remove) mChatsToBeRemoved size is: "+mChatsToBeRemoved.size());
+        Snackbar snackbar = Snackbar.make(recyclerView, "CHAT REMOVED", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOpenChatsList.add(adapterPos, chat);
+                        mAdapter.notifyItemInserted(adapterPos);
+                        recyclerView.scrollToPosition(adapterPos);
+                        mChatsToBeRemoved.remove(chatID);
+                        Log.d(TAG, "after undo mChatsToBeRemoved size is: "+mChatsToBeRemoved.size());
+                        Log.d(TAG, "after undo mOpenChatsList size is: "+mOpenChatsList.size());
+                    }
+                });
+        snackbar.show();
+        mOpenChatsList.remove(adapterPos);
+        Log.d(TAG, "after swipe(remove) mOpenChatsList size is: "+mOpenChatsList.size());
+        mAdapter.notifyItemRemoved(adapterPos);
 
     }
 
@@ -138,8 +203,13 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
+                hideProgressBar();
+                if ( mSwipeRefreshLayout.isRefreshing() ) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+
                 if ( response.isSuccessful() ) {
-                    hideProgressBar();
+                    Log.d(TAG, "fetchUserOpenChats() --> response.isSuccessful() = true");
 
                     JsonObject jsonObject = response.body();
 
@@ -154,24 +224,23 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
                             openChatsList.add(chat);
                         }
 
-                        if ( mSwipeRefreshLayout.isRefreshing() ) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
                         // mAdapter must point to the same object mOpenChatsList otherwise recycler view won't update
                         mOpenChatsList.clear();
                         mOpenChatsList.addAll(openChatsList);
                         mAdapter.notifyDataSetChanged();
 
                     }
-                    // no open chats exist for the user
                     else {
                         GradsHubApplication.showToast("no open chats exits yet.");
                     }
+
                 }
 
                 else {
-                    hideProgressBar();
-                    Log.i(TAG, "response.isSuccessful() = false");
+                    GradsHubApplication.showToast("Failed to load open chats, please swipe to refresh page or try again later.");
+                    Log.d(TAG, "fetchUserOpenChats() --> response.isSuccessful() = false");
+                    Log.d(TAG, "error code: " +response.code() );
+                    Log.d(TAG, "error message: " +response.message() );
                 }
 
             }
@@ -179,7 +248,65 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 hideProgressBar();
-                GradsHubApplication.showToast("failed to load open chats, please swipe to refresh page or try again later.");
+                GradsHubApplication.showToast("Failed to load open chats, please swipe to refresh page or try again later.");
+                Log.d(TAG, "fetchUserOpenChats() --> onFailure executed, error: ", t);
+                t.printStackTrace();
+            }
+
+        });
+
+    }
+
+
+    private void requestToRemoveChats(String userID, ArrayList<String> chatsToBeRemoved) {
+
+        StringBuilder chatsIDs = new StringBuilder();
+
+        for(int i = 0; i < chatsToBeRemoved.size(); i++) {
+            chatsIDs.append(chatsToBeRemoved.get(i));
+
+            if (i != chatsToBeRemoved.size()-1) {
+                chatsIDs.append(",");
+            }
+        }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", userID);
+        params.put("chat_ids", chatsIDs.toString());
+
+        final MessagingAPI messagingAPI = ApiProvider.getMessageApiService();
+        messagingAPI.removeChats(params).enqueue(new Callback<JsonObject>() {
+
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+
+                if ( response.isSuccessful() ) {
+                    Log.d(TAG, "requestToRemoveChats() --> response.isSuccessful() = true");
+
+                    JsonObject jsonObject = response.body();
+
+                    if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
+                        GradsHubApplication.showToast(jsonObject.get("message").getAsString());
+                    }
+                    else {
+                        // Api error
+                        ApiBaseResponse apiDefault = new Gson().fromJson(jsonObject, ApiBaseResponse.class);
+                        GradsHubApplication.showToast( apiDefault.getMessage() );
+                    }
+                }
+                else {
+                    GradsHubApplication.showToast("Failed to remove selected chats, please try again later.");
+                    Log.d(TAG, "requestToRemoveChats() --> response.isSuccessful() = false");
+                    Log.d(TAG, "error code: " +response.code() );
+                    Log.d(TAG, "error message: " +response.message() );
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                GradsHubApplication.showToast("Failed to remove selected chats, please try again later.");
+                Log.d(TAG, "requestToRemoveChats() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 
