@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,14 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -31,7 +35,6 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
-import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
@@ -50,17 +53,18 @@ import retrofit2.Callback;
 import static android.app.Activity.RESULT_OK;
 
 
-public class EditProfileFragment extends Fragment {
+public class EditProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "EditProfileFragment";
 
     private static final int SELECT_PICTURE_CODE = 1;
 
+    private Button mSaveBtn;
+    private Spinner mSpinner;
     private ImageView mImageView;
     private ProgressBar mProgressBar;
-    private Button mUpdateBtn;
-    private TextView mUsernameTV;
-    private EditText mUsernameET, mEmailET, mPhoneNoET, mAcademicStatusET, mPasswordET, mConfirmPasswordET;
+    private ArrayAdapter<CharSequence> mAcademicStatusAdapter;
+    private EditText mFirstNameET, mLastNameET, mEmailET, mPhoneNoET, mPasswordET, mConfirmPasswordET;
 
     private Uri mSelectedImageUri;
     private Uri mFirebaseImageUri;
@@ -68,7 +72,7 @@ public class EditProfileFragment extends Fragment {
     private StorageReference mStorageRef;
 
     private User mUser;
-    private String mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword;
+    private String mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword;
 
     private boolean mImageUrlRetrievalFailed = false;
     private boolean mImageUploadFailed = false;
@@ -91,13 +95,20 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
+        // order of calling these methods is important initViewComponents() then initialiseSpinner()
         initViewComponents(view);
+        initialiseSpinner(mSpinner);
 
-        mUsernameTV.setText( mUser.getUsername() );
-        mUsernameET.setText( mUser.getUsername() );
-        mPhoneNoET.setText( mUser.getPhoneNumber() );
+        mFirstNameET.setText( mUser.getFirstName() );
+        mLastNameET.setText( mUser.getLastName() );
         mEmailET.setText( mUser.getEmail() );
-        mAcademicStatusET.setText( mUser.getAcademicStatus() );
+        mPhoneNoET.setText( mUser.getPhoneNumber() );
+
+        String academicStatus = mUser.getAcademicStatus();
+        if ( !academicStatus.equals("no academicStatus set") ) {
+            int spinnerPos = mAcademicStatusAdapter.getPosition(academicStatus);
+            mSpinner.setSelection(spinnerPos);
+        }
 
         if ( !mUser.getProfilePicture().equals("no profilePicture set") ) {
             Uri uri = Uri.parse( mUser.getProfilePicture() );
@@ -106,6 +117,7 @@ public class EditProfileFragment extends Fragment {
         else {
             Glide.with( requireActivity() ).load(R.drawable.ic_account_circle).into(mImageView);
         }
+
 
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,20 +132,21 @@ public class EditProfileFragment extends Fragment {
         });
 
 
-        mUpdateBtn.setOnClickListener(new View.OnClickListener() {
+        mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                mUserName = mUsernameET.getText().toString().trim();
+                mFirstName = mFirstNameET.getText().toString().trim();
+                mLastName = mLastNameET.getText().toString().trim();
                 mEmail = mEmailET.getText().toString().trim();
                 mPhoneNo = mPhoneNoET.getText().toString().trim();
-                mAcademicStatus = mAcademicStatusET.getText().toString().trim();
+                mAcademicStatus = mSpinner.getSelectedItem().toString();
                 mPassword = mPasswordET.getText().toString().trim();
                 mConfirmPassword = mConfirmPasswordET.getText().toString().trim();
 
                 //============ SCENARIOS TO RETRY PROFILE UPDATE IN CASE OF FAILURE ===============
                 if (mImageUploadFailed) {
-                    Log.i(TAG, "executed scenario --> mImageUploadFailed");
+                    Log.d(TAG, "executed scenario --> mImageUploadFailed");
                     if ( mSelectedImageUri != null && validateInput() ) {
                         updateProfileWithImage();
                         mProgressBar.setVisibility(View.VISIBLE);
@@ -146,26 +159,26 @@ public class EditProfileFragment extends Fragment {
                 // means the file upload was successful (file exists in firebase storage) but failed
                 // to get the URL for the file
                 else if (mImageUrlRetrievalFailed) {
-                    Log.i(TAG, "executed scenario --> mImageUrlRetrievalFailed");
+                    Log.d(TAG, "executed scenario --> mImageUrlRetrievalFailed");
                     getFirebaseImageURL(mStorageRef);
                     mProgressBar.setVisibility(View.VISIBLE);
                 }
 
                 // failing point occurred on the DB server
                 else if (mUserProfileUpdateFailed) {
-                    Log.i(TAG, "executed scenario --> mUserProfileUpdateFailed");
+                    Log.d(TAG, "executed scenario --> mUserProfileUpdateFailed");
                     // user included a profile picture for this profile update. We check the mFirebaseImageUri
                     // to know what information to include in the profile update of the user.
                     if (mFirebaseImageUri != null) {
-                        Log.i(TAG, "profile updated with profile picture");
+                        Log.d(TAG, "profile updated with profile picture");
                         // for this case we don't call updateProfileWithImage() since that will go through the process
                         // of uploading the image to firebase again
-                        updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mFirebaseImageUri.toString() );
+                        updateUserProfile( mUser.getUserID(), mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mFirebaseImageUri.toString() );
                     }
                     // user did not include a profile picture for this profile update
                     else {
-                        Log.i(TAG, "profile updated without profile picture");
-                        updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
+                        Log.d(TAG, "profile updated without profile picture");
+                        updateUserProfile( mUser.getUserID(), mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
                     }
                     mProgressBar.setVisibility(View.VISIBLE);
                 }
@@ -173,17 +186,17 @@ public class EditProfileFragment extends Fragment {
 
                 // on first attempt to update profile
                 else {
-                    Log.i(TAG, "first attempt executed");
+                    Log.d(TAG, "first attempt executed");
                     if ( validateInput() ) {
 
                         if (mSelectedImageUri != null) {
-                            Log.i(TAG, "first attempt --> profile updated with profile picture");
+                            Log.d(TAG, "first attempt --> profile updated with profile picture");
                             updateProfileWithImage();
                         }
                         // user did not include a profile picture for this profile update
                         else {
-                            Log.i(TAG, "first attempt --> profile updated without profile picture");
-                            updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
+                            Log.d(TAG, "first attempt --> profile updated without profile picture");
+                            updateUserProfile( mUser.getUserID(), mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, null );
                         }
 
                         mProgressBar.setVisibility(View.VISIBLE);
@@ -199,21 +212,62 @@ public class EditProfileFragment extends Fragment {
 
     private void initViewComponents(View view) {
 
+        mSpinner = view.findViewById(R.id.spinner);
         mProgressBar = view.findViewById(R.id.progress_circular);
-        mUpdateBtn = view.findViewById(R.id.updateBtn);
-        mUsernameTV = view.findViewById(R.id.usernameTV);
         mImageView = view.findViewById(R.id.img_container);
-        mUsernameET = view.findViewById(R.id.usernameET);
+        mFirstNameET = view.findViewById(R.id.firstNameET);
+        mLastNameET = view.findViewById(R.id.lastNameET);
         mEmailET = view.findViewById(R.id.emailET);
         mPhoneNoET = view.findViewById(R.id.phoneNumberET);
-        mAcademicStatusET = view.findViewById(R.id.academicStatusET);
         mPasswordET = view.findViewById(R.id.passwordET);
         mConfirmPasswordET = view.findViewById(R.id.confirmPasswordET);
+        mSaveBtn = view.findViewById(R.id.updateBtn);
 
     }
 
 
+    // this part of the code allows us to create a spinner with a drop down list of items we want to display to the user to select.
+    @VisibleForTesting
+    private void initialiseSpinner(Spinner spinner) {
+
+        // style and populate spinner.
+        mAcademicStatusAdapter = ArrayAdapter.createFromResource(requireContext(), R.array.ACADEMIC_STATUS, android.R.layout.simple_spinner_item);
+        // spinner will have drop down layout style.
+        mAcademicStatusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // attaching adapter (academicStatusAdapter) to spinner.
+        spinner.setAdapter(mAcademicStatusAdapter);
+
+        spinner.setOnItemSelectedListener(this);
+
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        TextView tv = (TextView) view;
+
+        if (position == 0) {
+            // the first item (which by default is the displayed item) is set to gray to indicate its not part of the selection.
+            tv.setTextColor(Color.rgb(112,128,144));
+        }
+        else {
+            // the font colour for valid items once selected, is set to black when displayed after being selected.
+            tv.setTextColor(Color.BLACK);
+        }
+
+    }
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // empty
+    }
+
+
     private boolean validateInput() {
+
+        String academicStatusPlaceHolder = "Select your academic status here";//used as hint
 
         if ( !mEmail.isEmpty() ) {
             if ( !Patterns.EMAIL_ADDRESS.matcher(mEmail).matches() ){
@@ -221,6 +275,17 @@ public class EditProfileFragment extends Fragment {
                 mEmailET.requestFocus();
                 return false;
             }
+        }
+
+        if ( mAcademicStatus.equals(academicStatusPlaceHolder) ) {
+
+            TextView errorText = (TextView) mSpinner.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED); // just to highlight that this is an error message, we display it in red.
+            errorText.setText(R.string.spinnerErrorMsg); // changes the selected item text to this text.
+            mSpinner.requestFocus();
+            return false;
+
         }
 
         if ( !mPassword.isEmpty() ) {
@@ -243,10 +308,12 @@ public class EditProfileFragment extends Fragment {
 
 
     private void selectImage() {
+
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult( Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE_CODE);
+
     }
 
 
@@ -272,7 +339,7 @@ public class EditProfileFragment extends Fragment {
 
                             String imageName = cursor.getString(nameColumn);
                             int imageSize = cursor.getInt(sizeColumn);
-                            Log.i(TAG, "onActivityResult() --> image name: "+imageName+", image disk size: "+imageSize/1024.0 +" KB");
+                            Log.d(TAG, "onActivityResult() --> image name: "+imageName+", image disk size: "+imageSize/1024.0 +" KB");
 
                             if ( mSelectedImageUri.getPath() != null ) {
 
@@ -289,7 +356,7 @@ public class EditProfileFragment extends Fragment {
                             }
                             else {
                                 GradsHubApplication.showToast("An error occurred while trying to retrieve the selected image.");
-                                Log.i(TAG, " onActivityResult() --> selected image uri path is null");
+                                Log.d(TAG, " onActivityResult() --> selected image uri path is null");
                             }
 
                         }
@@ -297,7 +364,7 @@ public class EditProfileFragment extends Fragment {
                         cursor.close();
                     }
                     else {
-                        Log.i( TAG, " onActivityResult() --> cursor is null");
+                        Log.d( TAG, " onActivityResult() --> cursor is null");
                     }
 
                 }
@@ -314,9 +381,11 @@ public class EditProfileFragment extends Fragment {
 
 
     private String getFileExtension() {
+
         ContentResolver cr = requireActivity().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(mSelectedImageUri));
+
     }
 
 
@@ -334,7 +403,7 @@ public class EditProfileFragment extends Fragment {
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.i(TAG, "updateProfileWithImage() --> onSuccess executed.");
+                Log.d(TAG, "updateProfileWithImage() --> onSuccess executed.");
                 mImageUploadFailed = false;
                 getFirebaseImageURL(mStorageRef);
             }
@@ -343,7 +412,7 @@ public class EditProfileFragment extends Fragment {
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Log.i(TAG, "updateProfileWithImage() --> onFailure executed.");
+                Log.d(TAG, "updateProfileWithImage() --> onFailure executed.");
                 mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast("Something went wrong while trying to update profile, please try again.");
                 mImageUploadFailed = true;
@@ -360,16 +429,16 @@ public class EditProfileFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Log.i(TAG, "getFirebaseImageURL() --> onSuccess executed");
+                        Log.d(TAG, "getFirebaseImageURL() --> onSuccess executed");
                         mFirebaseImageUri = uri;
                         mImageUrlRetrievalFailed = false;
-                        updateUserProfile( mUser.getUserID(), mUserName, mEmail, mPhoneNo, mAcademicStatus, mPassword, uri.toString() );
+                        updateUserProfile( mUser.getUserID(), mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, uri.toString() );
                     }
 
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        Log.i(TAG, "getFirebaseImageURL() --> onFailure executed");
+                        Log.d(TAG, "getFirebaseImageURL() --> onFailure executed");
                         mProgressBar.setVisibility(View.GONE);
                         GradsHubApplication.showToast("Something went wrong while trying to update profile, please try again.");
                         mImageUrlRetrievalFailed = true;
@@ -379,7 +448,7 @@ public class EditProfileFragment extends Fragment {
     }
 
 
-    private void updateUserProfile(String userID, String username, String email, String phoneNo, String academicStatus, String password, String firebaseImageUrl) {
+    private void updateUserProfile(String userID, String firstName, String lastName, String email, String phoneNo, String academicStatus, String password, String firebaseImageUrl) {
 
         if ( password.equals("") ) {
             password = null;
@@ -388,7 +457,8 @@ public class EditProfileFragment extends Fragment {
 
         // among these fields password and firebaseImageUrl can be null
         params.put("user_id", userID);
-        params.put("user_name", username);
+        params.put("first_name", firstName);
+        params.put("last_name", lastName);
         params.put("email", email);
         params.put("phone_no", phoneNo);
         params.put("acad_status", academicStatus);
@@ -404,7 +474,7 @@ public class EditProfileFragment extends Fragment {
                 mProgressBar.setVisibility(View.GONE);
 
                 if ( response.isSuccessful() ) {
-                    Log.i(TAG, "updateUserProfile() --> response.isSuccessful() = true");
+                    Log.d(TAG, "updateUserProfile() --> response.isSuccessful() = true");
 
                     JsonObject jsonObject = response.body();
 
@@ -429,9 +499,9 @@ public class EditProfileFragment extends Fragment {
                     // internal server failure or something. Response is received but not necessarily a successful one.
                     GradsHubApplication.showToast( "Failed to update profile information, please try again later." );
                     mUserProfileUpdateFailed = true;
-                    Log.i(TAG, "updateUserProfile() --> response.isSuccessful() = false");
-                    Log.i(TAG, "error code: " +response.code() );
-                    Log.i(TAG, "error message: " +response.message() );
+                    Log.d(TAG, "updateUserProfile() --> response.isSuccessful() = false");
+                    Log.d(TAG, "error code: " +response.code() );
+                    Log.d(TAG, "error message: " +response.message() );
 
                 }
 
@@ -442,7 +512,7 @@ public class EditProfileFragment extends Fragment {
                 mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast("Failed to update profile information, please try again later.");
                 mUserProfileUpdateFailed = true;
-                Log.i(TAG, "updateUserProfile() --> onFailure executed, error: ", t);
+                Log.d(TAG, "updateUserProfile() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 

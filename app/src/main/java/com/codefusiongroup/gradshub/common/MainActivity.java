@@ -13,12 +13,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
 import com.codefusiongroup.gradshub.friends.FriendsFragment;
@@ -36,6 +38,7 @@ import com.codefusiongroup.gradshub.common.models.ResearchGroup;
 import com.codefusiongroup.gradshub.common.models.Schedule;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
+import com.codefusiongroup.gradshub.profile.ProfileFragment;
 import com.codefusiongroup.gradshub.utils.EventNotificationPublisher;
 import com.codefusiongroup.gradshub.utils.MonthsConstants;
 import com.google.android.gms.common.ConnectionResult;
@@ -72,6 +75,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 
@@ -82,17 +86,21 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         ScheduleListFragment.OnScheduleListFragmentInteractionListener,
         OpenChatsFragment.OnOpenChatsFragmentInteractionListener,
         UsersListFragment.OnUsersListFragmentInteractionListener,
-        FriendsFragment.OnFriendsListFragmentInteractionListener {
+        FriendsFragment.OnFriendsListFragmentInteractionListener,
+        ProfileFragment.OnProfileUpdateSuccessfulListener {
 
 
     private static final String TAG = "MainActivity";
 
     private static final String CHANNEL_ID = "0";
 
+    private ImageView mImageView;
+    private TextView mFullNameTV;
+    private TextView mEmailTV;
+
     private AppBarConfiguration mAppBarConfiguration;
 
     public User user; // used in other fragments, so has public access.
-    private Calendar rightNow;
     private int currentYear, currentMonth, currentDay;
 
     private List<Schedule> eventsSchedule = new ArrayList<>();
@@ -105,19 +113,19 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = getIntent();
-        user = intent.getParcelableExtra("USER");
-
-        rightNow = Calendar.getInstance();
+        Calendar rightNow = Calendar.getInstance();
         currentYear = rightNow.get(Calendar.YEAR);
         currentMonth = rightNow.get(Calendar.MONTH);
         currentDay = rightNow.get(Calendar.DAY_OF_MONTH);
 
-        readScheduleFromFile();
+        // user must first be initialised before calling getUserFavouredEvents()
+        Intent intent = getIntent();
+        user = intent.getParcelableExtra("USER");
 
         getUserFavouredEvents();
 
-        performEventDateChecksForNotification(userPreviouslyFavouredEvents);
+        Log.d(TAG, "onCreate() --> global values, currentYear: "+currentYear+", currentMonth: "+currentMonth+", currentDay: "+currentDay);
+        readScheduleFromFile(); // must be called after setting calendar date as above
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -146,89 +154,365 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         navController.setGraph(R.navigation.main_navigation, bundle);
 
 
+        // setting side menu bar with selected user profile details
         View headerView = navigationView.getHeaderView(0);
-        TextView fullNameTV = headerView.findViewById(R.id.userFullNameTV);
-        TextView emailTV = headerView.findViewById(R.id.userEmailTV);
-        String userFullName = user.getFirstName() + " " + user.getLastName();
-        fullNameTV.setText(userFullName);
-        emailTV.setText(user.getEmail());
+        mImageView = headerView.findViewById(R.id.img_container);
 
+        if ( !user.getProfilePicture().equals("no profilePicture set") ) {
+            Uri uri = Uri.parse( user.getProfilePicture() );
+            Glide.with( this ).load(uri).into(mImageView);
+        }
+        else {
+            Glide.with( this).load(R.drawable.ic_account_circle).into(mImageView);
+        }
+
+        mFullNameTV = headerView.findViewById(R.id.userFullNameTV);
+        mEmailTV = headerView.findViewById(R.id.userEmailTV);
+
+        mFullNameTV.setText( user.getFullName() );
+        mEmailTV.setText( user.getEmail() );
 
     }
 
 
-    // method ensures that only upcoming events are scheduled for notifications by checking event date
-    private void performEventDateChecksForNotification(ArrayList<String> userPreviouslyFavouredEvents) {
+    private void processFavouredEvents(ArrayList<String> userPreviouslyFavouredEvents) {
 
-        //===============================================================
-        // IMPORTANT READ FOR TESTING NOTIFICATION YOURSELF.
-        // You can test the notification with one event id added to userPreviouslyFavouredEvents. However this
-        // approach might mean waiting for days or months :( since the corresponding event with that id in Schedule-data.txt
-        // might have a date that's far in the future. So instead use the approach BELOW where a dummy event is
-        // created (NOTE: certain sections of the code below are commented out for this approach to work).
-        // ADJUST the DATE and/or MONTH in the event.setDate() method BELOW so that when you subtract 7 days from it,
-        // (for the DATE part) it brings you to the present day. The notification is set to appear approximately
-        // 5 minutes after the current time for testing purposes only.
-        //===============================================================
+        if ( userPreviouslyFavouredEvents.size() > 0 ) {
 
-//        if ( userPreviouslyFavouredEvents.size() > 0 ) {
-//
-//            for (String event_id : userPreviouslyFavouredEvents) {
-//                // check for the event id in schedules
-//                for (Schedule event : schedules) {
-//
-//                    if (event.getId().equals(event_id)) {
+            for ( String favoured_event_id : userPreviouslyFavouredEvents ) {
 
-                //***************************************
-                // TESTING NOTIFICATION with dummy event
-                Schedule event = new Schedule();
-                event.setTitle("Robotics");
-                event.setDate("date: October 03, 2020"); // adjust month/date appropriately & leave formatting as it is.
-                event.setPlace("place: Vancouver, Canada");
-                //***************************************
+                // search for the current event id in the favoured events ids
+                for (Schedule event : eventsSchedule) {
+                    String eventID = event.getId();
 
-                // check if date is relevant
-                String dateStr = event.getDate();
-                String compSubstring = dateStr.substring( dateStr.indexOf(":") + 2 );
-                String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
-                String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
-                String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
+                    if ( eventID.equals(favoured_event_id) ) {
 
-                int eventStartMonth = MonthsConstants.setMonths(month);
-                int eventYear = Integer.parseInt(year);
+                        Log.d(TAG, "processFavouredEvents() --> processing event: "+event.getTitle()+", with id: " + favoured_event_id);
 
-                int eventStartDay;
-                if (eventDuration.length() == 1) {
-                    eventStartDay = Integer.parseInt(eventDuration);
-                }
-                else {
-                    // check if second character is a number
-                    if ( Character.isDigit( eventDuration.charAt(1) ) ) {
-                        eventStartDay = Integer.parseInt( eventDuration.substring(0, 2) );
+                        // extract the event date
+                        String dateStr = event.getDate();
+                        String compSubstring = dateStr.substring(dateStr.indexOf(":") + 2);
+
+                        // extract event month
+                        String month = compSubstring.substring(0, compSubstring.indexOf(" "));
+                        int eventStartMonth = MonthsConstants.setMonths(month);
+
+                        // extract event start day
+                        int eventStartDay;
+                        String eventDuration = compSubstring.substring(compSubstring.indexOf(" ") + 1, compSubstring.indexOf(","));
+                        if (eventDuration.length() == 1) {
+                            eventStartDay = Integer.parseInt(eventDuration);
+                        } else {
+                            // check if second character is a number
+                            if (Character.isDigit(eventDuration.charAt(1))) {
+                                eventStartDay = Integer.parseInt(eventDuration.substring(0, 2));
+                            } else {
+                                // must be a hyphen
+                                eventStartDay = Integer.parseInt(eventDuration.substring(0, 1));
+                            }
+                        }
+
+                        // check if the notification based on the date of this event needs to be
+                        // scheduled to appear a week before the event start day if it has already
+                        // been shown a month before the event month OR if it still needs to be scheduled
+                        // to appear a month before the event month IF it happens in the near future.
+                        // (NOTE: eventsSchedule only holds upcoming events so we are scheduling notifications
+                        // for valid dates but we want to check how soon in the near future is this event
+                        // going to happen)
+
+                        //==========================================================================
+                        // NOTE: if this condition is satisfied, then the notification that is set
+                        // to appear a week before this event day hasn't been scheduled before.
+                        // check if the notification for this event needs to be scheduled to appear
+                        // a month before.
+                        if (eventStartMonth - 2 == currentMonth && currentDay <= 28) { // feb at most 28 days long
+                            Log.d(TAG, "set notificationCalendar to show notification on the 1st of the month before event month, for the event: " + event.getTitle());
+                            setNotificationCalender(event, eventStartMonth, eventStartDay);
+                        }
+                        //==========================================================================
+
+                        // NOTE: if one of the following conditions is true, then it means the notification
+                        // that is set to appear a month before the event month for this event has already
+                        // been shown.
+                        // we check if the notification for this event needs to be scheduled to appear
+                        // a week before the event day given that the number of days that remain
+                        // between the event day and the day when the notification is set to appear are >= 7.
+
+                        //==========================================================================
+                        // for events that start on the first week of the event month but its currently
+                        // the month before the event month, then the date to be notified
+                        // is in the range of days between (22 - 28) inclusive, taking 28 as max and
+                        // 22 as the min since Feb is at most 28 days long
+                        if (currentMonth + 1 == eventStartMonth && eventStartDay <= 7) {
+                            Log.d(TAG, "executed condition: ( currentMonth + 1 == eventStartMonth && eventStartDay <= 7 ) true");
+
+                            // notified on the 22nd if event day is on the 1st of the event month.
+                            if (eventStartDay == 1 && currentDay < 22) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 1 && currentDay < 22 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 23rd if event day is on the 2nd of the event month.
+                            else if (eventStartDay == 2 && currentDay < 23) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 2 && currentDay < 23 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 24th if event day is on the 3rd of the event month.
+                            else if (eventStartDay == 3 && currentDay < 24) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 3 && currentDay < 24) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 25th if event day is on the 4th of the event month.
+                            else if (eventStartDay == 4 && currentDay < 25) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 4 && currentDay < 25 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 26th if event day is on the 5th of the event month.
+                            else if (eventStartDay == 5 && currentDay < 26) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 5 && currentDay < 26 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 27th if event day is on the 6th of the event month.
+                            else if (eventStartDay == 6 && currentDay < 27) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 6 && currentDay < 27 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                            // notified on the 28th if event day is on the 7th of the event month.
+                            else if (eventStartDay == 7 && currentDay < 28) {
+                                Log.d(TAG, "executed sub-condition: ( eventStartDay == 7 && currentDay < 28 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification a week before, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+
+                        }
+                        //==========================================================================
+
+                        // for events that start on the 8th exactly of the event month but it's currently
+                        // the month before the event month, then the date to be notified is the 1st
+                        // of the event month.
+                        else if (currentMonth + 1 == eventStartMonth && eventStartDay == 8) {
+                            Log.d(TAG, "executed condition: ( currentMonth + 1 == eventStartMonth && eventStartDay == 8 ) true ");
+                            if (currentDay <= 28) { // feb is at most 28 days long.
+                                Log.d(TAG, "executed sub-condition: ( currentDay <= 28 ) true");
+                                Log.d(TAG, "set notificationCalendar to show notification on the 1st of the event month, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+                        }
+
+                        //==========================================================================
+
+                        // for events that start from the 9th onwards on the event month, the date
+                        // to be notified a week before is the offset that remains after 7 days are
+                        // subtracted from the evenStartDay
+                        else if (currentMonth == eventStartMonth && eventStartDay > 8) {
+                            Log.d(TAG, "executed condition: ( currentMonth == eventStartMonth && eventStartDay > 8 ) true ");
+                            if (currentDay < (eventStartDay - 7)) {
+                                Log.d(TAG, "executed sub-condition: ( currentDay < (eventStartDay-7) ) true ");
+                                Log.d(TAG, "set notificationCalendar to show notification 7 days before the event start day, for the event: " + event.getTitle());
+                                setNotificationCalender(event, eventStartMonth, eventStartDay);
+                            }
+                        }
+                        //==========================================================================
+
+                        // break out of inner loop since we have found the matching event id and consider
+                        // the next favoured event id.
+                        break;
                     }
-                    else {
-                        // must be a hyphen
-                        eventStartDay = Integer.parseInt( eventDuration.substring(0, 1) );
-                    }
                 }
 
-                Log.d(TAG, "event title: "+event.getTitle()+", eventYear: "+eventYear+", eventStartMonth: "+eventStartMonth+", eventStartDay: "+eventStartDay);
+            }
 
-                if ( eventYear >= currentYear) {
-                    if( eventStartMonth > currentMonth || (eventStartMonth == currentMonth && eventStartDay > currentDay) ) {
-                        int notificationId = 0;
-                        scheduleNotification(this.getApplicationContext(), notificationId, event, eventYear, eventStartMonth, eventStartDay);
-                    }
+        }
+
+    }
+
+
+    // method ensure that only events that are coming in the near future are scheduled for notification.
+    private void setNotificationCalender(Schedule event, int eventMonth, int eventStartDay) {
+
+        // calendar instance for which we use to set notification date
+        Calendar notificationCalendar = Calendar.getInstance();
+
+        // used to check if calender properties changed so notification can be scheduled.
+        boolean calendarFieldChanged = false;
+
+        // schedule the notification to appear on the 1st of the month before the event month
+        if (currentMonth + 2 == eventMonth) {
+            Log.d(TAG, "condition executed: ( currentMonth + 2 == eventMonth && currentDay <= 28 ) true");
+            notificationCalendar.set(Calendar.MONTH, currentMonth + 1);
+            notificationCalendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendarFieldChanged = true;
+        }
+
+        // schedule the notification to appear on the 1st of the event month
+        else if (currentMonth + 1 == eventMonth && eventStartDay == 8) {
+            Log.d(TAG, "condition executed: ( currentMonth + 1 == eventMonth && eventStartDay == 8 ) true");
+            notificationCalendar.set(Calendar.MONTH, eventMonth);
+            notificationCalendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendarFieldChanged = true;
+        }
+
+        // events that start from the 9th onwards of the event month
+        else if (currentMonth == eventMonth && eventStartDay > 8) {
+            Log.d(TAG, "condition executed: ( currentMonth == eventMonth && eventStartDay >= 8 ) true");
+            notificationCalendar.set(Calendar.MONTH, eventMonth);
+            notificationCalendar.set(Calendar.DAY_OF_MONTH, eventStartDay - 7);
+            calendarFieldChanged = true;
+        }
+
+        // events that start on the first week of the event month but currently its the month before the
+        // event month.
+        else if (currentMonth + 1 == eventMonth && eventStartDay <= 7) {
+
+            notificationCalendar.set(Calendar.MONTH, currentMonth);
+            Log.d(TAG, "condition executed: ( currentMonth + 1 == eventMonth && eventStartDay <= 7 ) true, eventStartDay: "+eventStartDay);
+
+            switch (eventStartDay) {
+
+                case 1:
+                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 22);
+                    break;
+
+                case 2:
+                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 23);
+                    break;
+
+                case 3:
+                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 24);
+                    break;
+
+                case 4:
+                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 25);
+                    break;
+
+                case 5:
+                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 26);
+                    break;
+
+                case 6:
+                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 27);
+                    break;
+
+                case 7:
+                    // take 28 as max since  Feb is at most 28 days long in case the current month is Feb
+                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 28);
+                    break;
+            }
+
+            calendarFieldChanged = true;
+
+        }
+
+
+        // if one of the conditions above was satisfied then schedule a notification for this event
+        if ( calendarFieldChanged ) {
+
+            // validate the event link
+            Uri uri = null;
+            String link = validateEventLinkFormat( event.getLink() );
+            if (link != null) {
+                Log.d(TAG, "event link is: "+link+", for event: "+event.getTitle());
+                uri = Uri.parse(link);
+            }
+            else {
+                Log.d(TAG, "event link is null for event: "+ event.getTitle());
+            }
+
+            // set the time when the notification should be sent
+            notificationCalendar.set( Calendar.HOUR_OF_DAY, 15 );
+            notificationCalendar.set( Calendar.MINUTE, 0 );
+            notificationCalendar.set( Calendar.SECOND, 0 ); // not important, so set to 0
+
+            // ALWAYS recompute the calendar after using add, set, roll
+            Date date = notificationCalendar.getTime();
+            Log.d(TAG, "calender fields changed, notification scheduled for event: " + event.getTitle()+" on date: "+ date);
+            Log.d(TAG, "===============================================================================================" );
+            Random random = new Random();
+            int notificationID = random.nextInt(Integer.MAX_VALUE); // ensure uniqueness of notifications
+            scheduleNotification(this.getApplicationContext(), notificationID, event, date, uri);
+
+        }
+        else {
+            Log.d(TAG, "calender fields were not changed, notification was not scheduled for event: " + event.getTitle() );
+            Log.d(TAG, "===============================================================================================" );
+        }
+
+    }
+
+
+    public String validateEventLinkFormat(String eventLink) {
+
+        String link;
+        if ( !eventLink.startsWith("https://") && !eventLink.startsWith("http://") ) {
+            link = "http://" + eventLink;
+        }
+        else {
+            link = eventLink;
+        }
+
+        return link;
+    }
+
+
+    // N.B: notificationId allows you to update the notification later on.
+    // notificationId is unique int for each notification that you must define
+    public void scheduleNotification(Context context, int notificationId, Schedule event, Date date, Uri uri) {
+
+        PendingIntent openEventLinkPendingIntent = null;
+        if (uri != null) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            openEventLinkPendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        }
+        else {
+            Log.d(TAG, "uri is null for event: "+event.getTitle());
+        }
+
+        String eventTitle = event.getTitle();
+        String dateStr = event.getDate();
+        String eventDate = dateStr.substring(dateStr.indexOf(":") + 2);
+        String placeStr = event.getPlace();
+        String eventPlace = placeStr.substring(placeStr.indexOf(":") + 2);
+
+        // set notification properties
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                // Notification Channel Id is ignored for Android pre O (26).
+                .setSmallIcon(R.mipmap.applogo) // shows app icon next to the notification
+                .setContentTitle("upcoming event, " + eventTitle + ".")
+                .setContentText("held on " + eventDate + " at " + eventPlace)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setShowWhen(false) // doesn't show notification timestamp
+                .setAutoCancel(true)// automatically removes the notification when the user taps it.
+                .setOngoing(false); // dismiss notification on swipe gesture
+
+                if(openEventLinkPendingIntent != null) {
+                    builder.setContentIntent(openEventLinkPendingIntent);
                 }
 
-//                    }
-//
-//                }
-//
-//            }
-//
-//        }
+        // builder.build() returns the notification to be published
+        Notification notification = builder.build();
 
+
+        // this part schedules the notification and calls EventNotificationPublisher to publish the notification
+        Intent notificationIntent = new Intent(context, EventNotificationPublisher.class);
+        notificationIntent.putExtra( EventNotificationPublisher.NOTIFICATION_ID, notificationId );
+        notificationIntent.putExtra( EventNotificationPublisher.NOTIFICATION, notification );
+        // 4th argument can be PendingIntent.FLAG_UPDATE_CURRENT or 0
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        assert alarmManager != null;
+        alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), pendingIntent);
 
     }
 
@@ -256,9 +540,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                 startActivity(intent);
                 finish(); // finish MainActivity
                 return true;
-
-            case R.id.action_refresh:
-
 
             default:
                 // default to any selected item on the app bar if no case is found above
@@ -481,14 +762,15 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                     } else if ( component.startsWith("date") ) {
 
                         // check if date is relevant
-                        String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
-                        String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
-                        String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
 
-                        int eventStartMonth = MonthsConstants.setMonths(month);
+                        String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
                         int eventYear = Integer.parseInt(year);
 
+                        String month = compSubstring.substring( 0, compSubstring.indexOf(" ") );
+                        int eventStartMonth = MonthsConstants.setMonths(month);
+
                         int eventStartDay;
+                        String eventDuration = compSubstring.substring( compSubstring.indexOf(" ") + 1, compSubstring.indexOf(",") );
                         if (eventDuration.length() == 1) {
                             eventStartDay = Integer.parseInt(eventDuration);
                         }
@@ -503,13 +785,32 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                             }
                         }
 
-                        //Log.i("MainActivity", "eventYear: "+eventYear+", eventStartMonth: "+eventStartMonth+", eventStartDay: "+eventStartDay+", event no: "+i);
-
-                        if (eventYear > currentYear) {
-                            date = component;
+                        if (eventYear < currentYear) {
+                            Log.d(TAG, "readScheduleFromFile() --> event year has passed for event: "+title);
+                            break;
                         }
-                        else if( eventYear == currentYear && (eventStartMonth > currentMonth || (eventStartMonth == currentMonth && eventStartDay > currentDay)) ) {
-                            date = component;
+                        else {
+                            Log.d(TAG, "readScheduleFromFile() --> else executed since either eventYear >= currentYear for event: "+title+", eventYear:  "+eventYear+", currentYear: "+currentYear);
+
+                            if (eventYear > currentYear) {
+                                date = component;
+                            }
+                            else {
+                                Log.d(TAG, "readScheduleFromFile() --> else executed since eventYear must be equal to currentYear,  eventYear:  "+eventYear+", currentYear: "+currentYear);
+                                if (eventStartMonth > currentMonth) {
+                                    Log.d(TAG, "readScheduleFromFile() --> executed sub-condition: ( eventStartMonth > currentMonth ) true, eventStartMonth:  "+eventStartMonth+", currentMonth: "+currentMonth);
+                                    date = component;
+                                }
+                                else if (eventStartMonth == currentMonth && eventStartDay > currentDay) {
+                                    Log.d(TAG, "readScheduleFromFile() --> executed sub-condition: ( eventStartMonth == currentMonth && eventStartDay > currentDay ) true, eventStartMonth: "+eventStartMonth+", currentMonth: "+currentMonth+", eventStartDay:  "+eventStartDay+", currentDay: "+currentDay);
+                                    date = component;
+                                }
+                                else {
+                                    Log.d(TAG, "readScheduleFromFile() --> event month or day has passed for event: "+title);
+                                    break;
+                                }
+                            }
+
                         }
 
                     } else if ( component.startsWith("place") ) {
@@ -520,6 +821,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
                 // filter based on date
                 if (date != null) {
+                    Log.i("MainActivity", "readScheduleFromFile() --> added event: "+title+", with eventDate: "+date);
                     eventsSchedule.add(new Schedule(id, title, link, deadline, timezone, date, place));
                 }
 
@@ -570,7 +872,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                         NOTE: regarding the display of a toast message here, its also a similar explanation given below
                         on the corresponding server response method for this method (i.e serverGetUserFavouredEventsResponse())
                          */
-                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Failed to retrieve favoured events.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
@@ -600,18 +902,11 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                         userPreviouslyFavouredEvents.add(event_id);
                     }
 
+                    // after receiving the favoured events then perform necessary check for scheduling notifications
+                    processFavouredEvents(userPreviouslyFavouredEvents);
+
                     break;
 
-                /*
-                NOTE: Since these network calls happen asynchronously and there are multiple methods in this fragment
-                that make network requests, it is not always clear as to which method will finish its network request
-                first thus it becomes difficult as to which Toast message will be shown to the user especially in the
-                case of the DB not having any records of the requested data since then these methods display different
-                Toast messages in that instance which can be confusing to the user. It is therefore important to consider
-                which toast messages are important to show to the user when a network request has been made.
-                So for methods like this one there's no need to display toast msg for network calls that get data
-                but don't necessarily have to inform the user of the outcome of that response from server.
-                */
                 case "0":
                     // no toast message shown.
                     break;
@@ -620,120 +915,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-    }
-
-
-    // N.B: notificationId allows you to update the notification later on.
-    // notificationId is unique int for each notification that you must define
-    public void scheduleNotification(Context context, int notificationId, Schedule event, int eventYear, int eventMonth, int eventStartDay) {
-
-        Intent authActivityIntent = new Intent(context, AuthenticationActivity.class);
-        authActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent authPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
-
-        String eventTitle = event.getTitle();
-        String dateStr = event.getDate();
-        String eventDate = dateStr.substring(dateStr.indexOf(":") + 2);
-        String placeStr = event.getPlace();
-        String eventPlace = placeStr.substring(placeStr.indexOf(":") + 2);
-
-        // set notification properties
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                // Notification Channel Id is ignored for Android pre O (26).
-                .setSmallIcon(R.mipmap.applogo) // shows app icon next to the notification
-
-                .setContentTitle("upcoming event, " + eventTitle + ".")
-                .setContentText("held on " + eventDate + " at " + eventPlace)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setShowWhen(false) // doesn't show notification timestamp
-                .setAutoCancel(true)// automatically removes the notification when the user taps it.
-                .setOngoing(false) // dismiss notification on swipe gesture
-                .setContentIntent(authPendingIntent);
-
-        // builder.build() returns the notification to be published
-        Notification notification = builder.build();
-
-
-        // this part schedules the notification and calls EventNotificationPublisher to publish the notification
-        Intent notificationIntent = new Intent(context, EventNotificationPublisher.class);
-        notificationIntent.putExtra(EventNotificationPublisher.NOTIFICATION_ID, notificationId);
-        notificationIntent.putExtra(EventNotificationPublisher.NOTIFICATION, notification);
-        // 4th argument can be PendingIntent.FLAG_UPDATE_CURRENT or 0
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
-
-
-        // set notification parameters based on the constraints met
-        Calendar notificationCalendar = Calendar.getInstance();
-        notificationCalendar.set(Calendar.YEAR, eventYear);
-
-
-        // NOTE: it has to be eventMonth - currentMonth since current month has a smaller int value.
-        // should be strictly greater than 1 since notification is sent a month before the event month
-        int currentMonth = rightNow.get(Calendar.MONTH);
-        if (eventMonth - currentMonth > 1) {
-            notificationCalendar.set(Calendar.MONTH, eventMonth - 1);
-            notificationCalendar.set(Calendar.DAY_OF_MONTH, 1); // first day of that month
-        }
-
-        // events that start from the 8th onwards of the event month
-        else if (currentMonth == eventMonth && eventStartDay >= 8) {
-            notificationCalendar.set(Calendar.DAY_OF_MONTH, eventStartDay - 7); // first day of event month
-        }
-
-        // events that start on the first week of the event month but currently its the month just before the
-        // event month. No need to worry about the case: if its already the event month but the eventStartDay <= 7
-        else if (currentMonth + 1 == eventMonth && eventStartDay <= 7) {
-
-            switch (eventStartDay) {
-                // not considering how many days the current month has makes things simple and might not be that important
-                case 1:
-                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 22);
-                    break;
-
-                case 2:
-                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 23);
-                    break;
-
-                case 3:
-                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 24);
-                    break;
-
-                case 4:
-                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 25);
-                    break;
-
-                case 5:
-                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 26);
-                    break;
-
-                case 6:
-                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 27);
-                    break;
-
-                case 7:
-                    // take 28 as max since  Feb is at most 28 days long in case the current month is Feb
-                    notificationCalendar.set(Calendar.DAY_OF_MONTH, 28);
-                    break;
-            }
-
-        }
-
-
-        // set the time when the notification should be sent
-        //***** VALUES ARE SET FOR TESTING NOTIFICATION ******
-        // TODO: set time correctly
-        notificationCalendar.set(Calendar.HOUR_OF_DAY, rightNow.get(Calendar.HOUR_OF_DAY)); // current hour,for testing
-        notificationCalendar.set(Calendar.MINUTE, rightNow.get(Calendar.MINUTE) + 5); // current minute + 5 minute delay, for testing
-        notificationCalendar.set(Calendar.SECOND, 0); // not important, so set to 0
-        //************************************************************
-
-        // ALWAYS recompute the calendar after using add, set, roll
-        Date date = notificationCalendar.getTime();
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        assert alarmManager != null;
-        alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), pendingIntent);
 
     }
 
@@ -748,5 +929,24 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         return eventsSchedule;
     }
 
+
+    @Override
+    public void onProfileUpdateSuccessfulListener(boolean value) {
+
+        if (value) {
+            user = UserPreferences.getInstance().getUserDetails(this);
+            if ( !user.getProfilePicture().equals("no profilePicture set") ) {
+                Uri uri = Uri.parse( user.getProfilePicture() );
+                Glide.with( this ).load(uri).into(mImageView);
+            }
+            else {
+                Glide.with( this).load(R.drawable.ic_account_circle).into(mImageView);
+            }
+
+            mFullNameTV.setText( user.getFullName() );
+            mEmailTV.setText( user.getEmail() );
+        }
+
+    }
 
 }

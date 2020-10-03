@@ -3,6 +3,7 @@ package com.codefusiongroup.gradshub.posts.createpost;
 import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -19,7 +20,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.provider.OpenableColumns;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +41,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.BuildConfig;
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment;
 import com.codefusiongroup.gradshub.common.models.Post;
@@ -47,8 +51,6 @@ import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnPausedListener;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -57,6 +59,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,22 +72,21 @@ import static android.app.Activity.RESULT_OK;
 
 public class CreatePostFragment extends Fragment {
 
-    private ProgressBar progressBar;
-    private View view;
+    private static final String TAG = "CreatePostFragment";
 
-    private EditText postSubjectET, postDescriptionET;
     private TextView pdfBtn;
-
-    private String postSubject, postDescription, displayName;
-    private static final int PICK_FILE_RESULT_CODE = 1;
+    private ProgressBar progressBar;
+    private EditText postSubjectET, postDescriptionET;
 
     private Uri uri;// Used to upload pdf file
+    private String postSubject, postDescription, displayName;
+    private static final int SELECT_FILE_REQUEST_CODE = 1;
 
-    private MainActivity mainActivity;
+    private String mFileName;
     private String postDate;
-    private ResearchGroup researchGroup;
-
     private String uploadedFile;
+    private ResearchGroup researchGroup;
+    private MainActivity mainActivity;
 
 
     @Override
@@ -94,8 +98,7 @@ public class CreatePostFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_create_post, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_create_post, container, false);
     }
 
 
@@ -108,7 +111,7 @@ public class CreatePostFragment extends Fragment {
         Button postBtn = view.findViewById(R.id.postBtn);
         pdfBtn = view.findViewById(R.id.pdfBtn);
 
-        // POST BUTTON
+
         postBtn.setOnClickListener(v -> {
 
             postSubject = postSubjectET.getText().toString().trim();
@@ -134,29 +137,34 @@ public class CreatePostFragment extends Fragment {
             }
         });
 
-        // PDF BUTTON
+
         pdfBtn.setOnClickListener(view1 -> {
 
-            //TODO : open pdf and show contents of file (currently opens empty pdf file)
-            File docPath = new File(requireActivity().getFilesDir(), "Download");
-            File targetFile = new File(docPath, displayName);
-            Uri contentUri = FileProvider.getUriForFile( requireActivity(),
-                    BuildConfig.APPLICATION_ID + ".fileprovider", targetFile );
+            File path = requireActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
 
-            Intent target = new Intent(Intent.ACTION_VIEW);
-            target.setDataAndType(contentUri, "application/pdf");
-            target.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            if ( path != null && path.exists() ) {
+                File targetFile = new File(path, mFileName);
+                Uri contentUri = FileProvider.getUriForFile( requireActivity(),
+                        BuildConfig.APPLICATION_ID + ".fileprovider", targetFile );
 
-            Intent appChooser = Intent.createChooser(target,"Choose PDF Application");
+                String mime = requireActivity().getContentResolver().getType(contentUri);
+                Intent target = new Intent(Intent.ACTION_VIEW);
+                target.setDataAndType(contentUri, mime);
+                target.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Intent appChooser = Intent.createChooser(target,"Open PDF");
 
-            try {
-                startActivity(appChooser);
+                try {
+                    startActivity(appChooser);
 
-            } catch(ActivityNotFoundException error) {
-                // Instruct the user to install a PDF reader here, or something
-                Toast.makeText(requireActivity(), "Please install a pdf reader", Toast.LENGTH_LONG).show();
+                } catch(ActivityNotFoundException error) {
+                    GradsHubApplication.showToast("Please install a pdf reader.");
+                }
+
             }
+            else {
+                GradsHubApplication.showToast("Could not open pdf file.");
+            }
+
         });
 
     }
@@ -278,13 +286,11 @@ public class CreatePostFragment extends Fragment {
 
     // this method is called to open the device file manager to pick the pdf file the user wants to upload
     private void selectPdfFile() {
-
         Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
         chooseFile.setType("application/pdf");
         chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
         chooseFile = Intent.createChooser(chooseFile, "Select PDF");
-        startActivityForResult(chooseFile, PICK_FILE_RESULT_CODE);
-
+        startActivityForResult(chooseFile, SELECT_FILE_REQUEST_CODE);
     }
 
 
@@ -293,71 +299,140 @@ public class CreatePostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if( requestCode == PICK_FILE_RESULT_CODE && resultCode == RESULT_OK && data != null ) {
+        if( requestCode == SELECT_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null ) {
 
             if( data.getData() != null ) {
 
-                uri = data.getData(); // return uri of selected file
-                String uriString = uri.toString();
-                File file = new File(uriString);
+                uri = data.getData();
+                String fileExtension = getFileExtension(uri);
 
-                //TODO: fix displayName. Seems to be null when selecting file from internal storage but file appear
-                // without its name displayed
+                if (fileExtension.equals("pdf") ) {
+                    // convert to string to determine the uri scheme (file:// or content://) to get file name
+                    // for now we'll only deal with content:// scheme
+                    String uriString = uri.toString();
+                    Log.i(TAG, "uriString: " + uriString);
 
-                // Get the name of the file
-                if (uriString.startsWith("content://")) {
-                    Cursor cursor = null;
+                    if ( uriString.startsWith("content://") ) {
 
-                    try {
+                        Cursor cursor = null;
 
-                        cursor = requireActivity().getContentResolver().query(uri, null, null, null, null);
-                        if (cursor != null && cursor.moveToFirst()) {
+                        try {
+                            // NOTE: following projection array doesn't necessarily mean the selected files are only from the Download directory
+                            String[] projection = {MediaStore.Downloads.TITLE, MediaStore.Downloads.SIZE, MediaStore.Downloads.DISPLAY_NAME};
+                            cursor = requireActivity().getContentResolver().query(uri, projection, null, null, null);
 
+                            if (cursor != null) {
 
-                            displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                                int nameColumnExternal = cursor.getColumnIndex(MediaStore.Downloads.TITLE);
+                                int nameColumnRecent = cursor.getColumnIndex(MediaStore.Downloads.DISPLAY_NAME);
+                                int sizeColumn = cursor.getColumnIndex(MediaStore.Downloads.SIZE);
 
-                            // commented out Log messages cause they result in an error when displayName = null as a
-                            // result of selecting a file from internal storage
-                            //Log.d("File name>>>>  ",displayName);
+                                cursor.moveToFirst();
 
-                            // Disable url(description) editText
-                            postDescriptionET.setInputType(0);
-                            postDescriptionET.setVisibility(View.GONE);
+                                String temp = cursor.getString(nameColumnRecent);
+                                if (temp != null) {
+                                    displayName = temp;
+                                }
+                                else {
+                                    displayName = cursor.getString(nameColumnExternal);
+                                }
 
-                            // Display pdf button
-                            pdfBtn.setVisibility(View.VISIBLE);
-                            pdfBtn.setText(displayName);
+                                int fileSize = cursor.getInt(sizeColumn);
 
+                                // firebase max file size upload is 7MB, free tier storage limit 1GiB
+                                if (fileSize < 2 * 1024 * 1024) { // 2MB limit
+
+                                    ContextWrapper cw = new ContextWrapper(GradsHubApplication.getContext());
+                                    File outDir = cw.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                                    mFileName = displayName + "." + getFileExtension(uri);
+                                    File outFile = new File(outDir, mFileName);
+
+                                    try {
+                                        InputStream in = requireActivity().getContentResolver().openInputStream(uri);
+
+                                        if (in != null) {
+
+                                            FileOutputStream fos = new FileOutputStream(outFile);
+
+                                            byte[] buffer = new byte[1024];
+                                            int read;
+
+                                            while ((read = in.read(buffer)) != -1) {
+                                                fos.write(buffer, 0, read);
+                                            }
+
+                                            in.close();
+                                            fos.flush();
+                                            fos.close();
+
+                                            File pdfFile = hasExternalStoragePdfFile(mFileName);
+                                            if (pdfFile != null) {
+                                                // disable and hide edit text for post description
+                                                postDescriptionET.setInputType(0);
+                                                postDescriptionET.setVisibility(View.GONE);
+
+                                                // show button with pdf file name
+                                                pdfBtn.setVisibility(View.VISIBLE);
+                                                pdfBtn.setText(displayName);
+                                            } else {
+                                                GradsHubApplication.showToast("Could not retrieve selected pdf file.");
+                                            }
+
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                } else {
+                                    GradsHubApplication.showToast("Selected file is too large.");
+                                    return;
+                                }
+
+                            }
+
+                        } finally {
+                            if (cursor != null) {
+                                cursor.close();
+                            }
                         }
 
-                    } finally {
-                        if (cursor != null)
-                            cursor.close();
                     }
-
-                } else if (uriString.startsWith("file://")) {
-
-
-                    displayName = file.getName();
-
-                    //Log.d("File name>>>>  ",displayName);
-
-                    // Disable url(description) editText
-                    postDescriptionET.setInputType(0);
-                    postDescriptionET.setVisibility(View.GONE);
-
-                    // Display pdf button
-                    pdfBtn.setVisibility(View.VISIBLE);
-                    pdfBtn.setText(displayName);
-
+                    else if( uriString.startsWith("file://") ) {
+                        // NOTE: implementation omitted since can't test this scheme, just display toast
+                        GradsHubApplication.showToast("Could not retrieve selected pdf file");
+                    }
+                }
+                else {
+                    GradsHubApplication.showToast("File must be a pdf type.");
                 }
 
             }
+            else {
+                return;
+            }
 
+        }
+        else {
+            return;
         }
 
         super.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+
+    private File hasExternalStoragePdfFile(String pdfFileName) {
+
+        ContextWrapper cw = new ContextWrapper( GradsHubApplication.getContext() );
+        File pdfFilePath = cw.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+
+        if (pdfFilePath != null) {
+            File pdfFile = new File(pdfFilePath, pdfFileName);
+            Log.i(TAG, " hasExternalStorageFile() --> pdf file name: " + pdfFile.getName() + " exists in external app storage.");
+            return pdfFile;
+        }
+
+        return null;
     }
 
 
@@ -389,20 +464,7 @@ public class CreatePostFragment extends Fragment {
                 .putFile(uri, metadata);
 
         // Listen for state changes, errors, and completion of the upload.
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                //double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                //System.out.println("Upload is " + progress + "% done");
-            }
-
-        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                //System.out.println("Upload is paused");
-            }
-
-        }).addOnFailureListener(new OnFailureListener() {
+        uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // this shows while they haven't clicked POST button if upload to firebase fails. Must fix

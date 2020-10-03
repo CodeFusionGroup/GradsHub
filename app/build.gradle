@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.codefusiongroup.gradshub"
-        minSdkVersion 18
+        minSdkVersion 19 // changed min from 18 to 19 for file accessibility
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"

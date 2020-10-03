@@ -1,5 +1,6 @@
 package com.codefusiongroup.gradshub.profile;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,11 +20,12 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
-import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.UserPreferences;
+import com.codefusiongroup.gradshub.common.models.Schedule;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
+import com.codefusiongroup.gradshub.events.ScheduleListFragment;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -37,17 +39,20 @@ public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
 
-    private ProgressBar mProgressBar;
     private ImageView mImageView;
-    private TextView mUsernameTV;
-    private TextView mContactNoTV;
+    private ProgressBar mProgressBar;
+
     private TextView mEmailTV;
+    private TextView mFullNameTV;
+    private TextView mContactNoTV;
     private TextView mAcademicStatusTV;
 
     private User mUser;
     private UserPreferences mUserPreferences;
 
     private boolean profileUpdatedSuccessfully = false;
+
+    private ProfileFragment.OnProfileUpdateSuccessfulListener mListener;
 
 
     @Override
@@ -60,7 +65,7 @@ public class ProfileFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             profileUpdatedSuccessfully = bundle.getBoolean("profile_updated");
-            Log.i(TAG, "profileUpdatedSuccessfully --> "+profileUpdatedSuccessfully);
+            Log.d(TAG, "profileUpdatedSuccessfully --> "+profileUpdatedSuccessfully);
         }
 
     }
@@ -76,7 +81,7 @@ public class ProfileFragment extends Fragment {
 
         mProgressBar = view.findViewById(R.id.progress_circular);
         mImageView = view.findViewById(R.id.img_container);
-        mUsernameTV = view.findViewById(R.id.usernameTV);
+        mFullNameTV = view.findViewById(R.id.fullNameTV);
         mContactNoTV = view.findViewById(R.id.contactNoTV);
         mEmailTV = view.findViewById(R.id.emailTV);
         mAcademicStatusTV = view.findViewById(R.id.academicStatusTV);
@@ -94,10 +99,12 @@ public class ProfileFragment extends Fragment {
             Glide.with( requireActivity() ).load(R.drawable.ic_account_circle).into(mImageView);
         }
 
-        mUsernameTV.setText( mUser.getUsername() );
+
+        mFullNameTV.setText( mUser.getFullName() );
         mContactNoTV.setText( mUser.getPhoneNumber() );
         mEmailTV.setText( mUser.getEmail() );
-        mAcademicStatusTV.setText( mUser.getAcademicStatus() );
+        String academics = "Academic Status: " + mUser.getAcademicStatus();
+        mAcademicStatusTV.setText(academics);
 
         editProfileBnt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +132,7 @@ public class ProfileFragment extends Fragment {
                 mProgressBar.setVisibility(View.GONE);
 
                 if ( response.isSuccessful() ) {
-                    Log.i(TAG, "getUpdatedUserProfile() --> response.isSuccessful() = true");
+                    Log.d(TAG, "getUpdatedUserProfile() --> response.isSuccessful() = true");
 
                     JsonObject jsonObject = response.body();
 
@@ -137,16 +144,17 @@ public class ProfileFragment extends Fragment {
                         // save details to preferences
                         mUserPreferences.saveUserDetails( mUser, requireActivity() );
 
-
                         if ( !mUser.getProfilePicture().equals("no profilePicture set") ) {
                             Uri uri = Uri.parse( mUser.getProfilePicture() );
                             Glide.with( requireActivity() ).load(uri).into(mImageView);
                         }
 
-                        mUsernameTV.setText( mUser.getUsername() );
+                        mFullNameTV.setText( mUser.getFullName() );
                         mContactNoTV.setText( mUser.getPhoneNumber() );
                         mEmailTV.setText( mUser.getEmail() );
                         mAcademicStatusTV.setText( mUser.getAcademicStatus() );
+
+                        mListener.onProfileUpdateSuccessfulListener(true);
 
                     }
                     else {
@@ -159,9 +167,9 @@ public class ProfileFragment extends Fragment {
                 else {
                     // internal server failure or something. Response is received but not necessarily a successful one.
                     GradsHubApplication.showToast( "Failed to load updated profile, please try again later." );
-                    Log.i(TAG, "getUpdatedUserProfile() --> response.isSuccessful() = false");
-                    Log.i(TAG, "error code: " +response.code() );
-                    Log.i(TAG, "error message: " +response.message() );
+                    Log.d(TAG, "getUpdatedUserProfile() --> response.isSuccessful() = false");
+                    Log.d(TAG, "error code: " +response.code() );
+                    Log.d(TAG, "error message: " +response.message() );
                 }
 
             }
@@ -170,7 +178,7 @@ public class ProfileFragment extends Fragment {
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 mProgressBar.setVisibility(View.GONE);
                 GradsHubApplication.showToast("Failed to get profile information, please try again later.");
-                Log.i(TAG, "getUpdatedUserProfile() --> onFailure executed, error: ", t);
+                Log.d(TAG, "getUpdatedUserProfile() --> onFailure executed, error: ", t);
                 t.printStackTrace();
             }
 
@@ -178,5 +186,31 @@ public class ProfileFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+
+        super.onAttach(context);
+
+        if (context instanceof ProfileFragment.OnProfileUpdateSuccessfulListener) {
+            mListener = (ProfileFragment.OnProfileUpdateSuccessfulListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnProfileUpdateSuccessfulListener");
+        }
+
+    }
+
+
+    public interface OnProfileUpdateSuccessfulListener {
+        void onProfileUpdateSuccessfulListener(boolean value);
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
 }

@@ -16,11 +16,22 @@
         android:textStyle="bold"/>
 
 
+    <TextView
+        android:id="@+id/academicStatusTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userProfileNameTV"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:text="Academic Status: PhD"
+        android:textSize="15sp" />
+
+
     <Button
         android:id="@+id/startChatBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/userProfileNameTV"
+        android:layout_below="@+id/academicStatusTV"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:paddingEnd="10dp"
@@ -34,7 +45,8 @@
         android:id="@+id/friendStatusBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/startChatBtn"
+        android:layout_below="@+id/academicStatusTV"
+        android:layout_toEndOf="@+id/startChatBtn"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:paddingEnd="10dp"
@@ -48,7 +60,8 @@
         android:id="@+id/blockStatusBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/friendStatusBtn"
+        android:layout_below="@+id/academicStatusTV"
+        android:layout_toEndOf="@+id/friendStatusBtn"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:paddingEnd="10dp"

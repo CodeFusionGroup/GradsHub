@@ -4,15 +4,31 @@ package com.codefusiongroup.gradshub.common.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Post implements Parcelable {
 
     private String postID;
+
+    @SerializedName("POST_CREATOR")
     private String postCreator;
+
+    @SerializedName("POST_DATE")
     private String postDate;
+
+    @SerializedName("POST_SUBJECT")
     private String postSubject;
+
+    @SerializedName("POST_DESCRIPTION")
     private String postDescription;
+
+    @SerializedName("POST_FILE")
     private String postFileName;
+
+    @SerializedName("POST_LIKES")
     private int postLikesCount = 0;
+
+    @SerializedName("POST_COMMENTS")
     private int postCommentsCount = 0;
 
 

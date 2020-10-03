@@ -27,5 +27,8 @@ public interface MessagingAPI {
     @POST("Message/create.php")
     Call<JsonObject> insertMessage(@Body HashMap<String, String> params);
 
+    @POST("User/closeChat.php")
+    Call<JsonObject> removeChats(@Body HashMap<String, String> params);
+
 
 }

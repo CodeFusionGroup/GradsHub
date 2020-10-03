@@ -6,17 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
     <androidx.recyclerview.widget.RecyclerView
 
         android:id="@+id/feedList"
-        android:name="com.example.gradshub.FeedListFragment"
+        android:name="com.codefusiongroup.gradshub.feed.FeedListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context=".feed.FeedListFragment"
-        tools:listitem="@layout/fragment_feed_item" />
+        tools:listitem="@layout/fragment_my_groups_post_item" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progress_circular"
