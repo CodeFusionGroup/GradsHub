@@ -44,14 +44,6 @@ public class ExploreGroupsFragmentTest {
     }
 
     @Test
-    public void testSearchGroups() throws InterruptedException {
-        openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
-        onView(withText("Refresh")).perform(click());
-        waitForResources(2000);
-        onView(withId(R.id.list)).check(matches(isDisplayed()));
-    }
-
-    @Test
     public void testJoinGroupInvalid(){
         onView(withId(R.id.list)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
         onView(withId(R.id.joinBtn)).perform(click());
@@ -62,7 +54,6 @@ public class ExploreGroupsFragmentTest {
     @Test
     public void testJoinGroupValid(){
         //TODO: Edit php file to allow dummy joining of groups(Private/Public)
-
     }
 
     @After

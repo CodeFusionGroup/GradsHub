@@ -45,14 +45,13 @@ public class ProfileFragmentTest {
 
     @Test
     public void testViewProfile() throws InterruptedException {
-        onView(withId(R.id.usernameET)).perform(clearText(), typeText("TestUser"), closeSoftKeyboard());
+        onView(withId(R.id.firstNameET)).perform(clearText(), typeText("Test"), closeSoftKeyboard());
+        onView(withId(R.id.lastNameET)).perform(clearText(), typeText("User"), closeSoftKeyboard());
         onView(withId(R.id.emailET)).perform(clearText(), typeText("testuser@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.phoneNumberET)).perform(clearText(), typeText("01234567"), closeSoftKeyboard());
-        onView(withId(R.id.academicStatusET)).perform(clearText(), typeText("Honors"), closeSoftKeyboard());
         onView(withId(R.id.updateBtn)).perform(click());
         onView(withId(R.id.phoneNumberET)).perform(typeText("89"));
-        //TODO: Uncomment the following lines to test successful profile update. During this test run, the following method crashed the app.
-        //onView(withId(R.id.updateBtn)).perform(click());
+        onView(withId(R.id.updateBtn)).perform(click());
     }
 
 }
