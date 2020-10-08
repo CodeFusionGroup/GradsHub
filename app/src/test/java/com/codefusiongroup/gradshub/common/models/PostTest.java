@@ -1,15 +1,14 @@
-package com.codefusiongroup.gradshub.modelUnitTests;
-
-import com.codefusiongroup.gradshub.common.models.Post;
+package com.codefusiongroup.gradshub.common.models;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-//public Post(String postDate, String postSubject, String postDescription) {
 public class PostTest {
-    //Create the paceable object
+
     Post post = new Post();
+    Post post2 = new Post("10/10/2020", "Post Constructors", "A post with constructors");
+    Post post3 = new Post("10/10/2020", "Post Constructors", "A post with constructors", "New File");
 
     @Test
     public void testGetPostDate(){
@@ -74,4 +73,17 @@ public class PostTest {
         assertEquals(expected,actual);
     }
 
+    @Test
+    public void testGetFileName(){
+        String expected = "New File";
+        String actual = post3.getPostFileName();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testSetPostFileName(){
+        String expected = "New file";
+        post2.setPostFileName(expected);
+        assertEquals(expected, post2.getPostFileName());
+    }
 }

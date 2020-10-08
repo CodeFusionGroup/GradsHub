@@ -4,6 +4,8 @@ package com.codefusiongroup.gradshub.common.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Post implements Parcelable {
@@ -94,7 +96,7 @@ public class Post implements Parcelable {
     public void setPostFileName(String postFileName) { this.postFileName = postFileName; }
 
 
-
+    @VisibleForTesting
     protected Post(Parcel in) {
         postID = in.readString();
         postCreator = in.readString();
