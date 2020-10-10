@@ -44,7 +44,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <receiver android:name=".utils.EventNotificationPublisher" />
+        <receiver android:name=".utils.notifications.EventNotificationPublisher" />
 
         <!-- [START firebase_service] -->
         <service

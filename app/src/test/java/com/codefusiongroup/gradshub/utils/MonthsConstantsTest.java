@@ -1,8 +1,9 @@
 package com.codefusiongroup.gradshub.utils;
 
+import com.codefusiongroup.gradshub.utils.notifications.MonthsConstants;
+
 import org.junit.Test;
 
-import static com.codefusiongroup.gradshub.utils.MonthsConstants.setMonths;
 import static org.junit.Assert.*;
 
 public class MonthsConstantsTest {

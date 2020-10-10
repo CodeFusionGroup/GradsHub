@@ -1,6 +1,5 @@
 package com.codefusiongroup.gradshub.messaging;
 
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,11 +8,11 @@ import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
+import com.codefusiongroup.gradshub.common.repositories.UserRepositoryImpl;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.ChatMessage;
@@ -22,18 +21,13 @@ import com.codefusiongroup.gradshub.common.network.ApiBaseResponse;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesContract;
-import com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesFragment;
 import com.codefusiongroup.gradshub.messaging.chatMessages.ChatMessagesPresenter;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -41,7 +35,6 @@ import retrofit2.Callback;
 
 
 public class MessagingService extends FirebaseMessagingService implements ChatMessagesContract.IChatMessagesModel {
-
 
     private static final String TAG = "MessagingService" ;
 
@@ -72,89 +65,21 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
 
         // Check if message contains a data payload.
-        //=================================================
         if ( remoteMessage.getData().size() > 0 ) {
-
-            //if user is currently not interacting with chat messages ????
-
+            // if user is currently not interacting with chat messages ????
             Log.i(TAG, "Message data payload: " + remoteMessage.getData() );
-
 //            JsonObject jsonObject = new JsonObject();
 //            JsonObject dataJO = jsonObject.getAsJsonObject("data");
 //            ChatMessage message = new Gson().fromJson(dataJO, ChatMessage.class);
 //            ChatMessagesFragment.getInstance().updateChatMessages(message);
-
             //mPresenter.setChatMessage(message);
         }
-        //===================================================
 
-        // Check if message contains a notification payload.
+        // Check if message contains a notification payload and notify if true.
         if (remoteMessage.getNotification() != null) {
-
             String messageTitle = remoteMessage.getNotification().getTitle();
             String messageBody = remoteMessage.getNotification().getBody();
             sendFCMNotification(this, messageTitle, messageBody);
-
-            Log.i(TAG, "Notification Title: " + messageTitle);
-            Log.i(TAG, "Notification Body: " + messageBody);
-        }
-
-    }
-
-
-    @Override
-    public void onDeletedMessages() {
-        // perform full syc with the app server to get messages
-        Log.i(TAG, "Exceeded message limit");
-    }
-
-
-    @Override
-    public void onMessageSent(@NonNull String messageID) {
-        //mPresenter.setMessageSentState(true);
-        Log.i(TAG, "message id: "+messageID);
-    }
-
-
-    @Override
-    public void onSendError(@NonNull String messageID, @NonNull Exception e) {
-        //mPresenter.setMessageSentState(false);
-    }
-
-
-    // create and show message containing the received FCM message
-    private void sendFCMNotification(Context context, String messageTitle, String messageBody) {
-
-        Intent authActivityIntent = new Intent(context, AuthenticationActivity.class);
-        authActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent authPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
-
-        // set notification properties
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "0")
-                // Notification Channel Id is ignored for Android pre O (26).
-                .setSmallIcon(R.mipmap.applogo) // shows app icon next to the notification
-
-                .setContentTitle(messageTitle)
-                .setContentText(messageBody)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                // Set the intent that will fire when the user taps the notification
-                .setContentIntent(authPendingIntent)
-                // dismiss notification on swipe gesture
-                .setOngoing(false)
-                // automatically removes the notification when the user taps it.
-                .setAutoCancel(true);
-
-        // builder.build() returns the notification to be published
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (notificationManager != null) {
-            // TODO: proper handle of notification IDs
-            // for now generate random integers
-            Random notificationID = new Random();
-            notificationManager.notify( notificationID.nextInt(100), builder.build() );
-        }
-        else {
-            Log.i(TAG, "notificationManager is null");
         }
 
     }
@@ -162,15 +87,25 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
     @Override
     public void onNewToken(@NonNull String token) {
-        Log.i(TAG, "onNewToken() executed, new token is: " + token);
+        // update the token immediately if network request is successful otherwise save it and update
+        // next time the user logs in. This ensures that the token of the user is up to date since it
+        // can change for various reasons its best to update it immediately.
+        UserRepositoryImpl.getInstance().updateUserToken(UserPreferences.getInstance().userID, token);
+    }
 
-        // Save the user token for later usage
-        Context ctx = GradsHubApplication.getContext();
-        UserPreferences userPreferences = UserPreferences.getInstance();
-        userPreferences.tokenChanged(ctx);
-        userPreferences.saveFCMToken(token,ctx);
-        Log.i(TAG, "Shared preferences token " + userPreferences.getFCMToken(ctx) );
-        //updateUserToken(userID, token);
+    @Override
+    public void onDeletedMessages() {
+        Log.i(TAG, "onDeletedMessages() --> Exceeded message limit");
+    }
+
+    @Override
+    public void onMessageSent(@NonNull String messageID) {
+        Log.i(TAG, "onMessageSent() --> message sent successfully");
+    }
+
+    @Override
+    public void onSendError(@NonNull String messageID, @NonNull Exception e) {
+        Log.i(TAG, "onSendError() --> error sending message");
     }
 
 
@@ -190,6 +125,7 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
                 if ( response.isSuccessful() ) {
+                    Log.d(TAG, "sendUserMessage() --> response.isSuccessful() = true");
 
                     JsonObject jsonObject = response.body();
 
@@ -207,9 +143,10 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
                 else {
                     mPresenter.setInsertMessageResponseCode(ApiResponseConstants.SERVER_FAILURE_CODE);
-                    Log.i(TAG, "response.isSuccessful() = false");
-                    Log.i(TAG, "error code: " +response.code() );
-                    Log.i(TAG, "error message: " +response.message() );
+                    mPresenter.setInsertMessageResponseMsg("Failed to send message, please try again later.");
+                    Log.d(TAG, "sendUserMessage() --> response.isSuccessful() = false");
+                    Log.d(TAG, "error code: " +response.code() );
+                    Log.d(TAG, "error message: " +response.message() );
                 }
 
             }
@@ -217,12 +154,44 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 mPresenter.setInsertMessageResponseCode(ApiResponseConstants.SERVER_FAILURE_CODE);
-                mPresenter.setInsertMessageResponseMsg("failed to send message, please try again later.");
+                mPresenter.setInsertMessageResponseMsg("Failed to send message, please try again later.");
                 mPresenter.onRequestInsertMessageFinished();
-                t.printStackTrace();
+                Log.d(TAG, "sendUserMessage() --> onFailure executed, error: ", t);
             }
 
         });
+
+    }
+
+
+    // show notification for the message received on the receiver's device
+    private void sendFCMNotification(Context context, String messageTitle, String messageBody) {
+
+        Intent authActivityIntent = new Intent(context, AuthenticationActivity.class);
+        authActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent authPendingIntent = PendingIntent.getActivity(context, 0, authActivityIntent, 0);
+
+        // set notification properties
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "0")
+                // Notification Channel Id is ignored for Android pre O (26).
+                .setSmallIcon(R.mipmap.applogo)
+                .setContentTitle(messageTitle)
+                .setContentText(messageBody)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(authPendingIntent) // intent that will fire when the user taps the notification opens app
+                .setAutoCancel(true) // automatically removes the notification when the user taps it.
+                .setOngoing(false); // dismiss notification on swipe gesture
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (notificationManager != null) {
+            Random random = new Random();
+            int notificationID = random.nextInt(Integer.MAX_VALUE); // ensure uniqueness of notifications
+            notificationManager.notify( notificationID, builder.build() ); // builder.build() returns the notification to be published
+        }
+        else {
+            Log.i(TAG, "sendFCMNotification() --> notificationManager is null, could not send notification");
+        }
 
     }
 

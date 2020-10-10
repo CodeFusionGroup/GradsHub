@@ -28,5 +28,4 @@ public interface EventsAPI {
     @POST("User/updatefavourites.php")
     Call<JsonObject> unRegisterFavouredEvents(@Body HashMap<String, String> params);
 
-
 }

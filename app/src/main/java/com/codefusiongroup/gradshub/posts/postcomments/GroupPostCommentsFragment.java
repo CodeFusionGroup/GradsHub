@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment;
 import com.codefusiongroup.gradshub.common.models.Post;
 import com.codefusiongroup.gradshub.common.models.ResearchGroup;
@@ -42,13 +43,11 @@ import java.util.Locale;
 
 public class GroupPostCommentsFragment extends Fragment {
 
-
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ProgressBar progressBar;
     private View view;
     private TextInputEditText commentET;
+    private ProgressBar progressBar;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private GroupPostCommentsFragment.OnCommentsListFragmentInteractionListener mListener;
     private Post post;
     private String comment;
     private static ArrayList<Comment> commentsList = new ArrayList<>();
@@ -103,7 +102,7 @@ public class GroupPostCommentsFragment extends Fragment {
             });
         }
         else {
-            postDescriptionTV.setVisibility(View.VISIBLE);
+            postDescriptionTV.setVisibility(View.GONE);
             postDescriptionTV.setText(post.getPostDescription());
         }
 
@@ -114,14 +113,14 @@ public class GroupPostCommentsFragment extends Fragment {
 
         submitCommentBtn.setOnClickListener(v -> {
 
-            // TODO: toString() may produce null pointer since first time the onViewCreated() is called and there is no
-            //  text in the edit text. May have to fix later
             comment = commentET.getText().toString().trim();
             if ( isValidInput() ) {
 
                 ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
-                User user = MyGroupsProfileFragment.getUser();
-                String fullName = user.getFirstName() + " " + user.getLastName();
+                //TODO: must account for group from feed
+                MainActivity mainActivity = (MainActivity) requireActivity();
+                User user = mainActivity.user;
+                String fullName = user.getFullName();
 
                 String commentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
@@ -240,7 +239,7 @@ public class GroupPostCommentsFragment extends Fragment {
                     Context context = view.getContext();
                     RecyclerView recyclerView = view.findViewById(R.id.commentsList);
                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    GroupPostCommentsRecyclerViewAdapter adapter = new GroupPostCommentsRecyclerViewAdapter(commentsList, mListener);
+                    GroupPostCommentsRecyclerViewAdapter adapter = new GroupPostCommentsRecyclerViewAdapter(commentsList);
                     recyclerView.setAdapter(adapter);
                 }
 
@@ -261,6 +260,7 @@ public class GroupPostCommentsFragment extends Fragment {
         HashMap<String, String> params = new HashMap<>();
 
         params.put("user_id", user.getUserID());
+        //params.put("group_id", post.getPostGroupID());//TODO:needs id from php file
         params.put("group_id", researchGroup.getGroupID());
         params.put("post_id", post.getPostID());
         params.put("post_date", comment.getCommentDate());
@@ -305,36 +305,6 @@ public class GroupPostCommentsFragment extends Fragment {
             e.printStackTrace();
         }
 
-    }
-
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof GroupPostCommentsFragment.OnCommentsListFragmentInteractionListener) {
-            mListener = (GroupPostCommentsFragment.OnCommentsListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnCommentsListFragmentInteractionListener");
-        }
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface OnCommentsListFragmentInteractionListener {
-        void onCommentsListFragmentInteraction(Comment comment);
     }
 
 

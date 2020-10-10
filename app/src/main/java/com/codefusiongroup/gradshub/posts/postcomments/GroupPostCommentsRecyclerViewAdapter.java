@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codefusiongroup.gradshub.R;
-import com.codefusiongroup.gradshub.posts.postcomments.GroupPostCommentsFragment.OnCommentsListFragmentInteractionListener;
 
 import java.util.List;
 
@@ -18,12 +17,9 @@ public class GroupPostCommentsRecyclerViewAdapter extends RecyclerView.Adapter<G
 
 
     private final List<Comment> mValues;
-    private final OnCommentsListFragmentInteractionListener mListener;
 
-
-    public GroupPostCommentsRecyclerViewAdapter(List<Comment> items, OnCommentsListFragmentInteractionListener listener) {
+    public GroupPostCommentsRecyclerViewAdapter(List<Comment> items) {
         mValues = items;
-        mListener = listener;
     }
 
 
@@ -42,17 +38,6 @@ public class GroupPostCommentsRecyclerViewAdapter extends RecyclerView.Adapter<G
         holder.mCommentDateView.setText( mValues.get(position).getCommentDate() );
         holder.mCommentCreatorView.setText( mValues.get(position).getCommentCreator() );
         holder.mCommentView.setText( mValues.get(position).getComment() );
-
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onCommentsListFragmentInteraction(holder.mComment);
-                }
-            }
-        });
-
     }
 
 

@@ -37,6 +37,7 @@ public class User implements Parcelable {
     private String fcmToken;
     private boolean isBlocked = false;
     private boolean isAFriend = false;
+    private boolean isLoggedIn = false;
 
 
     public User(String firstName, String lastName, String email, String phoneNumber, String academicStatus, String password, String fcmToken) {
@@ -120,6 +121,10 @@ public class User implements Parcelable {
     public void setFriendStatus(boolean value) { isAFriend = value; }
 
     public boolean isAFriend() { return isAFriend; }
+
+    public void setLoginState(boolean value) { this.isLoggedIn = value; }
+
+    public boolean isLoggedIn() { return isLoggedIn; }
 
 
     protected User(Parcel in) {

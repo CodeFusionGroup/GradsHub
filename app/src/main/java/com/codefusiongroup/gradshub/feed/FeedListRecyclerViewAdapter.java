@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.models.Post;
-import com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.List;
 
 public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRecyclerViewAdapter.ViewHolder> {
 
-    private List<Post> mValuesFull;
     private final List<Post> mValues;
     private ArrayList<String> userAlreadyLikedPosts = new ArrayList<>();
     private ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>();
@@ -50,7 +48,6 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
                                        FeedListRecyclerViewAdapter.OnPostItemCommentListener onPostItemCommentListener,
                                        FeedListRecyclerViewAdapter.OnPostPDFDownloadListener onPostPDFDownloadListener) {
         mValues = items;
-        mValuesFull = new ArrayList<>(mValues);
         this.onPostItemLikedListener = onPostItemLikedListener;
         this.onPostItemCommentListener = onPostItemCommentListener;
         this.onPostPDFDownloadListener = onPostPDFDownloadListener;
@@ -78,35 +75,28 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
         userAlreadyLikedPosts = FeedListFragment.getPreviouslyLikedPosts();
 
         if ( userAlreadyLikedPosts != null ) {
-
             String itemId = holder.mItem.getPostID();
-
             for (String eventId: userAlreadyLikedPosts) {
-
                 if ( eventId.equals(itemId) ) {
                     holder.mPostLikeBtn.setColorFilter(Color.BLUE);
                     break;
                 }
-
             }
-
         }
 
-
-        if( mValues.get(position).getPostDescription().startsWith("https://firebasestorage") ) {
-
+        // post with pdf file
+        if( holder.mItem.getPostDescription().startsWith("https://firebasestorage") ) {
             holder.mPdfDownloadTVView.setVisibility(View.VISIBLE);
-
             holder.mPdfDownloadTVView.setOnClickListener(v -> {
                 onPostPDFDownloadListener.onPostPDFDownload(holder.mItem);
                 Toast.makeText(v.getContext(), "Downloading file...", Toast.LENGTH_SHORT).show();
             });
-
         }
         else {
-            holder.mPostDescriptionView.setText( mValues.get(position).getPostDescription() );
+            // post with normal link
+            holder.mPdfDownloadTVView.setVisibility(View.GONE);
+            holder.mPostDescriptionView.setText( holder.mItem.getPostDescription() );
         }
-
 
         holder.mPostLikeBtn.setOnClickListener(v -> {
 
@@ -118,7 +108,6 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
                 Toast.makeText(v.getContext(), "already liked post.", Toast.LENGTH_SHORT).show();
             }
             else {
-
                 onPostItemLikedListener.onPostItemLiked(holder.mItem);
                 likesCounter++;
                 holder.mItem.setPostLikesCount(likesCounter);
@@ -130,7 +119,6 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
             likesCounter = 0;
 
         });
-
 
         holder.mCommentBtn.setOnClickListener(v -> onPostItemCommentListener.onPostItemComment(holder.mItem));
 

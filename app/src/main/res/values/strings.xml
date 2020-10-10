@@ -30,8 +30,10 @@
         <item>Masters</item>
         <item>PhD</item>
     </string-array>
-    <!-- if the user does not select a valid academic status display this error message -->
-    <string name="spinnerErrorMsg">please select valid academic status</string>
+
+    <string name="status_hint">Select your academic status here</string>
+    <string name="status_error">please select valid academic status</string>
+
 
     <!-- attributes for fragment_reset_password-->
     <string name="password_reset_request_tv">Enter your email address to request for password reset</string>

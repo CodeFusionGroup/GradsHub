@@ -35,6 +35,7 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
+import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
@@ -82,8 +83,8 @@ public class EditProfileFragment extends Fragment implements AdapterView.OnItemS
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UserPreferences userPreferences = UserPreferences.getInstance();
-        mUser = userPreferences.getUserDetails( requireActivity() );
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mUser = mainActivity.user;
     }
 
 
@@ -282,7 +283,7 @@ public class EditProfileFragment extends Fragment implements AdapterView.OnItemS
             TextView errorText = (TextView) mSpinner.getSelectedView();
             errorText.setError("");
             errorText.setTextColor(Color.RED); // just to highlight that this is an error message, we display it in red.
-            errorText.setText(R.string.spinnerErrorMsg); // changes the selected item text to this text.
+            errorText.setText(R.string.status_error); // changes the selected item text to this text.
             mSpinner.requestFocus();
             return false;
 
