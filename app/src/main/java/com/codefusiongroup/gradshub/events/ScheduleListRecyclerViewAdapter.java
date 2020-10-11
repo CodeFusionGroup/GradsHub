@@ -63,7 +63,6 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_schedule_item, parent, false);
         return new ViewHolder(view);
     }
@@ -81,7 +80,7 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         holder.mPlaceView.setText( holder.mEvent.getPlace() );
         holder.mStarCountView.setText( String.valueOf( holder.mEvent.getStarCount() ) );
 
-        if ( mValues.get(position).isFavouredByUser() ) {
+        if ( holder.mEvent.isFavouredByUser() ) {
             holder.mFavouriteBtnView.setImageResource(R.drawable.ic_fav_filled);
             holder.mFavouriteBtnView.setColorFilter(Color.rgb(255,223,0));
         }
@@ -156,13 +155,11 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
 
         });
 
-
         holder.mView.setOnClickListener(v -> {
             if (null != mListener) {
                 mListener.onScheduleListFragmentInteraction(holder.mEvent);
             }
         });
-
 
     }
 
@@ -182,7 +179,6 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         public final TextView mStarCountView;
         public final ImageButton mFavouriteBtnView;
         public Schedule mEvent;
-
 
         public ViewHolder(View view) {
             super(view);
@@ -237,6 +233,5 @@ public class ScheduleListRecyclerViewAdapter extends RecyclerView.Adapter<Schedu
         }
         return results;
     }
-
 
 }

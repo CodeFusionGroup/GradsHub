@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
+import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.UserPreferences;
 import com.codefusiongroup.gradshub.common.models.Schedule;
 import com.codefusiongroup.gradshub.common.models.User;
@@ -48,7 +49,7 @@ public class ProfileFragment extends Fragment {
     private TextView mAcademicStatusTV;
 
     private User mUser;
-    private UserPreferences mUserPreferences;
+    //private UserPreferences mUserPreferences;
 
     private boolean profileUpdatedSuccessfully = false;
 
@@ -59,8 +60,8 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserPreferences = UserPreferences.getInstance();
-        mUser = mUserPreferences.getUserDetails( requireActivity() );
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mUser = mainActivity.user;
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -142,7 +143,7 @@ public class ProfileFragment extends Fragment {
                         mUser = new Gson().fromJson(userJO, User.class);
 
                         // save details to preferences
-                        mUserPreferences.saveUserDetails( mUser, requireActivity() );
+                        UserPreferences.getInstance().saveUserState( mUser, requireActivity() );
 
                         if ( !mUser.getProfilePicture().equals("no profilePicture set") ) {
                             Uri uri = Uri.parse( mUser.getProfilePicture() );

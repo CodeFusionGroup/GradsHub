@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -15,134 +16,127 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codefusiongroup.gradshub.R;
+import com.codefusiongroup.gradshub.utils.validations.FormValidator;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
-import com.codefusiongroup.gradshub.common.models.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
+import com.codefusiongroup.gradshub.common.UserPreferences;
+import com.codefusiongroup.gradshub.databinding.FragmentRegisterBinding;
+import com.codefusiongroup.gradshub.utils.forms.RegisterForm;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 
-public class RegisterFragment extends Fragment implements RegisterContract.IRegisterView, AdapterView.OnItemSelectedListener {
-
+public class RegisterFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static String TAG = "RegisterFragment";
-
-    private Spinner mSpinner;
-    private Button mSubmitBtn;
-    private ProgressBar mProgressBar;
-    private EditText mFirstNameET, mLastNameET, mEmailET, mPhoneNoET, mPasswordET, mConfirmPasswordET;
-
-    private String mToken; // Used for Firebase Cloud Messaging
-    private RegisterPresenter mRegisterPresenter;
-    private String mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword;
+    private FragmentRegisterBinding binding;
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mRegisterPresenter = new RegisterPresenter();
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_register, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // inflate view and obtain an instance of the binding class
+        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        return  binding.getRoot();
     }
 
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        initViewComponents(view);
-        initialiseSpinner(mSpinner);
+        binding.generateTokenBtn.setOnClickListener(v -> getUserToken());
 
-        mRegisterPresenter.subscribe(this);
-        Log.i(TAG, "register presenter has subscribed to RegisterFragment");
+        initialiseSpinner(binding.spinner);
 
-        mSubmitBtn.setOnClickListener(v -> {
+        // set the life cycle owner as the RegisterFragment for data binding
+        binding.setLifecycleOwner(this);
 
-            // must be passed inside onClick so that isValidInput() doesn't validate empty fields and that no empty fields
-            // are used to register a user.
-            mFirstName = mFirstNameET.getText().toString().trim();
-            mLastName = mLastNameET.getText().toString().trim();
-            mEmail = mEmailET.getText().toString().trim();
-            mPhoneNo = mPhoneNoET.getText().toString().trim();
-            mAcademicStatus = mSpinner.getSelectedItem().toString();
-            mPassword = mPasswordET.getText().toString().trim();
-            mConfirmPassword = mConfirmPasswordET.getText().toString().trim();
+        // Obtain the RegisterViewModel component
+        RegisterViewModel registerViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
 
-            if ( mRegisterPresenter.validateRegistrationInput(mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mConfirmPassword) ) {
-                // Register User with FCM Token
-                registrationWithToken();
+        // Assign the LoginViewModel component to a property (i.e setRegisterViewModel) in the binding class
+        binding.setRegisterViewModel(registerViewModel);
+
+        // bind error properties associated with registration form fields with the FormValidator
+        binding.setFormValidator( FormValidator.getInstance() );
+
+        // associate the binding object with the registration form
+        RegisterForm.getInstance().setRegisterBinding(binding);
+
+        // observe changes to live data objects in RegisterViewModel
+        observeViewModel(registerViewModel);
+
+        // ensure token is generated for user when they register
+        getUserToken();
+
+    }
+
+
+    private void observeViewModel(RegisterViewModel viewModel) {
+
+        viewModel.getTokenStatus().observe(getViewLifecycleOwner(), tokenGenerated -> {
+            if (!tokenGenerated) {
+                GradsHubApplication.showToast("Registration token not generated, click refresh token below or try again later.");
+                binding.generateTokenBtn.setVisibility(View.VISIBLE);
             }
+            else {
+                binding.generateTokenBtn.setVisibility(View.GONE);
+            }
+        });
 
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading) {
+                binding.progressCircular.setVisibility(View.VISIBLE);
+            }
+            else {
+                binding.progressCircular.setVisibility(View.GONE);
+            }
+        });
+
+        viewModel.getRegisterResponse().observe(getViewLifecycleOwner(), stringResource -> {
+            if (stringResource != null) {
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
+                navController.navigate(R.id.action_registerFragment_to_loginFragment);
+                GradsHubApplication.showToast(stringResource.message);
+            }
+            else {
+                Log.d(TAG, "stringResource is null");
+            }
         });
 
     }
 
 
-    private void initViewComponents(View view) {
-
-        mProgressBar = view.findViewById(R.id.progress_circular);
-        mSpinner = view.findViewById(R.id.spinner);
-        mFirstNameET = view.findViewById(R.id.firstNameET);
-        mLastNameET = view.findViewById(R.id.lastNameET);
-        mEmailET = view.findViewById(R.id.emailET);
-        mPhoneNoET = view.findViewById(R.id.phoneNumberET);
-        mPasswordET = view.findViewById(R.id.passwordET);
-        mConfirmPasswordET = view.findViewById(R.id.confirmNewPasswordET);
-        mSubmitBtn = view.findViewById(R.id.submitBtn);
-
-    }
-
-
-    // Retrieve the FCM registration token and register the user
-    public void registrationWithToken() {
+    private void getUserToken() {
 
         FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            .addOnCompleteListener(task -> {
 
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-
-                        if ( task.isSuccessful() ) {
-
-                            Log.i(TAG, "task.isSuccessful() = true");
-                            // Get new Instance ID token and register user
-                            if (task.getResult() != null) {
-                                mToken = task.getResult().getToken();
-                                Log.d(TAG, "token generated, mToken --->"+mToken);
-                                mRegisterPresenter.registerUser(new User(mFirstName, mLastName, mEmail, mPhoneNo, mAcademicStatus, mPassword, mToken));
-                            } else {
-                                GradsHubApplication.showToast("failed to register, please try again later.");
-                                Log.d(TAG, "task.getResult() is null");
-                            }
-                        }
-                        else {
-                            GradsHubApplication.showToast("failed to register, please try again later.");
-                            Log.i(TAG, "task.isSuccessful() = false");
-                            Log.d( TAG, "getInstanceId failed", task.getException() );
-                        }
-
+                if ( task.isSuccessful() ) {
+                    Log.d(TAG, "task.isSuccessful() = true");
+                    if (task.getResult() != null) {
+                        binding.generateTokenBtn.setVisibility(View.GONE);
+                        String token = task.getResult().getToken();
+                        UserPreferences.getInstance().saveTokenState( token, requireActivity() );
+                        GradsHubApplication.showToast("Token successfully generated, enter required fields to complete registration.");
                     }
+                    else {
+                        GradsHubApplication.showToast("Failed to generate registration token, please refresh page or try again later.");
+                        Log.d(TAG, "task.getResult() is null");
+                    }
+                }
+                else {
+                    GradsHubApplication.showToast("Failed to generate registration token, please refresh page or try again later.");
+                    Log.d(TAG, "getInstanceId() --> task.isSuccessful() = false", task.getException());
+                }
 
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                GradsHubApplication.showToast("failed to register, please try again later.");
-                Log.d( TAG, "FCM onFailure() executed", e );
-            }
-        });
+            })
+            .addOnFailureListener(e -> {
+                GradsHubApplication.showToast("Failed to generate registration token, please refresh page or try again later.");
+                Log.d( TAG, "FCM getInstanceId() --> onFailure() executed", e );
+            });
 
     }
 
@@ -150,7 +144,6 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
     // this part of the code allows us to create a spinner with a drop down list of items we want to display to the user to select.
     @VisibleForTesting
     private void initialiseSpinner(Spinner spinner) {
-
         // style and populate spinner.
         ArrayAdapter<CharSequence> academicStatusAdapter = ArrayAdapter.createFromResource(requireContext(),R.array.ACADEMIC_STATUS,android.R.layout.simple_spinner_item);
         // spinner will have drop down layout style.
@@ -159,7 +152,6 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
         spinner.setAdapter(academicStatusAdapter);
 
         spinner.setOnItemSelectedListener(this);
-
     }
 
 
@@ -188,98 +180,11 @@ public class RegisterFragment extends Fragment implements RegisterContract.IRegi
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        // empty
-    }
-
-
-    @Override
-    public void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-
-    @Override
-    public void hideProgressBar() {
-        mProgressBar.setVisibility(View.GONE);
-    }
-
-
-    @Override
-    public void showFirstNameInputError(String message) {
-        mFirstNameET.setError(message);
-        mFirstNameET.requestFocus();
-    }
-
-
-    @Override
-    public void showLastNameInputError(String message) {
-        mLastNameET.setError(message);
-        mLastNameET.requestFocus();
-    }
-
-
-    @Override
-    public void showEmailInputError(String message) {
-        mEmailET.setError(message);
-        mEmailET.requestFocus();
-    }
-
-
-    @Override
-    public void showPhoneNoInputError(String message) {
-        mPhoneNoET.setError(message);
-        mPhoneNoET.requestFocus();
-    }
-
-
-    @Override
-    public void showAcademicStatusInputError(String message) {
-
-        TextView errorText = (TextView) mSpinner.getSelectedView();
-        errorText.setError("");
-        errorText.setTextColor(Color.RED); // just to highlight that this is an error message, we display it in red.
-        errorText.setText(R.string.spinnerErrorMsg); // changes the selected item text to this text.
-        mSpinner.requestFocus();
-
-    }
-
-
-    @Override
-    public void showPasswordInputError(String message) {
-        mPasswordET.setError(message);
-        mPasswordET.requestFocus();
-    }
-
-
-    @Override
-    public void showPasswordConfirmationError(String message) {
-        mConfirmPasswordET.setError(message);
-        mConfirmPasswordET.requestFocus();
-    }
-
-
-    @Override
-    public void showRegistrationResponseMsg(String message) {
-        // requireActivity() will work fine here
-        Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show();
-    }
-
-
-    @Override
-    public void navigateToLogin() {
-        NavController navController = Navigation.findNavController(requireActivity(), R.id.authentication_nav_host_fragment);
-        navController.navigate(R.id.action_registerFragment_to_loginFragment);
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+        // no implementation
     }
 
 
     // ==================== TESTING CODE ===================================
-
 /*
     public void setFirstName(String firstName) {
         mFirstName = firstName;

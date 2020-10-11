@@ -2,16 +2,13 @@ package com.codefusiongroup.gradshub.authentication.login;
 
 //import androidx.test.espresso.intent.Intents;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
-import com.codefusiongroup.gradshub.utils.MonthsConstants;
+import com.codefusiongroup.gradshub.utils.notifications.MonthsConstants;
 
-import org.junit.AfterClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -29,8 +26,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
         import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.codefusiongroup.gradshub.authentication.AuthenticationActivityTest.waitForResources;
 import static com.codefusiongroup.gradshub.common.AssisterMethods.logInUser;
-import static com.codefusiongroup.gradshub.common.AssisterMethods.logUserOut;
-import static com.codefusiongroup.gradshub.common.AssisterMethods.state;
 import static org.junit.Assert.assertEquals;
 
 public class LoginFragmentTest {

@@ -2,14 +2,11 @@ package com.codefusiongroup.gradshub.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.codefusiongroup.gradshub.common.models.User;
 
 
 public class UserPreferences {
-
-    private static final String TAG = "UserPreferences";
 
     private final String USER_ID = "user_id";
     private final String FIRST_NAME = "first_name";
@@ -20,28 +17,32 @@ public class UserPreferences {
     private final String PROFILE_PICTURE = "profile_picture";
     private final String USER_NAME = "username";
     private final String LOGIN_STATE = "is_loggedIn";
-    private final String PREF_NAME = "com.codefusiongroup.gradshub.PREFERENCE_FILE_KEY";
     private final String FCM_TOKEN = "fcm_token";
     private final String FCM_TOKEN_CHANGED = "fcm_token_changed";
+    private final String PREF_NAME = "com.codefusiongroup.gradshub.PREFERENCE_FILE_KEY";
+
+    // update this variable with the current user id without retrieving the whole user object to access
+    // the id of the user (cannot be null since every user has an id and the user state is always
+    // set when the user logs in)
+    public static String userID;//TODO: this is null??? fix message api user id
 
     private SharedPreferences.Editor editor;
     private static UserPreferences instance;
 
-    private UserPreferences() {
+    // must explicitly define as private so cannot be instantiated directly by another class
+    private UserPreferences() { }
 
-    }
-
+    // singleton pattern
     public static UserPreferences getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new UserPreferences();
         }
-
         return instance;
     }
 
 
-    public void saveUserDetails(User user, Context context) {
-
+    public void saveUserState(User user, Context context) {
+        userID = user.getUserID();
         editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
                 .putString( USER_ID, user.getUserID() )
                 .putString( FIRST_NAME, user.getFirstName() )
@@ -50,71 +51,54 @@ public class UserPreferences {
                 .putString( PHONE_NO, user.getPhoneNumber() )
                 .putString( ACADEMIC_STATUS, user.getAcademicStatus() )
                 .putString( PROFILE_PICTURE, user.getProfilePicture() )
-                .putString( USER_NAME, user.getUsername() );
+                .putString( USER_NAME, user.getUsername() )
+                .putBoolean( LOGIN_STATE, true );
         editor.apply();
 
     }
 
 
-    public User getUserDetails(Context context) {
+    public User getUserState(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
-        SharedPreferences mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        String userID = mPreferences.getString(USER_ID, "no ID set");
-        String firstName = mPreferences.getString(FIRST_NAME, "no firstName set");
-        String lastName = mPreferences.getString(LAST_NAME, "no lastName set");
-        String email = mPreferences.getString(EMAIL, "no email set");
-        String phoneNumber = mPreferences.getString(PHONE_NO, "no phoneNo set");
-        String academicStatus = mPreferences.getString(ACADEMIC_STATUS, "no academicStatus set");
-        String profilePicture = mPreferences.getString(PROFILE_PICTURE, "no profilePicture set");
-        String username = mPreferences.getString(USER_NAME, "no username set");
+        String userID = preferences.getString(USER_ID, "no ID set");
+        String firstName = preferences.getString(FIRST_NAME, "no firstName set");
+        String lastName = preferences.getString(LAST_NAME, "no lastName set");
+        String email = preferences.getString(EMAIL, "no email set");
+        String phoneNumber = preferences.getString(PHONE_NO, "no phoneNo set");
+        String academicStatus = preferences.getString(ACADEMIC_STATUS, "no academicStatus set");
+        String profilePicture = preferences.getString(PROFILE_PICTURE, "no profilePicture set");
+        String username = preferences.getString(USER_NAME, "no username set");
+        boolean isLoggedIn = preferences.getBoolean(LOGIN_STATE, false);
 
         User user = new User(firstName, lastName, email, phoneNumber, academicStatus, null, null);
         user.setUserID(userID);
         user.setProfilePicture(profilePicture);
         user.setUsername(username);
+        user.setLoginState(isLoggedIn);
 
         return user;
 
     }
-
-
-    public boolean isLoggedIn(Context context) {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).getBoolean(LOGIN_STATE, false);
-    }
-
-
-    public void setLogInState(Context context) {
-        editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean(LOGIN_STATE, true);
-        editor.apply();
-    }
-
 
     public void setLogOutState(Context context) {
         editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean(LOGIN_STATE, false);
         editor.apply();
     }
 
-
-    public void saveFCMToken(String fcmToken, Context context) {
-        editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putString(FCM_TOKEN, fcmToken);;
+    public void saveTokenState(String token, Context context) {
+        editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
+                .putBoolean(FCM_TOKEN_CHANGED, true)
+                .putString(FCM_TOKEN, token);
         editor.apply();
     }
-
-
-    public String getFCMToken(Context context) {
-        return context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE).getString(FCM_TOKEN,"Token Not Found");
-    }
-
-
-    public void tokenChanged(Context context) {
-        editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean(FCM_TOKEN_CHANGED, true);
-        editor.apply();
-    }
-
 
     public boolean isTokenChanged(Context context) {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).getBoolean(FCM_TOKEN_CHANGED, false);
+    }
+
+    public String getToken(Context context) {
+        return context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE).getString(FCM_TOKEN,"no token set");
     }
 
 }

@@ -75,9 +75,6 @@ public class MyGroupsProfileFragment extends Fragment {
     // listener that keeps track of which post PDF the user wants to download
     private GroupPostsListRecyclerViewAdapter.OnPostPDFDownloadListener onPostPDFDownloadListener;
 
-    // listener that keeps track of which post has the user clicked on
-    private MyGroupsProfileFragment.OnPostsListFragmentInteractionListener mListener;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,7 +98,7 @@ public class MyGroupsProfileFragment extends Fragment {
             Context context = view.getContext();
             recyclerView = view.findViewById(R.id.postsList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
+            adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
             recyclerView.setAdapter(adapter);
         }
 
@@ -121,9 +118,7 @@ public class MyGroupsProfileFragment extends Fragment {
         getGroupPosts();
         progressBar.setVisibility(View.VISIBLE);
 
-
         onPostItemLikedListener = item -> userCurrentlyLikedPosts.add(item.getPostID());
-
 
         onPostItemCommentListener = item -> {
 
@@ -134,9 +129,7 @@ public class MyGroupsProfileFragment extends Fragment {
 
         };
 
-
         onPostPDFDownloadListener = item -> downloadFile(requireActivity(), item.getPostFileName(), ".pdf", DIRECTORY_DOWNLOADS, item.getPostDescription());
-
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(view1 -> {
@@ -155,7 +148,6 @@ public class MyGroupsProfileFragment extends Fragment {
                 getGroupPosts();
             }
         });
-
 
     }
 
@@ -206,12 +198,10 @@ public class MyGroupsProfileFragment extends Fragment {
 
             // this group has no posts yet.
             if (statusCode.equals("0")) {
-
                 mSwipeRefreshLayout.setRefreshing(false);
                 if (view instanceof RelativeLayout) {
                     progressBar.setVisibility(View.GONE);
                 }
-
                 Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
             }
 
@@ -220,7 +210,6 @@ public class MyGroupsProfileFragment extends Fragment {
 
                 JSONArray groupPostsJA = response.getJSONArray("message");
                 String postDescription = null;
-
 
                 for(int i = 0 ; i < groupPostsJA.length(); i++) {
 
@@ -243,8 +232,16 @@ public class MyGroupsProfileFragment extends Fragment {
                     String postSubject = groupPostJO.getString("POST_TITLE");
                     String postDate = groupPostJO.getString("POST_DATE");
                     String postID = groupPostJO.getString("GROUP_POST_ID");
-                    int noLikes = Integer.parseInt(groupPostJO.getString("NO_OF_LIKES"));
-                    int noComments = Integer.parseInt(groupPostJO.getString("NO_OF_COMMENTS"));
+
+                    int noLikes = 0;
+                    if ( !groupPostJO.isNull("NO_OF_LIKES") ) {
+                        noLikes = Integer.parseInt(groupPostJO.getString("NO_OF_LIKES"));
+                    }
+
+                    int noComments = 0;
+                    if ( !groupPostJO.isNull("NO_OF_COMMENTS") ) {
+                        noComments = Integer.parseInt(groupPostJO.getString("NO_OF_COMMENTS"));
+                    }
 
                     post.setPostID(postID);
                     post.setPostDate(postDate);
@@ -255,7 +252,6 @@ public class MyGroupsProfileFragment extends Fragment {
                     post.setPostCommentsCount(noComments);
 
                     groupPosts.add(post);
-
                 }
 
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -264,7 +260,7 @@ public class MyGroupsProfileFragment extends Fragment {
                     Context context = view.getContext();
                     recyclerView = view.findViewById(R.id.postsList);
                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, mListener, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
+                    adapter = new GroupPostsListRecyclerViewAdapter(groupPosts, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
                     recyclerView.setAdapter(adapter);
                 }
 
@@ -319,13 +315,11 @@ public class MyGroupsProfileFragment extends Fragment {
 
             // user has previously liked posts in this group
             if (statusCode.equals("1")) {
-
                 JSONArray ja = response.getJSONArray("message");
                 for(int i = 0 ; i < ja.length(); i++) {
                     JSONObject jasonObject = (JSONObject)ja.get(i);
                     userAlreadyLikedPosts.add(jasonObject.getString("GROUP_POST_ID"));
                 }
-
             }
 
         } catch (JSONException e) {
@@ -446,36 +440,6 @@ public class MyGroupsProfileFragment extends Fragment {
         shareCodeIntent.putExtra(android.content.Intent.EXTRA_TEXT, groupInviteCode);
         startActivity(Intent.createChooser(shareCodeIntent, "share invite code via"));
 
-    }
-
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof MyGroupsProfileFragment.OnPostsListFragmentInteractionListener) {
-            mListener = (MyGroupsProfileFragment.OnPostsListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnPostsListFragmentInteractionListener");
-        }
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    public interface OnPostsListFragmentInteractionListener {
-        void onPostsListFragmentInteraction(Post item);
     }
 
 

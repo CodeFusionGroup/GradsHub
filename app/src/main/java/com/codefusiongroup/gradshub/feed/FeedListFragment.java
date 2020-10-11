@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,7 +33,6 @@ import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
-import com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -58,15 +56,11 @@ public class FeedListFragment extends Fragment {
 
     private static final String TAG = "FeedListFragment";
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mView;
     private ProgressBar mProgressBar;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    //private RecyclerView recyclerView;
     private FeedListRecyclerViewAdapter mAdapter;
-
-    private static ArrayList<String> userAlreadyLikedPosts = new ArrayList<>(); // values are post IDs
-    private static ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>(); // values are post IDs
-    private List<Post> groupPosts = new ArrayList<>();
 
     // listener that keeps track of which post is liked in the feed
     private FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener;
@@ -77,10 +71,10 @@ public class FeedListFragment extends Fragment {
     // listener that keeps track of which post PDF the user wants to download
     private FeedListRecyclerViewAdapter.OnPostPDFDownloadListener onPostPDFDownloadListener;
 
-    private ArrayList<Post> mLatestPosts = new ArrayList<>();
-
-    private View mView;
     private static User mUser;
+    private List<Post> mLatestPosts = new ArrayList<>();
+    private static ArrayList<String> userAlreadyLikedPosts = new ArrayList<>(); // values are post IDs
+    private static ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>(); // values are post IDs
 
 
     @Override
@@ -91,27 +85,12 @@ public class FeedListFragment extends Fragment {
         if(getArguments()!=null) {
             mUser = getArguments().getParcelable("user");
         }
-
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_feed_item_list, container, false);
-
-        groupPosts.clear();
-        Post post1 = new Post("2020-10-02", "Android 11", "developer.android.com");
-        Post post2 = new Post("2020-09-25", "Android 10", "developer.android.com");
-        Post post3 = new Post("2020-09-10", "Android Pie", "developer.android.com");
-        Post post4 = new Post("2020-09-01", "Android Oreo", "developer.android.com");
-        Post post5 = new Post("2020-08-21", "Android Nougat", "developer.android.com");
-
-        groupPosts.add(post1);
-        groupPosts.add(post2);
-        groupPosts.add(post3);
-        groupPosts.add(post4);
-        groupPosts.add(post5);
-
         return mView;
     }
 
@@ -122,14 +101,17 @@ public class FeedListFragment extends Fragment {
         mSwipeRefreshLayout = view.findViewById(R.id.refresh);
         mProgressBar = view.findViewById(R.id.progress_circular);
 
-        //getUserFeedLikedPosts();
-        //fetchLatestPosts( mUser.getUserID() );
+        // progress bar and swipe refresh layout must be initialised before these network calls
+        assert mUser != null;
+        fetchFeedLatestPosts( mUser.getUserID() );
+        getUserFeedLikedPosts();
 
         // if network request to fetch latest posts for feed fails, the user can refresh the page to
         // initiate another request
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            //fetchLatestPosts( mUser.getUserID() );
-            //mSwipeRefreshLayout.setRefreshing(true);
+            getUserFeedLikedPosts();
+            fetchFeedLatestPosts( mUser.getUserID() );
+            mSwipeRefreshLayout.setRefreshing(true);
         });
 
         onPostItemLikedListener = item -> userCurrentlyLikedPosts.add( item.getPostID() );
@@ -143,21 +125,19 @@ public class FeedListFragment extends Fragment {
 
         onPostPDFDownloadListener = item -> downloadFile(requireActivity(), item.getPostFileName(), ".pdf", DIRECTORY_DOWNLOADS, item.getPostDescription());
 
-
         // listeners must be initialised before setting adapter
-        if (mView instanceof RelativeLayout) {
-            Context context = mView.getContext();
-            RecyclerView recyclerView = mView.findViewById(R.id.feedList);
+        if (view instanceof RelativeLayout) {
+            Context context = view.getContext();
+            RecyclerView recyclerView = view.findViewById(R.id.feedList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            mAdapter = new FeedListRecyclerViewAdapter(groupPosts, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
+            mAdapter = new FeedListRecyclerViewAdapter(mLatestPosts, onPostItemLikedListener, onPostItemCommentListener, onPostPDFDownloadListener);
             recyclerView.setAdapter(mAdapter);
         }
-
 
     }
 
 
-    private void fetchLatestPosts(String userID) {
+    private void fetchFeedLatestPosts(String userID) {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", userID);
@@ -174,7 +154,7 @@ public class FeedListFragment extends Fragment {
                 mProgressBar.setVisibility(View.GONE);
 
                 if ( response.isSuccessful() ) {
-                    Log.d(TAG, "fetchLatestPosts() --> response.isSuccessful() = true");
+                    Log.d(TAG, "fetchFeedLatestPosts() --> response.isSuccessful() = true");
 
                     JsonObject jsonObject = response.body();
 
@@ -185,24 +165,70 @@ public class FeedListFragment extends Fragment {
 
                         for (JsonElement jsonElement: latestPostsJA) {
                             JsonObject latestPostJO = jsonElement.getAsJsonObject();
-                            Post post = new Gson().fromJson(latestPostJO, Post.class);
+
+                            Post post = new Post();
+                            String postDescription;
+
+                            JsonElement postFileJE = latestPostJO.get("POST_FILE");
+                            // check if post is for a pdf file
+                            if( postFileJE != null && !postFileJE.isJsonNull() ) {
+                                postDescription = latestPostJO.get("POST_FILE").getAsString();
+                                String postFileName = latestPostJO.get("POST_FILE_NAME").getAsString();
+                                post.setPostFileName(postFileName);
+
+                            }
+                            // post description is for a normal link
+                            else {
+                                postDescription = latestPostJO.get("POST_URL").getAsString();
+                            }
+
+                            JsonElement postLikesCountJE = latestPostJO.get("NO_OF_LIKES");
+                            int noLikes = 0;
+                            if (postLikesCountJE != null && !postLikesCountJE.isJsonNull()) {
+                                noLikes = Integer.parseInt(latestPostJO.get("NO_OF_LIKES").getAsString());
+                            }
+
+                            JsonElement postCommentsCountJE = latestPostJO.get("NO_OF_COMMENTS");
+                            int noComments = 0;
+                            if (postCommentsCountJE != null && !postCommentsCountJE.isJsonNull()) {
+                                noComments = Integer.parseInt(latestPostJO.get("NO_OF_COMMENTS").getAsString());
+                            }
+
+                            String firstName = latestPostJO.get("USER_FNAME").getAsString();
+                            String lastName = latestPostJO.get("USER_LNAME").getAsString();
+                            String postCreator = firstName + " "+ lastName;
+                            String postSubject = latestPostJO.get("POST_TITLE").getAsString();
+                            String postDate = latestPostJO.get("POST_DATE").getAsString();
+                            String postID = latestPostJO.get("GROUP_POST_ID").getAsString();
+
+                            //TODO: needs id from php file
+                            //String groupID = latestPostJO.get("GROUP_ID").getAsString();
+
+                            post.setPostID(postID);
+                            post.setPostDate(postDate);
+                            post.setPostCreator(postCreator);
+                            post.setPostSubject(postSubject);
+                            post.setPostDescription(postDescription);
+                            post.setPostLikesCount(noLikes);
+                            post.setPostCommentsCount(noComments);
+
+                            //Post post = new Gson().fromJson(latestPostJO, Post.class);
                             latestPosts.add(post);
                         }
-
                         // mAdapter must point to the same object mLatestPosts otherwise recycler view won't update
                         mLatestPosts.clear();
                         mLatestPosts.addAll(latestPosts);
                         mAdapter.notifyDataSetChanged();
                     }
-                    // no latest posts
+
                     else {
                         GradsHubApplication.showToast("no latest posts exist yet.");
                     }
                 }
 
                 else {
-                    GradsHubApplication.showToast("Failed to show feed, please swipe to refresh page or try again later.");
-                    Log.d(TAG, "fetchLatestPosts() --> response.isSuccessful() = false");
+                    GradsHubApplication.showToast("Failed to load feed, please swipe to refresh page or try again later.");
+                    Log.d(TAG, "fetchFeedLatestPosts() --> response.isSuccessful() = false");
                     Log.d(TAG, "error code: " +response.code() );
                     Log.d(TAG, "error message: " +response.message() );
                 }
@@ -211,10 +237,12 @@ public class FeedListFragment extends Fragment {
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                if ( mSwipeRefreshLayout.isRefreshing() ) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
                 mProgressBar.setVisibility(View.GONE);
-                GradsHubApplication.showToast("Failed to show feed, please swipe to refresh page or try again later.");
-                Log.d(TAG, "fetchUserOpenChats() --> onFailure executed, error: ", t);
-                t.printStackTrace();
+                GradsHubApplication.showToast("Failed to load feed, please swipe to refresh page or try again later.");
+                Log.d(TAG, "fetchFeedLatestPosts() --> onFailure executed, error: ", t);
             }
 
         });
@@ -264,15 +292,14 @@ public class FeedListFragment extends Fragment {
 
             // user has previously liked posts in this group
             if (statusCode.equals("1")) {
-
                 JSONArray ja = response.getJSONArray("message");
                 for(int i = 0 ; i < ja.length(); i++) {
                     JSONObject jasonObject = (JSONObject)ja.get(i);
                     userAlreadyLikedPosts.add(jasonObject.getString("GROUP_POST_ID"));
                 }
-
             }
 
+            Log.d(TAG, "userAlreadyLikedPosts size: "+userAlreadyLikedPosts.size());
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codefusiongroup.gradshub.R;
-import com.codefusiongroup.gradshub.groups.userGroups.userGroupProfile.MyGroupsProfileFragment.OnPostsListFragmentInteractionListener;
 import com.codefusiongroup.gradshub.common.models.Post;
 
 import java.util.ArrayList;
@@ -22,15 +21,11 @@ import java.util.List;
 
 public class GroupPostsListRecyclerViewAdapter extends RecyclerView.Adapter<GroupPostsListRecyclerViewAdapter.ViewHolder> {
 
-
-    private List<Post> mValuesFull;
     private final List<Post> mValues;
     private ArrayList<String> userAlreadyLikedPosts = new ArrayList<>();
     private ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>();
 
     private int likesCounter = 0;
-
-    private final MyGroupsProfileFragment.OnPostsListFragmentInteractionListener mListener;
 
     private OnPostItemLikedListener onPostItemLikedListener;
     interface OnPostItemLikedListener {
@@ -48,13 +43,10 @@ public class GroupPostsListRecyclerViewAdapter extends RecyclerView.Adapter<Grou
     }
 
 
-    public GroupPostsListRecyclerViewAdapter(List<Post> items, OnPostsListFragmentInteractionListener listener,
-                                             OnPostItemLikedListener onPostItemLikedListener,
+    public GroupPostsListRecyclerViewAdapter(List<Post> items, OnPostItemLikedListener onPostItemLikedListener,
                                              OnPostItemCommentListener onPostItemCommentListener,
                                              OnPostPDFDownloadListener onPostPDFDownloadListener) {
         mValues = items;
-        mListener = listener;
-        mValuesFull = new ArrayList<>(mValues);
         this.onPostItemLikedListener = onPostItemLikedListener;
         this.onPostItemCommentListener = onPostItemCommentListener;
         this.onPostPDFDownloadListener = onPostPDFDownloadListener;
@@ -139,14 +131,6 @@ public class GroupPostsListRecyclerViewAdapter extends RecyclerView.Adapter<Grou
 
 
         holder.mCommentBtn.setOnClickListener(v -> onPostItemCommentListener.onPostItemComment(holder.mItem));
-
-
-        holder.mView.setOnClickListener(v -> {
-            if (null != mListener) {
-                mListener.onPostsListFragmentInteraction(holder.mItem);
-            }
-        });
-
 
     }
 

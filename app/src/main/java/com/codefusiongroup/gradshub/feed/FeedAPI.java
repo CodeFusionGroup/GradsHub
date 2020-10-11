@@ -10,7 +10,7 @@ import retrofit2.http.POST;
 
 public interface FeedAPI {
 
-    @POST("Posts/fetchLatestPosts.php")
+    @POST("GroupPost/feed.php")
     Call<JsonObject> getLatestPosts(@Body HashMap<String, String> params);
 
 }

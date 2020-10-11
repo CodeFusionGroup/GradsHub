@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/resetPasswordFragment"
-        android:name="com.codefusiongroup.gradshub.authentication.login.ResetPasswordFragment"
+        android:name="com.codefusiongroup.gradshub.authentication.passwordReset.ResetPasswordFragment"
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password">
         <action

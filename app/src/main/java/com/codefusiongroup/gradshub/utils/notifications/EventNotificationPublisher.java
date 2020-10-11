@@ -1,4 +1,4 @@
-package com.codefusiongroup.gradshub.utils;
+package com.codefusiongroup.gradshub.utils.notifications;
 
 import android.app.Notification;
 import android.content.BroadcastReceiver;
