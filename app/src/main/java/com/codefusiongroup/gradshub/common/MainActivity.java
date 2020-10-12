@@ -45,6 +45,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.MenuCompat;
 import androidx.navigation.NavController;
@@ -949,4 +950,12 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     }
 
+    //================================Testing code==================================================
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public void processFavouredEventsTest(ArrayList<String>events){
+        //String id, String title, String link, String deadline, String timezone, String date, String place
+        eventsSchedule.add(new Schedule("10021102", "title", "https://wits.ac.za","11/10/2020","GMT2+", "10/10/2020", "Wits"));
+        processFavouredEvents(events);
+    }
 }

@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -42,7 +43,16 @@ public class MainActivityTest{
         String result = mockedMainActivity.validateEventLinkFormat(link2);
         assertThat(result, is("http://google.com"));
     }
-/*
+    @Test
+    public void testProcessFavouriteEvents(){
+        MainActivity m = new MainActivity();
+        ArrayList<String>events = new ArrayList<>();
+        events.add(new String("10021102"));
+        //10021102
+        m.processFavouredEventsTest(events);
+    }
+
+    /*
     Tests depends on alarm context. Impossible to unit test without device
     @Test
     public void  testScheduleNotification(){
