@@ -47,7 +47,7 @@ public class MainActivityTest{
     public void testProcessFavouriteEvents(){
         MainActivity m = new MainActivity();
         ArrayList<String>events = new ArrayList<>();
-        events.add(new String("10021102"));
+        events.add(new String("wmt20"));
         //10021102
         m.processFavouredEventsTest(events);
     }

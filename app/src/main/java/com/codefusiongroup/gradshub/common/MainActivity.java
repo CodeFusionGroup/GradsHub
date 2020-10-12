@@ -955,7 +955,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public void processFavouredEventsTest(ArrayList<String>events){
         //String id, String title, String link, String deadline, String timezone, String date, String place
-        eventsSchedule.add(new Schedule("10021102", "title", "https://wits.ac.za","11/10/2020","GMT2+", "10/10/2020", "Wits"));
+        eventsSchedule.add(new Schedule("wmt20", "WMT", "https://wits.ac.za","2020-08-15 23:59:00","UTC-12", "November 19-20, 202", "Wits"));
         processFavouredEvents(events);
     }
 }
