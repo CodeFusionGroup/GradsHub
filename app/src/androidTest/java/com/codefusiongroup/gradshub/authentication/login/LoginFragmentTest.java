@@ -37,41 +37,6 @@ public class LoginFragmentTest {
     public ActivityScenarioRule<AuthenticationActivity> rule = new ActivityScenarioRule<AuthenticationActivity>(AuthenticationActivity.class);
 
     @Test
-    public void inValidInputEmptyEmail(){
-        onView(withId(R.id.passwordET)).perform(typeText(password));
-        closeSoftKeyboard();
-        onView(withId(R.id.loginBtn)).perform(click());
-        onView(withId(R.id.emailET)).check(matches(hasErrorText(fieldError)));      //Correct error message was returned.
-    }
-
-    @Test
-    public void inValidInputEmptyPasswordField(){
-        onView(withId(R.id.emailET)).perform(typeText(username));
-        closeSoftKeyboard();
-        onView(withId(R.id.loginBtn)).perform(click());
-        onView(withId(R.id.passwordET)).check(matches(hasErrorText(fieldError)));        //Correct error message was returned.
-    }
-
-    @Test
-    public void inValidEmailAddressEntered(){
-        onView(withId(R.id.emailET)).perform(typeText("testuser"));
-        closeSoftKeyboard();
-        onView(withId(R.id.loginBtn)).perform(click());
-        onView(withId(R.id.emailET)).check(matches(hasErrorText("Check that your email address is entered correctly!")));      //Correct error message was returned.
-    }
-
-    @Test
-    public void inValidLogInDetails() throws InterruptedException {
-        onView(withId(R.id.emailET)).perform(typeText(username));
-        closeSoftKeyboard();
-        onView(withId(R.id.passwordET)).perform(typeText("wrongpass"));
-        closeSoftKeyboard();
-        onView(withId(R.id.loginBtn)).perform(click());
-        waitForResources(3000);     //Wait for the error report
-        //onView(withText("Incorrect Password.Please try again!")).check(matches(isDisplayed()));      //Correct error message was returned
-    }
-     
-    @Test
     public void testUserLogin() throws InterruptedException, UiObjectNotFoundException {
         logInUser();
         onView(withId(R.id.toolbar)).check(matches(isDisplayed()));       //This is the first view that should be visible after the user logs in.
@@ -82,15 +47,5 @@ public class LoginFragmentTest {
         //logUserOut();
     }
 
-    /*----------------------------------------------------------------Unit Test---------------------------------------------*/
-    private String[] months = {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
-            "OCTOBER", "NOVEMBER", "DECEMBER"};
-    @Test
-    public void setMonthsTest() {
-        for(int i = 0;i<12;i++){
-            int actual = MonthsConstants.setMonths(months[i]);
-            assertEquals(i, actual);
-        }
-    }
 
 }
