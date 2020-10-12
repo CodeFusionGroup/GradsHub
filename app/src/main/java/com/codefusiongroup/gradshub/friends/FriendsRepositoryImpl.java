@@ -96,15 +96,13 @@ public class FriendsRepositoryImpl implements IFriendsRepository {
                             String userID = userFriendJO.get("USER_ID").getAsString();
                             String firstName = userFriendJO.get("USER_FNAME").getAsString();
                             String lastName = userFriendJO.get("USER_LNAME").getAsString();
-
-                            //TODO: needs php file
-                            //String academicStatus = userFriendJO.get("USER_ACAD_STATUS").getAsString();
+                            String academicStatus = userFriendJO.get("USER_ACAD_STATUS").getAsString();
 
                             User user = new User();
                             user.setUserID(userID);
                             user.setFirstName(firstName);
                             user.setLastName(lastName);
-                            //user.setAcademicStatus(academicStatus);
+                            user.setAcademicStatus(academicStatus);
                             user.setFriendStatus(true);
                             friendsList.add(user);
                         }
