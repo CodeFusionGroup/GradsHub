@@ -239,11 +239,14 @@ public class UserRepositoryImpl implements IUserRepository {
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
                 if ( response.isSuccessful() ) {
-                    // NOTE: commented out on purpose
-                    //GradsHubApplication.showToast("Your token for messaging was successfully restored.");
+
+                    JsonObject jsonObject = response.body();
+                    // we don't show a toast for this
                     Log.i(TAG, "updateUserToken() --> response.isSuccessful() = true");
+                    Log.i(TAG, "api response: "+ jsonObject.get("message").getAsString());
                 }
                 else {
+                    // if token update on DB was not successful then store it on preferences
                     UserPreferences.getInstance().saveTokenState(token, GradsHubApplication.getContext());
                     Log.i(TAG, "updateUserToken() --> response.isSuccessful() = false");
                     Log.i(TAG, "error code: " +response.code() );
@@ -254,6 +257,7 @@ public class UserRepositoryImpl implements IUserRepository {
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                // if token update on DB was not successful then store it on preferences
                 UserPreferences.getInstance().saveTokenState(token, GradsHubApplication.getContext());
                 Log.i(TAG, "updateUserToken() --> onFailure executed, error: ", t);
             }

@@ -66,11 +66,11 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
     public void onBindViewHolder(final FeedListRecyclerViewAdapter.ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
 
-        holder.mPostDateView.setText( mValues.get(position).getPostDate() );
-        holder.mPostCreatorView.setText( mValues.get(position).getPostCreator() );
-        holder.mPostSubjectView.setText( mValues.get(position).getPostSubject() );
-        holder.mPostNoOfLikesView.setText( String.valueOf( mValues.get(position).getPostLikesCount() ) );
-        holder.mPostNoOfCommentsView.setText( String.valueOf( mValues.get(position).getPostCommentsCount() ) );
+        holder.mPostDateView.setText( holder.mItem.getPostDate() );
+        holder.mPostCreatorView.setText( holder.mItem.getPostCreator() );
+        holder.mPostSubjectView.setText( holder.mItem.getPostSubject() );
+        holder.mPostNoOfLikesView.setText( String.valueOf( holder.mItem.getPostLikesCount() ) );
+        holder.mPostNoOfCommentsView.setText( String.valueOf( holder.mItem.getPostCommentsCount() ) );
 
         userAlreadyLikedPosts = FeedListFragment.getPreviouslyLikedPosts();
 

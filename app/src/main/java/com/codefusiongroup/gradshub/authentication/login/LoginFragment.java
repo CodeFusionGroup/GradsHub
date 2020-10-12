@@ -104,7 +104,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         if (userResource.data != null) {
                             mUserPreferences.saveUserState( userResource.data, requireActivity() );
                             startMainActivity(userResource.data);
-                            GradsHubApplication.showToast(userResource.message);
+                            // commented out toast message to prevent conflict when there are multiple
+                            // toast messages to show
+                            //GradsHubApplication.showToast(userResource.message);
                             viewModel.onLoginSuccessful(); // set live data object to null
                         }
                         else {

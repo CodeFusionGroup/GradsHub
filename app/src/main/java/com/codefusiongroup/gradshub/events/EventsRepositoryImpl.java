@@ -89,9 +89,6 @@ public class EventsRepositoryImpl implements IEventsRepository {
         params.put("user_id", userID);
         params.put("event_ids", eventsIDs.toString());
 
-        Log.d(TAG, "registerFavouredEvents() --> user id: "+userID);
-        Log.d(TAG, "registerFavouredEvents() --> favoured events: "+eventsIDs.toString());
-
         eventsAPI.registerFavouredEvents(params).enqueue(new Callback<JsonObject>() {
 
             @Override
@@ -136,9 +133,6 @@ public class EventsRepositoryImpl implements IEventsRepository {
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", userID);
         params.put("event_ids", eventsIDs.toString());
-
-        Log.d(TAG, "unRegisterFavouredEvents() --> user id: "+userID);
-        Log.d(TAG, "unRegisterFavouredEvents() --> unfavoured events: "+eventsIDs.toString());
 
         eventsAPI.unRegisterFavouredEvents(params).enqueue(new Callback<JsonObject>() {
 
@@ -272,6 +266,5 @@ public class EventsRepositoryImpl implements IEventsRepository {
         });
 
     }
-
 
 }

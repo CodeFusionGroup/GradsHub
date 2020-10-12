@@ -74,7 +74,7 @@ public class RegisterViewModel extends ObservableViewModel {
         if ( this.firstName.equals(firstName) ) {
             return;
         }
-        this.firstName = firstName.trim();
+        this.firstName = firstName;
         notifyPropertyChanged(BR.firstName);
     }
 
@@ -83,7 +83,7 @@ public class RegisterViewModel extends ObservableViewModel {
         if ( this.lastName.equals(lastName) ) {
             return;
         }
-        this.lastName = lastName.trim();
+        this.lastName = lastName;
         notifyPropertyChanged(BR.lastName);
     }
 
@@ -92,7 +92,7 @@ public class RegisterViewModel extends ObservableViewModel {
         if ( this.email.equals(email) ) {
             return;
         }
-        this.email = email.trim();
+        this.email = email;
         notifyPropertyChanged(BR.email);
     }
 
@@ -110,7 +110,7 @@ public class RegisterViewModel extends ObservableViewModel {
         if ( this.password.equals(password) ) {
             return;
         }
-        this.password = password.trim();
+        this.password = password;
         notifyPropertyChanged(BR.password);
     }
 
@@ -119,7 +119,7 @@ public class RegisterViewModel extends ObservableViewModel {
         if ( this.confirmPassword.equals(confirmPassword) ) {
             return;
         }
-        this.confirmPassword = confirmPassword.trim();
+        this.confirmPassword = confirmPassword;
         notifyPropertyChanged(BR.confirmPassword);
     }
 
@@ -127,20 +127,19 @@ public class RegisterViewModel extends ObservableViewModel {
     public void onSubmitClicked() {
 
         RegisterForm registerForm = new RegisterForm.RegisterFormBuilder()
-                .withFirstName(firstName)
-                .withLastName(lastName)
-                .withEmail(email)
+                .withFirstName(firstName.trim())
+                .withLastName(lastName.trim())
+                .withEmail(email.trim())
                 .withPhoneNo(phoneNo)
                 .withAcademicStatus(academicStatus)
-                .withPassword(password)
-                .withConfirmPassword(confirmPassword)
+                .withPassword(password.trim())
+                .withConfirmPassword(confirmPassword.trim())
                 .build();
 
         if ( FormValidator.getInstance().isFormStateValid(registerForm) ) {
             String token = UserPreferences.getInstance().getToken(GradsHubApplication.getContext());
             if ( !token.equals("no token set") ) {
-                GradsHubApplication.showToast("register validation passed!");
-                repository.registerUser( new User(firstName, lastName, email, phoneNo, academicStatus, password, token) );
+                repository.registerUser( new User(firstName.trim(), lastName.trim(), email.trim(), phoneNo.trim(), academicStatus.trim(), password.trim(), token) );
             }
             else {
                 isTokenGenerated.setValue(false);

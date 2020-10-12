@@ -10,10 +10,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Post implements Parcelable {
 
-    @SerializedName("POST_ID")
+    @SerializedName("GROUP_POST_ID")
     private String postID;
 
-    @SerializedName("POST_GROUP_ID")
+    @SerializedName("GROUP_ID")
     private String postGroupID;
 
     @SerializedName("POST_CREATOR")
@@ -22,7 +22,7 @@ public class Post implements Parcelable {
     @SerializedName("POST_DATE")
     private String postDate;
 
-    @SerializedName("POST_SUBJECT")
+    @SerializedName("POST_TITLE")
     private String postSubject;
 
     @SerializedName("POST_DESCRIPTION")
@@ -31,10 +31,10 @@ public class Post implements Parcelable {
     @SerializedName("POST_FILE")
     private String postFileName;
 
-    @SerializedName("POST_LIKES")
+    @SerializedName("NO_OF_LIKES")
     private int postLikesCount = 0;
 
-    @SerializedName("POST_COMMENTS")
+    @SerializedName("NO_OF_COMMENTS")
     private int postCommentsCount = 0;
 
     public Post(String postDate, String postSubject, String postDescription) {
@@ -103,7 +103,7 @@ public class Post implements Parcelable {
     @VisibleForTesting
     protected Post(Parcel in) {
         postID = in.readString();
-        //postGroupID = in.readString();//TODO: needs id from php file
+        postGroupID = in.readString();
         postCreator = in.readString();
         postDate = in.readString();
         postSubject = in.readString();
@@ -136,7 +136,7 @@ public class Post implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(postID);
-        //dest.writeString(groupID);//TODO: needs group id from php
+        dest.writeString(postGroupID);
         dest.writeString(postCreator);
         dest.writeString(postDate);
         dest.writeString(postSubject);
