@@ -15,7 +15,7 @@ public interface IFeedRepository {
 
     void getUserLikedPosts(String userID);
 
-    void insertUserLikedPosts(String userID, String groupID, List<String> likedPosts);
+    void insertUserLikedPosts(String userID, String groupID, String postID);
 
     LiveData<Boolean> getIsLoading();
 

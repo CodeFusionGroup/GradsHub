@@ -161,6 +161,7 @@ public class FeedRepositoryImpl implements IFeedRepository {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", userID);
+        //params.put("group_id", groupID);//TODO: needs group id from feed???
 
         feedAPI.getUserLikedPosts(params).enqueue(new Callback<JsonObject>() {
             @Override
@@ -181,7 +182,7 @@ public class FeedRepositoryImpl implements IFeedRepository {
                         likedPostsResponse.setValue( Resource.apiDataRequestSuccess(userLikedPosts, null) );
                     }
                     else {
-                        Log.i(TAG, "api response: no like posts for this user");
+                        Log.i(TAG, "api response: "+ jsonObject.get("message").getAsString());
                     }
 
                 }
@@ -206,53 +207,44 @@ public class FeedRepositoryImpl implements IFeedRepository {
 
 
     @Override
-    public void insertUserLikedPosts(String userID, String groupID, List<String> likedPosts) {
+    public void insertUserLikedPosts(String userID, String groupID, String postID) {
 
-        StringBuilder likedPostsIDs = new StringBuilder();
-
-        for(int i = 0; i < likedPosts.size(); i++) {
-
-            likedPostsIDs.append(likedPosts.get(i));
-
-            if (i != likedPosts.size()-1) {
-                likedPostsIDs.append(",");
-            }
-        }
+//        StringBuilder likedPostsIDs = new StringBuilder();
+//
+//        for(int i = 0; i < likedPosts.size(); i++) {
+//
+//            likedPostsIDs.append(likedPosts.get(i));
+//
+//            if (i != likedPosts.size()-1) {
+//                likedPostsIDs.append(",");
+//            }
+//        }
 
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", userID);
         params.put("group_id", groupID);
-        params.put("post_id", likedPostsIDs.toString());
+        params.put("post_id", postID);
 
         feedAPI.insertFeedLikedPosts(params).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
                 if ( response.isSuccessful() ) {
-                    Log.i(TAG, "insertUserLikedPosts() --> response.isSuccessful() = true");
+                    Log.d(TAG, "insertUserLikedPosts() --> response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
-
-                    if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-                        // no toast messages shown yet
-                        Log.i(TAG, "api response: inserted liked posts");
-                    }
-                    else {
-                        Log.i(TAG, "api response: no like posts for this user");
-                    }
-
+                    Log.d(TAG, "api response: "+ jsonObject.get("message").getAsString() );
                 }
-
                 else {
-                    Log.i(TAG, "insertUserLikedPosts() --> response.isSuccessful() = false");
-                    Log.i(TAG, "error code: " +response.code() );
-                    Log.i(TAG, "error message: " +response.message() );
+                    Log.d(TAG, "insertUserLikedPosts() --> response.isSuccessful() = false");
+                    Log.d(TAG, "error code: " +response.code() );
+                    Log.d(TAG, "error message: " +response.message() );
                 }
 
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.i(TAG, "insertUserLikedPosts() --> onFailure executed, error: ", t);
+                Log.d(TAG, "insertUserLikedPosts() --> onFailure executed, error: ", t);
             }
         });
 

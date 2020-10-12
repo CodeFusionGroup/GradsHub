@@ -14,8 +14,7 @@ public class FeedViewModel extends ObservableViewModel {
 
 
     private FeedRepositoryImpl repository;
-    private String userID, groupID;
-    private List<String> likedPosts;
+    private String userID, groupID, postID;
 
     public FeedViewModel() {
         repository = FeedRepositoryImpl.getInstance();
@@ -33,10 +32,11 @@ public class FeedViewModel extends ObservableViewModel {
     public void getUserLikedPosts(String userID) { repository.getUserLikedPosts(userID); }
 
 
-    public void insertFeedLikedPosts(String userID, String groupID, List<String> likedPosts) {
-        this.userID = userID;
-        this.groupID = groupID;
-        this.likedPosts = likedPosts;
+    public void insertFeedLikedPosts(String userID, String groupID, String postID) {
+//        this.userID = userID;
+//        this.groupID = groupID;
+//        this.postID = postID;
+        repository.insertUserLikedPosts(userID, groupID, postID);
     }
 
 
@@ -68,7 +68,6 @@ public class FeedViewModel extends ObservableViewModel {
 
     @Override
     public void onCleared() {
-        //repository.insertUserLikedPosts(userID, groupID, likedPosts);
         repository.deregisterObserverObjects();
     }
 

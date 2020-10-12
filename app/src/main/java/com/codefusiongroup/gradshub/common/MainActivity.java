@@ -265,6 +265,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     @Override
     public void onProfileUpdateSuccessfulListener(boolean value) {
         if (value) {
+            // get updated saved details from preferences
+            user = UserPreferences.getInstance().getUserState(this);
             if ( !user.getProfilePicture().equals("no profilePicture set") ) {
                 Uri uri = Uri.parse( user.getProfilePicture() );
                 Glide.with( this ).load(uri).into(imageView);

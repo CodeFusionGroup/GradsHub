@@ -105,8 +105,16 @@ public class FeedListFragment extends Fragment {
             }
         });
 
+
+        FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = new FeedListRecyclerViewAdapter.OnPostItemLikedListener() {
+            @Override
+            public void onPostItemLiked(Post item) {
+                feedViewModel.insertFeedLikedPosts(mUser.getUserID(), item.getPostGroupID(), item.getPostID());
+            }
+        };
+
         // listener that keeps track of which post is liked in the feed
-        FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = item -> userCurrentlyLikedPosts.add(item.getPostID());
+        //FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = item -> userCurrentlyLikedPosts.add(item.getPostID());
 
         // listener that keeps track of which post PDF the user wants to download
         FeedListRecyclerViewAdapter.OnPostPDFDownloadListener onPostPDFDownloadListener = item -> downloadFile(requireActivity(), item.getPostFileName(), DIRECTORY_DOWNLOADS, item.getPostDescription());

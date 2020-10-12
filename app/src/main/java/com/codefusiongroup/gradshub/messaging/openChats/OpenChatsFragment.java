@@ -287,11 +287,13 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
 
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
                         GradsHubApplication.showToast(jsonObject.get("message").getAsString());
+                        Log.d(TAG, "requestToRemoveChats() --> api response: "+jsonObject.get("message").getAsString());
                     }
                     else {
                         // Api error
                         ApiBaseResponse apiDefault = new Gson().fromJson(jsonObject, ApiBaseResponse.class);
                         GradsHubApplication.showToast( apiDefault.getMessage() );
+                        Log.d(TAG, "requestToRemoveChats() --> api response: "+apiDefault.getMessage());
                     }
                 }
                 else {
