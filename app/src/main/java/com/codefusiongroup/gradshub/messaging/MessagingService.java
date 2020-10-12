@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.authentication.AuthenticationActivity;
+import com.codefusiongroup.gradshub.common.MainActivity;
 import com.codefusiongroup.gradshub.common.repositories.UserRepositoryImpl;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.UserPreferences;
@@ -38,9 +39,8 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
 
     private static final String TAG = "MessagingService" ;
 
-    private ChatMessagesContract.IChatMessagesPresenter mPresenter;
     private static MessagingService instance;
-
+    private ChatMessagesContract.IChatMessagesPresenter mPresenter;
 
     public MessagingService() {
         // empty constructor needed to instantiate FCM functions
@@ -49,7 +49,6 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
     public MessagingService(ChatMessagesContract.IChatMessagesPresenter cmp) {
         mPresenter = cmp;
     }
-
 
     public static MessagingService newInstance(ChatMessagesPresenter cmp) {
         if (instance == null) {
@@ -63,16 +62,9 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-
         // Check if message contains a data payload.
         if ( remoteMessage.getData().size() > 0 ) {
-            // if user is currently not interacting with chat messages ????
             Log.i(TAG, "Message data payload: " + remoteMessage.getData() );
-//            JsonObject jsonObject = new JsonObject();
-//            JsonObject dataJO = jsonObject.getAsJsonObject("data");
-//            ChatMessage message = new Gson().fromJson(dataJO, ChatMessage.class);
-//            ChatMessagesFragment.getInstance().updateChatMessages(message);
-            //mPresenter.setChatMessage(message);
         }
 
         // Check if message contains a notification payload and notify if true.
@@ -90,7 +82,12 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
         // update the token immediately if network request is successful otherwise save it and update
         // next time the user logs in. This ensures that the token of the user is up to date since it
         // can change for various reasons its best to update it immediately.
-        UserRepositoryImpl.getInstance().updateUserToken(UserPreferences.getInstance().userID, token);
+        String userID = UserPreferences.getInstance().getUserID(GradsHubApplication.getContext());
+        if ( !userID.equals("no ID set") ) {
+            Log.d(TAG, "user id from preferences: "+userID);
+            UserRepositoryImpl.getInstance().updateUserToken(userID, token);
+        }
+
     }
 
     @Override
@@ -130,7 +127,6 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
                     JsonObject jsonObject = response.body();
 
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-
                         mPresenter.setInsertMessageResponseCode(ApiResponseConstants.API_SUCCESS_CODE);
                         mPresenter.setInsertMessageResponseMsg(jsonObject.get("message").getAsString());
                         mPresenter.onRequestInsertMessageFinished();
@@ -194,66 +190,5 @@ public class MessagingService extends FirebaseMessagingService implements ChatMe
         }
 
     }
-
-
-//    @Override
-//    public void fetchChatMessages(String currentUserID, String correspondentID) {
-//
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("user_id_one", currentUserID);
-//        params.put("user_id_two", correspondentID);
-//
-//        MessagingAPI messagingAPI = ApiProvider.getMessageApiService();
-//        messagingAPI.fetchChatMessages(params).enqueue(new Callback<JsonObject>() {
-//
-//            @Override
-//            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-//
-//                if ( response.isSuccessful() ) {
-//                    Log.i(TAG, "response.isSuccessful() = true");
-//
-//                    JsonObject jsonObject = response.body();
-//
-//                    // open chats have messages so no else case
-//                    if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-//
-//                        List<ChatMessage> chatMessagesList = new ArrayList<>();
-//                        JsonArray chatMessagesJA = jsonObject.getAsJsonArray("message");
-//
-//                        for (JsonElement jsonElement: chatMessagesJA) {
-//                            JsonObject chatMessageJO = jsonElement.getAsJsonObject();
-//                            ChatMessage  message = new Gson().fromJson(chatMessageJO, ChatMessage.class);
-//                            chatMessagesList.add(message);
-//                        }
-//
-//                        mPresenter.setFetchMessagesResponseCode(ApiResponseConstants.API_SUCCESS_CODE);
-//                        mPresenter.setChatMessagesList(chatMessagesList);
-//                    }
-//                    else {
-//                        ApiBaseResponse apiDefault = new Gson().fromJson(jsonObject, ApiBaseResponse.class);
-//                        mPresenter.setFetchMessagesResponseCode( apiDefault.getStatusCode() );
-//                        mPresenter.setFetchMessagesResponseMsg( "no messages exist for this chat yet." );
-//                    }
-//
-//                    mPresenter.onRequestFetchMessagesFinished();
-//                }
-//
-//                else {
-//                    Log.i(TAG, "response.isSuccessful() = false");
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<JsonObject> call, Throwable t) {
-//                mPresenter.setFetchMessagesResponseCode(ApiResponseConstants.SERVER_FAILURE_CODE);
-//                mPresenter.setFetchMessagesResponseMsg("failed to load messages, please swipe to refresh or try again later.");
-//                mPresenter.onRequestFetchMessagesFinished();
-//                t.printStackTrace();
-//            }
-//
-//        });
-//
-//    }
 
 }

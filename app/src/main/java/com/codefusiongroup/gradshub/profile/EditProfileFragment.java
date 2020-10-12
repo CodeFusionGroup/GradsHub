@@ -262,7 +262,7 @@ public class EditProfileFragment extends Fragment implements AdapterView.OnItemS
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        // empty
+        // no implemetation
     }
 
 
@@ -343,17 +343,7 @@ public class EditProfileFragment extends Fragment implements AdapterView.OnItemS
                             Log.d(TAG, "onActivityResult() --> image name: "+imageName+", image disk size: "+imageSize/1024.0 +" KB");
 
                             if ( mSelectedImageUri.getPath() != null ) {
-
-                                int reqWidth = 250, reqHeight = 250;
-
-                                if (imageSize > reqWidth * reqHeight) {
-                                    mSelectedImageUri = null;
-                                    GradsHubApplication.showToast("Image too large to display.");
-                                }
-                                else {
-                                    Glide.with( requireActivity() ).load(mSelectedImageUri).into(mImageView);
-                                }
-
+                                Glide.with( requireActivity() ).load(mSelectedImageUri).into(mImageView);
                             }
                             else {
                                 GradsHubApplication.showToast("An error occurred while trying to retrieve the selected image.");

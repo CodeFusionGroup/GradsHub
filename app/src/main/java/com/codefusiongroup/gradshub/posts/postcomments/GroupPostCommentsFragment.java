@@ -260,8 +260,9 @@ public class GroupPostCommentsFragment extends Fragment {
         HashMap<String, String> params = new HashMap<>();
 
         params.put("user_id", user.getUserID());
-        //params.put("group_id", post.getPostGroupID());//TODO:needs id from php file
-        params.put("group_id", researchGroup.getGroupID());
+        //TODO: must account for commenting from feed
+        //params.put("group_id", post.getPostGroupID()); // when you comment from feed
+        params.put("group_id", researchGroup.getGroupID());// when you comment from a group
         params.put("post_id", post.getPostID());
         params.put("post_date", comment.getCommentDate());
         params.put("post_comment", comment.getComment());
@@ -295,8 +296,9 @@ public class GroupPostCommentsFragment extends Fragment {
             // toast msg: inserted comment
             if(success.equals("1")) {
                 Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
+                //post.setPostCommentsCount(post.getPostCommentsCount()+1);
                 // call getGroupPostComments() method to update comments count for that post
-                getGroupPostComments(post);
+                getGroupPostComments(post);//TODO: fix call not fetching comments count
             }
 
         }

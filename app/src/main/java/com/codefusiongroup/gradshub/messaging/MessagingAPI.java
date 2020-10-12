@@ -11,7 +11,6 @@ import retrofit2.http.POST;
 
 public interface MessagingAPI {
 
-
     @POST("User/updatefcmtoken.php")
     Call<JsonObject> updateUserFCMToken(@Body HashMap<String, String> params);
 
@@ -29,6 +28,5 @@ public interface MessagingAPI {
 
     @POST("User/closeChat.php")
     Call<JsonObject> removeChats(@Body HashMap<String, String> params);
-
 
 }

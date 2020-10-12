@@ -9,54 +9,36 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.codefusiongroup.gradshub.R;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.MainActivity;
-import com.codefusiongroup.gradshub.common.models.ResearchGroup;
 import com.codefusiongroup.gradshub.common.models.User;
-import com.codefusiongroup.gradshub.common.network.ApiBaseResponse;
-import com.codefusiongroup.gradshub.common.network.ApiProvider;
-import com.codefusiongroup.gradshub.groups.GroupsAPI;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.codefusiongroup.gradshub.databinding.FragmentFriendsItemListBinding;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 
 public class FriendsFragment extends Fragment {
 
     private static final String TAG = "FriendsFragment";
 
-    private final String  SUCCESS_CODE = "1";
-    private final String  SERVER_FAILURE_MSG = "Failed to load friends, please try again later or refresh page.";
-    private final FriendsAPI friendsAPI = ApiProvider.getFriendsApiService();
+    private List<User> mFriendsList = new ArrayList<>();
 
-    private View mRootView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ProgressBar mProgressBar;
-
-    private RecyclerView mRecyclerView;
     private FriendsListRecyclerViewAdapter mAdapter;
     private FriendsFragment.OnFriendsListFragmentInteractionListener mListener;
-    private List<User> mFriendsList = new ArrayList<>();
+
+    private MainActivity mainActivity;
+    private FriendsViewModel friendsViewModel;
+    private FragmentFriendsItemListBinding binding;
 
 
     @Override
@@ -76,28 +58,89 @@ public class FriendsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mainActivity = (MainActivity) requireActivity();
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_friends_item_list, container, false);
-        return mRootView;
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // inflate view and obtain an instance of the binding class
+        binding = FragmentFriendsItemListBinding.inflate(inflater, container, false);
+        return  binding.getRoot();
     }
 
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        mSwipeRefreshLayout = view.findViewById(R.id.refresh);
-        mProgressBar = view.findViewById(R.id.progress_circular);
+        RecyclerView mRecyclerView = binding.list;
+        Context context = binding.getRoot().getContext();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        mAdapter = new FriendsListRecyclerViewAdapter(mFriendsList, mListener);
+        mRecyclerView.setAdapter(mAdapter);
 
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        getUserFriends( mainActivity.user.getUserID() );
+        binding.refresh.setOnRefreshListener(() -> {
+            friendsViewModel.getUserFriends(mainActivity.user.getUserID());
+            binding.refresh.setRefreshing(true);
+        });
 
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            getUserFriends( mainActivity.user.getUserID() );
-            mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Obtain the FriendsViewModel component
+        friendsViewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
+        friendsViewModel.getUserFriends( mainActivity.user.getUserID() );
+
+        binding.setFriendsViewModel(friendsViewModel);
+
+        // observe changes to live data objects in FriendsViewModel
+        observeViewModel(friendsViewModel);
+
+    }
+
+    private void observeViewModel(FriendsViewModel viewModel) {
+
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading) {
+                binding.progressCircular.setVisibility(View.VISIBLE);
+            } else {
+                if (binding.refresh.isRefreshing()) {
+                    binding.refresh.setRefreshing(false);
+                }
+                binding.progressCircular.setVisibility(View.GONE);
+            }
+        });
+
+
+        viewModel.getUserFriendsResponse().observe(getViewLifecycleOwner(), listResource -> {
+            if (listResource != null) {
+
+                switch (listResource.status) {
+
+                    case API_DATA_SUCCESS:
+                        if (listResource.data != null) {
+                            mFriendsList.clear();
+                            mFriendsList.addAll(listResource.data);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        else {
+                            Log.d(TAG, "listResource.data  is null");
+                        }
+                        break;
+
+                    case ERROR:
+                    case API_NON_DATA_SUCCESS:
+                        GradsHubApplication.showToast(listResource.message);
+                        break;
+                }
+            }
+            else {
+                Log.d(TAG, "listResource is null");
+            }
         });
 
     }
@@ -129,15 +172,10 @@ public class FriendsFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_search:
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_search) {
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -146,95 +184,10 @@ public class FriendsFragment extends Fragment {
     }
 
 
-    public void getUserFriends(String userID) {
-
-        Map<String, String> params = new HashMap<>();
-        params.put("user_id", userID);
-
-        friendsAPI.getUserFriends(params).enqueue(new Callback<JsonObject>() {
-
-            @Override
-            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-
-                mProgressBar.setVisibility(View.GONE);
-                if ( mSwipeRefreshLayout.isRefreshing() ) {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-
-                if ( response.isSuccessful() ) {
-                    Log.d(TAG, "getUserFriends() --> response.isSuccessful() = true");
-
-                    JsonObject jsonObject = response.body();
-
-                    if ( jsonObject.get("success").getAsString().equals(SUCCESS_CODE) ) {
-
-                        mFriendsList.clear();
-                        JsonArray userFriendsJA = jsonObject.getAsJsonArray("message");
-
-                        for (JsonElement jsonElement: userFriendsJA) {
-
-                            JsonObject userFriendJO = jsonElement.getAsJsonObject();
-
-                            String userID = userFriendJO.get("USER_ID").getAsString();
-                            String firstName = userFriendJO.get("USER_FNAME").getAsString();
-                            String lastName = userFriendJO.get("USER_LNAME").getAsString();
-
-                            User user = new User();
-                            user.setUserID(userID);
-                            user.setFirstName(firstName);
-                            user.setLastName(lastName);
-                            user.setFriendStatus(true);
-
-                            mFriendsList.add(user);
-                        }
-
-                        if (mRootView instanceof ConstraintLayout) {
-                            mRecyclerView = mRootView.findViewById(R.id.list);
-                            Context context = mRootView.getContext();
-                            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-                            mAdapter = new FriendsListRecyclerViewAdapter(mFriendsList, mListener);
-                            mRecyclerView.setAdapter(mAdapter);
-                        }
-
-                    }
-                    else {
-                        // user has no friends
-                        ApiBaseResponse apiDefault = new Gson().fromJson(jsonObject, ApiBaseResponse.class);
-                        GradsHubApplication.showToast( apiDefault.getMessage() );
-                    }
-
-                }
-                else {
-                    GradsHubApplication.showToast( SERVER_FAILURE_MSG );
-                    Log.d(TAG, "getUserFriends() --> response.isSuccessful() = false");
-                    Log.d(TAG, "error code: " +response.code() );
-                    Log.d(TAG, "error message: " +response.message() );
-                }
-
-            }
-
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                if ( mSwipeRefreshLayout.isRefreshing() ) {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-                mProgressBar.setVisibility(View.GONE);
-                GradsHubApplication.showToast( SERVER_FAILURE_MSG );
-                Log.d(TAG, "getUserFriends() --> onFailure executed, error: ", t);
-                t.printStackTrace();
-            }
-
-        });
-
-    }
-
-
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-
 
 }

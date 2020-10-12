@@ -75,4 +75,12 @@ public class EventsViewModel extends ObservableViewModel {
         return unfavouredEventsResponse;
     }
 
+
+    public void onBackPressed() {
+        previouslyFavouredEventsResponse.setValue(null);
+        favouredEventsResponse.setValue(null);
+        unfavouredEventsResponse.setValue(null);
+        eventsStarsResponse.setValue(null);
+    }
+
 }

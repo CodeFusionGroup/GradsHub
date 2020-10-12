@@ -49,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 
-public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPresenter>, OpenChatsContract.IOpenChatsView {
+public class OpenChatsFragment extends Fragment { //implements BaseView<OpenChatsPresenter>, OpenChatsContract.IOpenChatsView {
 
 
     private static final String TAG = "OpenChatsFragment";
@@ -66,7 +66,7 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     private ArrayList<String> mChatsToBeRemoved = new ArrayList<>();
 
     private User mUser;
-    private OpenChatsPresenter mPresenter;
+    private boolean shouldRemoveChats = false;
 
 
     @Override
@@ -84,7 +84,6 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setPresenter( new OpenChatsPresenter() );
         setHasOptionsMenu(true);
         MainActivity mainActivity = (MainActivity) requireActivity();
         mUser = mainActivity.user;
@@ -114,16 +113,11 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
         mSwipeRefreshLayout = view.findViewById(R.id.refresh);
         mProgressBar = view.findViewById(R.id.progress_circular);
 
-        //mPresenter.attachView(this);
-        //Log.i(TAG, "open chats presenter has subscribed to view");
-        //mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
-
         fetchUserOpenChats(mUser.getUserID());
 
         // if network request to fetch user's open chats fails, the user can refresh the page to
         // initiate another request
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            //mPresenter.initialiseUserOpenChats(mainActivity.user.getUserID());
             fetchUserOpenChats( mUser.getUserID() );
             mSwipeRefreshLayout.setRefreshing(true);
         });
@@ -136,9 +130,11 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
         });
 
 
+        // if user requested to remove chats but pressed back button then boolean shouldRemoveChats
+        // will be reset to false since fragment is recreated unlike when navigating to messages then
+        // coming back to open chats
         view.setFocusableInTouchMode(true);
         view.setOnKeyListener( (v, keyCode, event) -> {
-
             if ( keyCode == KeyEvent.KEYCODE_BACK ) {
                 if ( mChatsToBeRemoved.size() > 0 ) {
                     requestToRemoveChats(mUser.getUserID(), mChatsToBeRemoved);
@@ -147,6 +143,15 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
             }
             return false;
         });
+
+
+        // if condition is true it means there is at least one chat to be removed even though undo
+        // was pressed for some chats but will always consider the final value of this boolean.
+        if (shouldRemoveChats) {
+            Log.d(TAG, "shouldRemoveChats final value is true");
+            requestToRemoveChats(mUser.getUserID(), mChatsToBeRemoved);
+            mChatsToBeRemoved.clear();
+        }
 
     }
 
@@ -176,6 +181,8 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
                 .setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        shouldRemoveChats = false;
                         mOpenChatsList.add(adapterPos, chat);
                         mAdapter.notifyItemInserted(adapterPos);
                         recyclerView.scrollToPosition(adapterPos);
@@ -184,6 +191,8 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
                         Log.d(TAG, "after undo mOpenChatsList size is: "+mOpenChatsList.size());
                     }
                 });
+
+        shouldRemoveChats = true;
         snackbar.show();
         mOpenChatsList.remove(adapterPos);
         Log.d(TAG, "after swipe(remove) mOpenChatsList size is: "+mOpenChatsList.size());
@@ -228,7 +237,6 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
                         mOpenChatsList.clear();
                         mOpenChatsList.addAll(openChatsList);
                         mAdapter.notifyDataSetChanged();
-
                     }
                     else {
                         GradsHubApplication.showToast("no open chats exits yet.");
@@ -258,10 +266,9 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     }
 
 
-    private void requestToRemoveChats(String userID, ArrayList<String> chatsToBeRemoved) {
+    private void requestToRemoveChats(String userID, List<String> chatsToBeRemoved) {
 
         StringBuilder chatsIDs = new StringBuilder();
-
         for(int i = 0; i < chatsToBeRemoved.size(); i++) {
             chatsIDs.append(chatsToBeRemoved.get(i));
 
@@ -274,19 +281,23 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
         params.put("user_id", userID);
         params.put("chat_ids", chatsIDs.toString());
 
+
         final MessagingAPI messagingAPI = ApiProvider.getMessageApiService();
         messagingAPI.removeChats(params).enqueue(new Callback<JsonObject>() {
 
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
+                // reset boolean value on response from server (type of response doesn't matter)
+                shouldRemoveChats = false;
                 if ( response.isSuccessful() ) {
                     Log.d(TAG, "requestToRemoveChats() --> response.isSuccessful() = true");
-
                     JsonObject jsonObject = response.body();
 
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-                        GradsHubApplication.showToast(jsonObject.get("message").getAsString());
+                        // omit this toast message if the operation is successful
+                        //GradsHubApplication.showToast(jsonObject.get("message").getAsString());
+                        Log.d(TAG, "requestToRemoveChats() --> api response: "+jsonObject.get("message").getAsString());
                     }
                     else {
                         // Api error
@@ -295,7 +306,7 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
                     }
                 }
                 else {
-                    GradsHubApplication.showToast("Failed to remove selected chats, please try again later.");
+                    GradsHubApplication.showToast("Failed to remove selected chat(s), please try again later.");
                     Log.d(TAG, "requestToRemoveChats() --> response.isSuccessful() = false");
                     Log.d(TAG, "error code: " +response.code() );
                     Log.d(TAG, "error message: " +response.message() );
@@ -305,9 +316,10 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                GradsHubApplication.showToast("Failed to remove selected chats, please try again later.");
+                // reset boolean value on response from server (type of response doesn't matter)
+                shouldRemoveChats = false;
+                GradsHubApplication.showToast("Failed to remove selected chat(s), please try again later.");
                 Log.d(TAG, "requestToRemoveChats() --> onFailure executed, error: ", t);
-                t.printStackTrace();
             }
 
         });
@@ -343,67 +355,26 @@ public class OpenChatsFragment extends Fragment implements BaseView<OpenChatsPre
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-            case R.id.action_search:
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_search) {
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
 
-    @Override
-    public void setPresenter(OpenChatsPresenter presenter) {
-        mPresenter = presenter;
-    }
-
-
-    @Override
-    public void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-
-    @Override
     public void hideProgressBar() {
         mProgressBar.setVisibility(View.GONE);
     }
-
-
-//    @Override
-//    public void showUserOpenChatsResponseMsg(String message) {
-//        GradsHubApplication.showToast(message);
-//    }
-//
-//
-//    @Override
-//    public void updateUserOpenChats(List<Chat> openChats) {
-//
-//        hideProgressBar();
-//        if ( mSwipeRefreshLayout.isRefreshing() ) {
-//            mSwipeRefreshLayout.setRefreshing(false);
-//        }
-//        // mAdapter must point to the same object mOpenChatsList otherwise recycler view won't update
-//        mOpenChatsList.clear();
-//        mOpenChatsList.addAll(openChats);
-//        mAdapter.notifyDataSetChanged();
-//
-//    }
 
 
     public interface OnOpenChatsFragmentInteractionListener {
         void onOpenChatsFragmentInteraction(Chat item);
     }
 
-
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        //mPresenter.detachView(this);
-        //Log.i(TAG, "open chats presenter has unsubscribed from view");
     }
 
 }

@@ -21,11 +21,6 @@ public class UserPreferences {
     private final String FCM_TOKEN_CHANGED = "fcm_token_changed";
     private final String PREF_NAME = "com.codefusiongroup.gradshub.PREFERENCE_FILE_KEY";
 
-    // update this variable with the current user id without retrieving the whole user object to access
-    // the id of the user (cannot be null since every user has an id and the user state is always
-    // set when the user logs in)
-    public static String userID;//TODO: this is null??? fix message api user id
-
     private SharedPreferences.Editor editor;
     private static UserPreferences instance;
 
@@ -42,7 +37,6 @@ public class UserPreferences {
 
 
     public void saveUserState(User user, Context context) {
-        userID = user.getUserID();
         editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
                 .putString( USER_ID, user.getUserID() )
                 .putString( FIRST_NAME, user.getFirstName() )
@@ -80,6 +74,12 @@ public class UserPreferences {
         return user;
 
     }
+
+    // to avoid fetching the all user's details just to access the id we use this method
+    public String getUserID(Context context) {
+        return context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE).getString(USER_ID,"no ID set");
+    }
+
 
     public void setLogOutState(Context context) {
         editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean(LOGIN_STATE, false);

@@ -48,7 +48,6 @@ public class ScheduleListFragment extends Fragment {
     private static List<String> userCurrentlyFavouredEvents = new ArrayList<>();
     private static List<String> userPreviouslyFavouredEvents = new ArrayList<>();
 
-    //private User user;
     private MainActivity mainActivity;
     private EventsViewModel eventsViewModel;
 
@@ -87,15 +86,18 @@ public class ScheduleListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        // listener that keeps track of which event is favoured by the user
-         onScheduleItemFavouredListener
-                = (item) -> userCurrentlyFavouredEvents.add(item.getId());
+        eventsViewModel = new ViewModelProvider( this ).get(EventsViewModel.class);
+        observeViewModel();
+        eventsViewModel.getEventsStars();
+        eventsViewModel.getPreviouslyFavouredEvents( mainActivity.user.getUserID() );
 
-        // listener that keeps track of which event is unfavoured by the user
-         onScheduleItemUnFavouredListener
-                = (item) -> userUnFavouredEvents.add(item.getId());
+        //=============== SET SCHEDULE LISTENERS FOR STAR AND UN-STAR OF AN EVENT ==================
+         onScheduleItemFavouredListener = event -> userCurrentlyFavouredEvents.add( event.getId() );
 
-        // called after setting the listeners above
+         onScheduleItemUnFavouredListener = event -> userUnFavouredEvents.add( event.getId() );
+        //==========================================================================================
+
+        // called after setting the listeners above to prevent null pointers
         if (mView instanceof RelativeLayout) {
             Context context = mView.getContext();
             RecyclerView recyclerView = mView.findViewById(R.id.scheduleList);
@@ -104,15 +106,10 @@ public class ScheduleListFragment extends Fragment {
             recyclerView.setAdapter(adapter);
         }
 
-        eventsViewModel = new ViewModelProvider( this ).get(EventsViewModel.class);
-        observeViewModel();
-        eventsViewModel.getEventsStars();
-        Log.d(TAG, "mainActivity.user.getUserID() = "+mainActivity.user.getUserID() );
-        eventsViewModel.getPreviouslyFavouredEvents( mainActivity.user.getUserID() );
 
         // listen for when user presses back button from the ScheduleListFragment and use that as an
-        // indication that they are finished interacting with the events schedule and if they favoured or unfavoured
-        // any events we update the user's favourite events accordingly.
+        // indication that they are finished interacting with the events schedule and if they favoured
+        // or unfavoured any events we update the user's favourite events accordingly.
         view.setFocusableInTouchMode(true);
         view.setOnKeyListener( (v, keyCode, event) -> {
 
@@ -121,14 +118,16 @@ public class ScheduleListFragment extends Fragment {
                 if ( userCurrentlyFavouredEvents.size() > 0 ) {
                     eventsViewModel.registerFavouredEvents(mainActivity.user.getUserID(), userCurrentlyFavouredEvents);
                     userCurrentlyFavouredEvents.clear();
-                    userPreviouslyFavouredEvents.clear();
                 }
 
                 if ( userUnFavouredEvents.size() > 0 ) {
                     eventsViewModel.unRegisterFavouredEvents(mainActivity.user.getUserID(), userUnFavouredEvents);
                     userUnFavouredEvents.clear();
-                    userPreviouslyFavouredEvents.clear();
                 }
+
+                // set live data objects to null in events view model (important for highlighting
+                // favoured events correctly.)
+                eventsViewModel.onBackPressed();
             }
 
             return false;
@@ -166,15 +165,17 @@ public class ScheduleListFragment extends Fragment {
         // FETCHES THE USER'S FAVOURED EVENTS IF THERE ARE ANY
         eventsViewModel.getPreviouslyFavouredEvents().observe(getViewLifecycleOwner(), listResource -> {
 
+            userPreviouslyFavouredEvents.clear();
             if (listResource != null) {
 
                 if (listResource.data != null) {
 
                     userPreviouslyFavouredEvents.addAll(listResource.data);
-                    // set events that have been favoured by the user
                     for (Schedule event: eventsSchedule) {
                         String event_id = event.getId();
-                        // search for this event_id in the userPreviouslyFavouredEvents list
+                        // take an event id from the previously favoured events and search for it
+                        // in the events schedule to set the favoured event property for the
+                        // matching event id
                         for (String eventID: userPreviouslyFavouredEvents) {
                             if ( eventID.equals(event_id) ) {
                                 event.setFavouredByUser(true);
@@ -183,17 +184,9 @@ public class ScheduleListFragment extends Fragment {
                         }
                     }
 
-//                    if (mView instanceof RelativeLayout) {
-//                        Context context = mView.getContext();
-//                        RecyclerView recyclerView = mView.findViewById(R.id.scheduleList);
-//                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//                        adapter = new ScheduleListRecyclerViewAdapter(eventsSchedule, listener, onScheduleItemFavouredListener, onScheduleItemUnFavouredListener);
-//                        recyclerView.setAdapter(adapter);
-//                    }
-
-                    //if (adapter != null ) {
+                    if (adapter != null ) {
                         adapter.notifyDataSetChanged();
-                    //}
+                    }
                 }
                 else {
                     Log.d(TAG, "listResource.data is null");

@@ -63,6 +63,8 @@ public class ProfileFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         mUser = mainActivity.user;
 
+        //TODO: user user details from preferences
+
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             profileUpdatedSuccessfully = bundle.getBoolean("profile_updated");
@@ -144,9 +146,12 @@ public class ProfileFragment extends Fragment {
 
                         // save details to preferences
                         UserPreferences.getInstance().saveUserState( mUser, requireActivity() );
+                        String profileUri = mUser.getProfilePicture();
 
-                        if ( !mUser.getProfilePicture().equals("no profilePicture set") ) {
-                            Uri uri = Uri.parse( mUser.getProfilePicture() );
+                        // here we using user object to set profile so must check for 'null' in profile
+                        // field.
+                        if (profileUri != null) {
+                            Uri uri = Uri.parse(profileUri);
                             Glide.with( requireActivity() ).load(uri).into(mImageView);
                         }
 
@@ -156,7 +161,6 @@ public class ProfileFragment extends Fragment {
                         mAcademicStatusTV.setText( mUser.getAcademicStatus() );
 
                         mListener.onProfileUpdateSuccessfulListener(true);
-
                     }
                     else {
                         // DB validation failed
