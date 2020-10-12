@@ -161,20 +161,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     }
 
-    //private boolean favouredEventsUpdated = false;
-//    private boolean favouredEventsNetworkRequestFailed = false;
-//
-//    public void setFavouredEventsUpdated(boolean value) {
-//        favouredEventsUpdated = value;
-//    }
-//
-//    public boolean favouredEventsUpdated() {
-//        return favouredEventsUpdated;
-//    }
-//
-//    public boolean favouredEventsNetworkRequestFailed() {
-//        return favouredEventsNetworkRequestFailed;
-//    }
 
     private void observeViewModel(MainActivityViewModel viewModel) {
 
@@ -183,19 +169,14 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
                 if (listResource.status == Resource.Status.API_DATA_SUCCESS) {
                     if (listResource.data != null) {
-                        //Log.d(TAG, "favoured events network request passed");
                         userFavouredEvents.clear();
                         userFavouredEvents.addAll(listResource.data);
                         EventNotificationComposer.getInstance().processFavouredEvents(userFavouredEvents, eventsSchedule, currentDay, currentMonth);
-                        //Log.d(TAG, "userFavouredEvents size: " + userFavouredEvents.size());
-                    } else {
+                    }
+                    else {
                         Log.d(TAG, "listResource.data is null");
                     }
                 }
-//                else if(listResource.status == Resource.Status.ERROR) {
-//                    Log.d(TAG, "favoured events network request failed");
-//                    favouredEventsNetworkRequestFailed = true;
-//                }
 
             }
         });
@@ -365,7 +346,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
                     } else if ( component.startsWith("date") ) {
 
                         // check if date is relevant
-
                         String year = compSubstring.substring( compSubstring.lastIndexOf(" ") + 1 );
                         int eventYear = Integer.parseInt(year);
 
@@ -445,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     }
 
-    //====== METHODS CALLED IN SCHEDULE FRAGMENT =======
+    //====== METHOD CALLED IN SCHEDULE FRAGMENT =======
     public List<Schedule> getScheduleList() {
         if (eventsSchedule.size() == 0) {
             return null;
@@ -453,13 +433,6 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
         return eventsSchedule;
     }
 
-    public List<String> getFavouredEvents() {
-        if (userFavouredEvents.size() == 0) {
-            return null;
-        }
-        return userFavouredEvents;
-    }
-    //=================================================
 
     // this method gets schedule from website and writes the schedules to a file (Schedule-data.txt)
     // NOTE: method is not called anywhere to avoid making multiple request to the website for data

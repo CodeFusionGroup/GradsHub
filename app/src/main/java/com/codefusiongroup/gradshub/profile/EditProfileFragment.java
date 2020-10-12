@@ -262,7 +262,7 @@ public class EditProfileFragment extends Fragment implements AdapterView.OnItemS
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        // empty
+        // no implemetation
     }
 
 

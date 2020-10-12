@@ -173,12 +173,12 @@ public class FeedRepositoryImpl implements IFeedRepository {
                     JsonObject jsonObject = response.body();
 
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-
                         List<String> userLikedPosts = new ArrayList<>();
                         JsonArray likedPostsJA = jsonObject.getAsJsonArray("message");
                         for (int i = 0; i < likedPostsJA.size(); i++) {
                             userLikedPosts.add(likedPostsJA.get(i).getAsString());
                         }
+
                         likedPostsResponse.setValue( Resource.apiDataRequestSuccess(userLikedPosts, null) );
                     }
                     else {
@@ -208,17 +208,6 @@ public class FeedRepositoryImpl implements IFeedRepository {
 
     @Override
     public void insertUserLikedPosts(String userID, String groupID, String postID) {
-
-//        StringBuilder likedPostsIDs = new StringBuilder();
-//
-//        for(int i = 0; i < likedPosts.size(); i++) {
-//
-//            likedPostsIDs.append(likedPosts.get(i));
-//
-//            if (i != likedPosts.size()-1) {
-//                likedPostsIDs.append(",");
-//            }
-//        }
 
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", userID);
