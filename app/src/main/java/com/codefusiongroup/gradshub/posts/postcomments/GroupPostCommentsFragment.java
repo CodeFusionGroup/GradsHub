@@ -110,14 +110,12 @@ public class GroupPostCommentsFragment extends Fragment {
         getGroupPostComments(post);
         progressBar.setVisibility(View.VISIBLE);
 
-
         submitCommentBtn.setOnClickListener(v -> {
 
             comment = commentET.getText().toString().trim();
             if ( isValidInput() ) {
 
                 ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
-                //TODO: must account for group from feed
                 MainActivity mainActivity = (MainActivity) requireActivity();
                 User user = mainActivity.user;
                 String fullName = user.getFullName();
@@ -129,7 +127,12 @@ public class GroupPostCommentsFragment extends Fragment {
                 userComment.setComment(comment);
                 userComment.setCommentDate(commentDate);
 
-                insertGroupPostComment(user, researchGroup, post, userComment);
+                if (researchGroup != null) {
+                    insertGroupPostComment(user.getUserID(), researchGroup.getGroupID(), post.getPostID(), userComment);
+                }
+                else {
+                    insertGroupPostComment(user.getUserID(), post.getGroupID(), post.getPostID(), userComment);
+                }
 
                 commentET.setText("");
             }
@@ -254,16 +257,14 @@ public class GroupPostCommentsFragment extends Fragment {
     }
 
 
-    private void insertGroupPostComment(User user, ResearchGroup researchGroup, Post post, Comment comment) {
+    private void insertGroupPostComment(String userID, String groupID, String postID, Comment comment) {
 
         String url = "https://gradshub.herokuapp.com/api/GroupPost/insertcomment.php";
         HashMap<String, String> params = new HashMap<>();
 
-        params.put("user_id", user.getUserID());
-        //TODO: must account for commenting from feed
-        //params.put("group_id", post.getPostGroupID()); // when you comment from feed
-        params.put("group_id", researchGroup.getGroupID());// when you comment from a group
-        params.put("post_id", post.getPostID());
+        params.put("user_id", userID);
+        params.put("group_id", groupID);
+        params.put("post_id", postID);
         params.put("post_date", comment.getCommentDate());
         params.put("post_comment", comment.getComment());
 
@@ -290,23 +291,18 @@ public class GroupPostCommentsFragment extends Fragment {
     private void serverInsertPostCommentResponse(JSONObject response) {
 
         try {
-
             String success = response.getString("success");
-
             // toast msg: inserted comment
             if(success.equals("1")) {
                 Toast.makeText(requireActivity(), response.getString("message"), Toast.LENGTH_SHORT).show();
-                //post.setPostCommentsCount(post.getPostCommentsCount()+1);
                 // call getGroupPostComments() method to update comments count for that post
-                getGroupPostComments(post);//TODO: fix call not fetching comments count
+                getGroupPostComments(post);
             }
-
         }
 
         catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
 

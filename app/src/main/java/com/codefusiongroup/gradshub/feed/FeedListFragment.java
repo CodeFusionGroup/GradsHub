@@ -71,8 +71,6 @@ public class FeedListFragment extends Fragment {
     private FeedListRecyclerViewAdapter mAdapter;
 
     private List<Post> mLatestPosts = new ArrayList<>();
-//    private List<Post> currentlyLikedPosts = new ArrayList<>();
-//    private boolean isInserted = false;
 
 
     @Override
@@ -105,12 +103,11 @@ public class FeedListFragment extends Fragment {
             }
         });
 
-        //Log.d(TAG, "currentlyLikedPosts size on start up: "+currentlyLikedPosts.size());
+
         // listener that keeps track of which post is liked in the feed
         FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = new FeedListRecyclerViewAdapter.OnPostItemLikedListener() {
             @Override
             public void onPostItemLiked(Post post) {
-                //currentlyLikedPosts.add(post);
                 FeedRepositoryImpl.getInstance().insertUserLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
                 //feedViewModel.getLatestPosts( mUser.getUserID() );
                 //Post post = currentlyLikedPosts.get(0);
@@ -134,17 +131,6 @@ public class FeedListFragment extends Fragment {
 
         // listener that keeps track of which post the user wishes to comment on
         FeedListRecyclerViewAdapter.OnPostItemCommentListener onPostItemCommentListener = item -> {
-
-//            Log.d(TAG, "currentlyLikedPosts size after clicking comment button: "+currentlyLikedPosts.size());
-//            if (currentlyLikedPosts.size() > 0) {
-//                Post post = currentlyLikedPosts.get(0);
-//                currentlyLikedPosts.clear();
-//                Log.d(TAG, "currentlyLikedPosts after clear prior to insert call(for comment btn clicked): "+currentlyLikedPosts.size());
-//                feedViewModel.insertFeedLikedPosts();
-//
-//
-//            }
-
             Bundle bundle = new Bundle();
             bundle.putParcelable("post_item", item);
             NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
