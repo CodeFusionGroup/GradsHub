@@ -29,24 +29,37 @@ public class UserPreferencesTest {
         assertEquals("foobar", userPreferences.getUserID(ctx));
     }
 
-/*    @Test
+    /*
+    @Test
     public void saveTokenState() {
-        final Context ctx = mock(Context.class);
         final String PREF_NAME = "com.codefusiongroup.gradshub.PREFERENCE_FILE_KEY";
         final String FCM_TOKEN_CHANGED = "fcm_token_changed";
-        final SharedPreferences sharedPreferences = mock(SharedPreferences.class);
-        userPreferences = UserPreferences.getInstance();
         final String FCM_TOKEN = "fcm_token";
-        when(ctx.getSharedPreferences(FCM_TOKEN, Context.MODE_PRIVATE)).thenReturn(sharedPreferences);
-        final SharedPreferences.Editor editor = mock(SharedPreferences.Editor.class);
-//        when(ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
- //       .putBoolean(FCM_TOKEN_CHANGED, true).putString(FCM_TOKEN, FCM_TOKEN)).thenReturn(editor);
+        final String token = "token";
 
+        userPreferences = UserPreferences.getInstance();
+        final Context ctx = mock(Context.class);
+        final SharedPreferences.Editor edit = mock(SharedPreferences.Editor.class);
+        final SharedPreferences sharedPreferences = mock(SharedPreferences.class);
+        when(ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)).thenReturn(sharedPreferences);
+        when(sharedPreferences.getString(anyString(), anyString())).thenReturn("foobar");
+        //when(edit.putBoolean(FCM_TOKEN_CHANGED, true)).thenReturn(edit);
+        when(ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()).thenReturn(edit);
+        when(ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean(FCM_TOKEN_CHANGED, true)
+                .putString(FCM_TOKEN, token));
+        //assertEquals("foobar", userPreferences.getUserID(ctx));
         userPreferences.saveTokenState(FCM_TOKEN, ctx);
-
     }
+*/
 
     @Test
     public void getToken() {
-    }*/
+        final String PREF_NAME = "com.codefusiongroup.gradshub.PREFERENCE_FILE_KEY";
+        userPreferences = UserPreferences.getInstance();
+        final Context ctx = mock(Context.class);
+        final SharedPreferences sharedPreferences = mock(SharedPreferences.class);
+        when(ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)).thenReturn(sharedPreferences);
+        when(sharedPreferences.getString(anyString(), anyString())).thenReturn("foobar");
+        assertEquals("foobar", userPreferences.getToken(ctx));
+    }
 }

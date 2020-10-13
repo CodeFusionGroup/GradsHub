@@ -92,6 +92,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    testImplementation "org.robolectric:robolectric:4.4"
+
 
     androidTestImplementation 'com.21buttons:fragment-test-rule:2.0.1'
     debugImplementation 'com.21buttons:fragment-test-rule-extras:2.0.1'

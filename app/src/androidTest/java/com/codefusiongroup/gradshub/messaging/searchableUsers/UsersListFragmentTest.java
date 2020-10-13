@@ -45,7 +45,7 @@ public class UsersListFragmentTest {
     }
 
     @Test
-    public void testSearchableUsersList() throws InterruptedException {
+    public void testSearchableUsersList() throws InterruptedException, UiObjectNotFoundException {
         onView(withId(R.id.usersList)).check(matches(isDisplayed()));
         waitForResources(1500);
         onView(withId(R.id.usersList)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
@@ -54,7 +54,14 @@ public class UsersListFragmentTest {
         onView(withText("REMOVE FRIEND")).perform(click());
         onView(withText("BLOCK")).perform(click());
         waitForResources(1000);
-
+        //unblock the blocked friend
+        logUserOut();
+        setUp();
+        onView(withId(R.id.usersList)).check(matches(isDisplayed()));
+        waitForResources(1500);
+        onView(withId(R.id.usersList)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+        onView(withText("UN-BLOCK")).perform(click());
+        waitForResources(1000);
     }
 
 }
