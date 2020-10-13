@@ -22,9 +22,6 @@ import java.util.List;
 public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRecyclerViewAdapter.ViewHolder> {
 
     private final List<Post> mValues;
-    private ArrayList<String> userAlreadyLikedPosts = new ArrayList<>();
-    private ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>();
-
     private int likesCounter = 0;
 
     private FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener;
@@ -72,16 +69,12 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
         holder.mPostNoOfLikesView.setText( String.valueOf( holder.mItem.getPostLikesCount() ) );
         holder.mPostNoOfCommentsView.setText( String.valueOf( holder.mItem.getPostCommentsCount() ) );
 
-        userAlreadyLikedPosts = FeedListFragment.getPreviouslyLikedPosts();
-
-        if ( userAlreadyLikedPosts != null ) {
-            String itemId = holder.mItem.getPostID();
-            for (String eventId: userAlreadyLikedPosts) {
-                if ( eventId.equals(itemId) ) {
-                    holder.mPostLikeBtn.setColorFilter(Color.BLUE);
-                    break;
-                }
-            }
+        // set highlight posts the user has liked
+        if ( holder.mItem.isLikedByUser() ) {
+            holder.mPostLikeBtn.setColorFilter(Color.BLUE);
+        }
+        else {
+            holder.mPostLikeBtn.setColorFilter(Color.GRAY);
         }
 
         // post with pdf file
@@ -100,18 +93,17 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
 
         holder.mPostLikeBtn.setOnClickListener(v -> {
 
-            userCurrentlyLikedPosts = FeedListFragment.getCurrentlyLikedPosts();
             holder.mItem = mValues.get(position);
 
-            if ( userAlreadyLikedPosts != null && userAlreadyLikedPosts.contains(holder.mItem.getPostID()) ||
-                    userCurrentlyLikedPosts != null && userCurrentlyLikedPosts.contains(holder.mItem.getPostID()) ) {
+            if ( holder.mItem.isLikedByUser() ) {
                 Toast.makeText(v.getContext(), "already liked post.", Toast.LENGTH_SHORT).show();
             }
             else {
                 onPostItemLikedListener.onPostItemLiked(holder.mItem);
-                likesCounter++;
-                holder.mItem.setPostLikesCount(likesCounter);
-                holder.mPostNoOfLikesView.setText( String.valueOf( mValues.get(position).getPostLikesCount() ) );
+                holder.mItem.setLikedByUser(true);
+                //likesCounter++;
+                //holder.mItem.setPostLikesCount(likesCounter);
+                //holder.mPostNoOfLikesView.setText( String.valueOf( mValues.get(position).getPostLikesCount() ) );
                 holder.mPostLikeBtn.setColorFilter(Color.BLUE);
             }
 

@@ -295,6 +295,7 @@ public class OpenChatsFragment extends Fragment { //implements BaseView<OpenChat
                     JsonObject jsonObject = response.body();
 
                     if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
+                        fetchUserOpenChats(userID);
                         // omit this toast message if the operation is successful
                         //GradsHubApplication.showToast(jsonObject.get("message").getAsString());
                         Log.d(TAG, "requestToRemoveChats() --> api response: "+jsonObject.get("message").getAsString());

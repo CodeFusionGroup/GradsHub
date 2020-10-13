@@ -36,6 +36,7 @@ import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
+import com.codefusiongroup.gradshub.common.repositories.UserRepositoryImpl;
 import com.codefusiongroup.gradshub.databinding.FragmentFeedItemListBinding;
 import com.codefusiongroup.gradshub.databinding.FragmentLoginBinding;
 import com.codefusiongroup.gradshub.utils.api.Resource;
@@ -64,14 +65,12 @@ public class FeedListFragment extends Fragment {
 
     private static final String TAG = "FeedListFragment";
 
-    private FeedListRecyclerViewAdapter mAdapter;
-    private List<Post> mLatestPosts = new ArrayList<>();
-    private static ArrayList<String> userAlreadyLikedPosts = new ArrayList<>(); // values are post IDs
-    private static ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>(); // values are post IDs
-
     private User mUser;
     private FeedViewModel feedViewModel;
     private FragmentFeedItemListBinding binding;
+    private FeedListRecyclerViewAdapter mAdapter;
+
+    private List<Post> mLatestPosts = new ArrayList<>();
 
 
     @Override
@@ -100,21 +99,32 @@ public class FeedListFragment extends Fragment {
         binding.refresh.setOnRefreshListener(() -> {
             if (mUser != null) {
                 feedViewModel.getLatestPosts( mUser.getUserID() );
-                feedViewModel.getUserLikedPosts( mUser.getUserID() );
                 binding.refresh.setRefreshing(true);
             }
         });
 
 
+        // listener that keeps track of which post is liked in the feed
         FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = new FeedListRecyclerViewAdapter.OnPostItemLikedListener() {
             @Override
-            public void onPostItemLiked(Post item) {
-                feedViewModel.insertFeedLikedPosts(mUser.getUserID(), item.getPostGroupID(), item.getPostID());
+            public void onPostItemLiked(Post post) {
+                FeedRepositoryImpl.getInstance().insertUserLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
+                //feedViewModel.getLatestPosts( mUser.getUserID() );
+                //Post post = currentlyLikedPosts.get(0);
+                //currentlyLikedPosts.clear();
+                //Log.d(TAG, "currentlyLikedPosts after clear prior to insert call: "+currentlyLikedPosts.size());
+                //feedViewModel.insertFeedLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
+
             }
         };
 
-        // listener that keeps track of which post is liked in the feed
-        //FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = item -> userCurrentlyLikedPosts.add(item.getPostID());
+//        if (currentlyLikedPosts.size() > 0) {
+//            Post post = currentlyLikedPosts.get(0);
+//            currentlyLikedPosts.clear();
+//            Log.d(TAG, "currentlyLikedPosts after clear prior to insert call: "+currentlyLikedPosts.size());
+//            feedViewModel.insertFeedLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
+//        }
+
 
         // listener that keeps track of which post PDF the user wants to download
         FeedListRecyclerViewAdapter.OnPostPDFDownloadListener onPostPDFDownloadListener = item -> downloadFile(requireActivity(), item.getPostFileName(), DIRECTORY_DOWNLOADS, item.getPostDescription());
@@ -145,7 +155,6 @@ public class FeedListFragment extends Fragment {
         feedViewModel = new ViewModelProvider(this).get(FeedViewModel.class);
         if (mUser != null) {
             feedViewModel.getLatestPosts( mUser.getUserID() );
-            feedViewModel.getUserLikedPosts( mUser.getUserID() );
         }
 
         binding.setFeedViewModel(feedViewModel);
@@ -166,23 +175,6 @@ public class FeedListFragment extends Fragment {
             }
         });
 
-
-        viewModel.getLikedPostsResponse().observe(getViewLifecycleOwner(), listResource -> {
-            if (listResource != null) {
-                if (listResource.data != null) {
-                    userAlreadyLikedPosts.clear();
-                    userAlreadyLikedPosts.addAll(listResource.data);
-                }
-                else {
-                    Log.d(TAG, "listResource.data is null");
-                }
-            }
-            else {
-                Log.d(TAG, "listResource is null");
-            }
-        });
-
-
         viewModel.getLatestPostsResponse().observe(getViewLifecycleOwner(), listResource -> {
             if (listResource != null) {
 
@@ -196,6 +188,7 @@ public class FeedListFragment extends Fragment {
                             mLatestPosts.clear();
                             mLatestPosts.addAll(listResource.data);
                             mAdapter.notifyDataSetChanged();
+                            //viewModel.deregisterObserverObjects();
                         }
                         else {
                             Log.d(TAG, "listResource.data is null");
@@ -214,25 +207,23 @@ public class FeedListFragment extends Fragment {
             }
         });
 
-    }
+//        viewModel.getInsertLikesResponse().observe(getViewLifecycleOwner(), new Observer<Resource<String>>() {
+//            @Override
+//            public void onChanged(Resource<String> stringResource) {
+//                if (stringResource != null) {
+//
+//                    //currentlyLikedPosts.clear();
+//                    //GradsHubApplication.showToast(stringResource.message);
+//                    //currentlyLikedPosts.clear();
+//                    Log.d(TAG, "api response: "+stringResource.message);
+//                    //viewModel.deregisterObserverObjects();
+//                }
+//                else {
+//                    Log.d(TAG, "getInsertLikesResponse() --> stringResource is null");
+//                }
+//            }
+//        });
 
-
-//    public static User getUser() { return mUser; }
-
-
-    public static ArrayList<String> getCurrentlyLikedPosts() {
-        if (userCurrentlyLikedPosts.size() == 0) {
-            return null;
-        }
-        return userCurrentlyLikedPosts;
-    }
-
-
-    public static ArrayList<String> getPreviouslyLikedPosts() {
-        if (userAlreadyLikedPosts.size() == 0) {
-            return null;
-        }
-        return userAlreadyLikedPosts;
     }
 
 

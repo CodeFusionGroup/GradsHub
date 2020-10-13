@@ -14,7 +14,7 @@ public class Post implements Parcelable {
     private String postID;
 
     @SerializedName("GROUP_ID")
-    private String postGroupID;
+    private String groupID;
 
     @SerializedName("POST_CREATOR")
     private String postCreator;
@@ -37,6 +37,9 @@ public class Post implements Parcelable {
     @SerializedName("NO_OF_COMMENTS")
     private int postCommentsCount = 0;
 
+    @SerializedName("USER_LIKED")
+    private boolean isLikedByUser = false;
+
     public Post(String postDate, String postSubject, String postDescription) {
         this.postDate = postDate;
         this.postSubject = postSubject;
@@ -54,9 +57,21 @@ public class Post implements Parcelable {
     public Post() {}
 
 
+    public void setLikedByUser(boolean likedByUser) {
+        isLikedByUser = likedByUser;
+    }
+
+    public boolean isLikedByUser() {
+        return isLikedByUser;
+    }
+
     public String getPostID() { return postID; }
 
     public void setPostID(String postID) { this.postID = postID; }
+
+    public void setGroupID(String groupID) {this.groupID = groupID; }
+
+    public String getGroupID() {return groupID; }
 
     public String getPostCreator() {
         return postCreator;
@@ -96,14 +111,11 @@ public class Post implements Parcelable {
 
     public void setPostFileName(String postFileName) { this.postFileName = postFileName; }
 
-    public void setPostGroupID(String postGroupID) {this.postGroupID = postGroupID; }
-
-    public String getPostGroupID() {return postGroupID; }
 
     @VisibleForTesting
     protected Post(Parcel in) {
         postID = in.readString();
-        postGroupID = in.readString();
+        groupID = in.readString();
         postCreator = in.readString();
         postDate = in.readString();
         postSubject = in.readString();
@@ -136,7 +148,7 @@ public class Post implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(postID);
-        dest.writeString(postGroupID);
+        dest.writeString(groupID);
         dest.writeString(postCreator);
         dest.writeString(postDate);
         dest.writeString(postSubject);
