@@ -19,6 +19,4 @@ public interface IFeedRepository {
 
     MutableLiveData<Resource<List<Post>>> getLatestPostsResponse();
 
-    //MutableLiveData<Resource<String>> getInsertLikesResponse();
-
 }

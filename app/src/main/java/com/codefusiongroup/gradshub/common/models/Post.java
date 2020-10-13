@@ -120,9 +120,6 @@ public class Post implements Parcelable {
         postDate = in.readString();
         postSubject = in.readString();
         postDescription = in.readString();
-        //=============================
-        //postLikesCount = in.readInt();
-        //============================
         postCommentsCount = in.readInt();
         postFileName = in.readString();
     }
@@ -154,9 +151,6 @@ public class Post implements Parcelable {
         dest.writeString(postSubject);
         dest.writeString(postDescription);
         dest.writeString(postFileName);
-        //================================
-        //dest.writeInt(postLikesCount);
-        //dest.writeInt(postCommentsCount);
     }
 
 }

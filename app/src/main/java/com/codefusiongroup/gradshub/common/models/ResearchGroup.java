@@ -28,7 +28,6 @@ public class ResearchGroup implements Parcelable {
         groupAdmin = in.readString();
         groupName = in.readString();
         groupVisibility = in.readString();
-        //groupInviteCode = in.readString();
         groupID = in.readString();
     }
 
@@ -37,7 +36,6 @@ public class ResearchGroup implements Parcelable {
         dest.writeString(groupAdmin);
         dest.writeString(groupName);
         dest.writeString(groupVisibility);
-        //dest.writeString(groupInviteCode);
         dest.writeString(groupID);
     }
 

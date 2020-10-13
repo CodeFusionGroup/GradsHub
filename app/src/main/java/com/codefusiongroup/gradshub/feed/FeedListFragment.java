@@ -11,52 +11,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.codefusiongroup.gradshub.R;
-import com.codefusiongroup.gradshub.authentication.login.LoginViewModel;
 import com.codefusiongroup.gradshub.common.GradsHubApplication;
 import com.codefusiongroup.gradshub.common.models.Post;
 import com.codefusiongroup.gradshub.common.models.User;
-import com.codefusiongroup.gradshub.common.network.ApiProvider;
-import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
-import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
-import com.codefusiongroup.gradshub.common.repositories.UserRepositoryImpl;
 import com.codefusiongroup.gradshub.databinding.FragmentFeedItemListBinding;
-import com.codefusiongroup.gradshub.databinding.FragmentLoginBinding;
-import com.codefusiongroup.gradshub.utils.api.Resource;
-import com.codefusiongroup.gradshub.utils.forms.LoginForm;
-import com.codefusiongroup.gradshub.utils.validations.FormValidator;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
@@ -69,7 +39,6 @@ public class FeedListFragment extends Fragment {
     private FeedViewModel feedViewModel;
     private FragmentFeedItemListBinding binding;
     private FeedListRecyclerViewAdapter mAdapter;
-
     private List<Post> mLatestPosts = new ArrayList<>();
 
 
@@ -105,26 +74,7 @@ public class FeedListFragment extends Fragment {
 
 
         // listener that keeps track of which post is liked in the feed
-        FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = new FeedListRecyclerViewAdapter.OnPostItemLikedListener() {
-            @Override
-            public void onPostItemLiked(Post post) {
-                FeedRepositoryImpl.getInstance().insertUserLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
-                //feedViewModel.getLatestPosts( mUser.getUserID() );
-                //Post post = currentlyLikedPosts.get(0);
-                //currentlyLikedPosts.clear();
-                //Log.d(TAG, "currentlyLikedPosts after clear prior to insert call: "+currentlyLikedPosts.size());
-                //feedViewModel.insertFeedLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
-
-            }
-        };
-
-//        if (currentlyLikedPosts.size() > 0) {
-//            Post post = currentlyLikedPosts.get(0);
-//            currentlyLikedPosts.clear();
-//            Log.d(TAG, "currentlyLikedPosts after clear prior to insert call: "+currentlyLikedPosts.size());
-//            feedViewModel.insertFeedLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
-//        }
-
+        FeedListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener = post -> feedViewModel.insertFeedLikedPosts(mUser.getUserID(), post.getGroupID(), post.getPostID());
 
         // listener that keeps track of which post PDF the user wants to download
         FeedListRecyclerViewAdapter.OnPostPDFDownloadListener onPostPDFDownloadListener = item -> downloadFile(requireActivity(), item.getPostFileName(), DIRECTORY_DOWNLOADS, item.getPostDescription());
@@ -188,7 +138,7 @@ public class FeedListFragment extends Fragment {
                             mLatestPosts.clear();
                             mLatestPosts.addAll(listResource.data);
                             mAdapter.notifyDataSetChanged();
-                            //viewModel.deregisterObserverObjects();
+                            viewModel.deregisterObserverObjects();
                         }
                         else {
                             Log.d(TAG, "listResource.data is null");
@@ -206,23 +156,6 @@ public class FeedListFragment extends Fragment {
                 Log.d(TAG, "listResource is null");
             }
         });
-
-//        viewModel.getInsertLikesResponse().observe(getViewLifecycleOwner(), new Observer<Resource<String>>() {
-//            @Override
-//            public void onChanged(Resource<String> stringResource) {
-//                if (stringResource != null) {
-//
-//                    //currentlyLikedPosts.clear();
-//                    //GradsHubApplication.showToast(stringResource.message);
-//                    //currentlyLikedPosts.clear();
-//                    Log.d(TAG, "api response: "+stringResource.message);
-//                    //viewModel.deregisterObserverObjects();
-//                }
-//                else {
-//                    Log.d(TAG, "getInsertLikesResponse() --> stringResource is null");
-//                }
-//            }
-//        });
 
     }
 

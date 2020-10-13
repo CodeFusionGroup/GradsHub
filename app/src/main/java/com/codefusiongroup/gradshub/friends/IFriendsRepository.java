@@ -9,10 +9,6 @@ import java.util.List;
 
 public interface IFriendsRepository {
 
-    void addToFriends(String userID, String addID);
-
-    void removeFromFriends(String userID, String removeID);
-
     void getUserFriends(String userID);
 
     MutableLiveData<Boolean> getIsLoading();
