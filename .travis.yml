@@ -59,8 +59,8 @@ script:
 
 #  - ./gradlew clean build connectedCheck -PdisablePreDex --stacktrace #--scan
   - ./gradlew test    --scan #unit tests
-  - ./gradlew connectedCheck --scan #Instrumentation tests
+#  - ./gradlew connectedCheck --scan #Instrumentation tests
   - ./gradlew build --scan
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)
