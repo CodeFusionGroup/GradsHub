@@ -13,14 +13,12 @@ public interface IFeedRepository {
 
     void getLatestPosts(String userID);
 
-    void getUserLikedPosts(String userID);
-
     void insertUserLikedPosts(String userID, String groupID, String postID);
 
     LiveData<Boolean> getIsLoading();
 
     MutableLiveData<Resource<List<Post>>> getLatestPostsResponse();
 
-    MutableLiveData<Resource<List<String>>> getUserLikedPostsResponse();
+    //MutableLiveData<Resource<String>> getInsertLikesResponse();
 
 }
