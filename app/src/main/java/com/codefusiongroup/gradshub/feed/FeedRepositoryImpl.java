@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.codefusiongroup.gradshub.common.models.Post;
+import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.utils.api.Resource;
@@ -85,25 +86,27 @@ public class FeedRepositoryImpl implements IFeedRepository {
 
                             JsonObject latestPostJO = jsonElement.getAsJsonObject();
                             Post post = new Gson().fromJson(latestPostJO, Post.class);
+                            String postDescription = null;
 
-                            String firstName = latestPostJO.get("USER_FNAME").getAsString();
-                            String lastName = latestPostJO.get("USER_LNAME").getAsString();
-                            post.setPostCreator(firstName+" "+lastName);
-
-                            String postDescription;
                             JsonElement postFileJE = latestPostJO.get("POST_FILE");
-                            // check if post is for a pdf file
-                            if (postFileJE != null && !postFileJE.isJsonNull()) {
+                            JsonElement postURLJE = latestPostJO.get("POST_URL");
+                            if( postFileJE != null && !postFileJE.isJsonNull() ) {
                                 postDescription = latestPostJO.get("POST_FILE").getAsString();
                                 String postFileName = latestPostJO.get("POST_FILE_NAME").getAsString();
                                 post.setPostFileName(postFileName);
+
                             }
-                            // post description is for a normal link
-                            else {
+                            else if( postURLJE != null && !postURLJE.isJsonNull() ) {
                                 postDescription = latestPostJO.get("POST_URL").getAsString();
                             }
 
+                            String firstName = latestPostJO.get("USER_FNAME").getAsString();
+                            String lastName = latestPostJO.get("USER_LNAME").getAsString();
+                            String postCreator = firstName + " "+ lastName;
+
+                            post.setPostCreator(postCreator);
                             post.setPostDescription(postDescription);
+
                             latestPosts.add(post);
                         }
 

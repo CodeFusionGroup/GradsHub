@@ -25,7 +25,7 @@ public class Post implements Parcelable {
     @SerializedName("POST_TITLE")
     private String postSubject;
 
-    @SerializedName("POST_DESCRIPTION")
+    //@SerializedName("POST_DESCRIPTION")
     private String postDescription;
 
     @SerializedName("POST_FILE")
