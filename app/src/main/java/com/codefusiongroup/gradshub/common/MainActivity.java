@@ -29,6 +29,7 @@ import com.codefusiongroup.gradshub.profile.ProfileFragment;
 import com.codefusiongroup.gradshub.utils.api.Resource;
 import com.codefusiongroup.gradshub.utils.notifications.EventNotificationComposer;
 import com.codefusiongroup.gradshub.utils.notifications.MonthsConstants;
+import com.google.android.gms.common.util.VisibleForTesting;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.core.view.MenuCompat;
@@ -437,6 +438,8 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
     // this method gets schedule from website and writes the schedules to a file (Schedule-data.txt)
     // NOTE: method is not called anywhere to avoid making multiple request to the website for data
     // still have to schedule the requests since data on the website can change
+    //Method commented out for testing purposes.
+    /*
     private void requestScheduleFromSource() {
 
         try {
@@ -508,4 +511,11 @@ public class MainActivity extends AppCompatActivity implements MyGroupsListFragm
 
     }
 
+    //================================Testing Code=================================================
+
+    @VisibleForTesting
+    public void readScheduleFromSourceTest(){
+        requestScheduleFromSource();
+    }
+*/
 }

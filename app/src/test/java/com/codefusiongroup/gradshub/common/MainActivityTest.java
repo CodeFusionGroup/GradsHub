@@ -8,6 +8,7 @@ import com.codefusiongroup.gradshub.common.models.Schedule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 /*
 @RunWith(MockitoJUnitRunner.class)
@@ -22,6 +24,14 @@ public class MainActivityTest{
     @Mock
     MainActivity mockMainActivity;
 
+
+    @Test
+    public void requestScheduleFromSourceTest(){
+        //doNothing().when(mockMainActivity).readScheduleFromSourceTest();
+        //mockMainActivity.readScheduleFromFileTest();
+        MainActivity m = new MainActivity();
+        m.readScheduleFromSourceTest();
+    }
  /*   @Test
     public void testUrlValidator(){
      //   when(mockMainActivity.validateEventLinkFormat(link))
