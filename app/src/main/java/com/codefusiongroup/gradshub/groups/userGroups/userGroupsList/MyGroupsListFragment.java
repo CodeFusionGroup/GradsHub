@@ -90,6 +90,7 @@ public class MyGroupsListFragment extends Fragment {
             ResearchGroup researchGroup = MyGroupsProfileFragment.getGroup();
             insertGroupLikedPosts(userCurrentlyLikedPosts, user, researchGroup);
             MyGroupsProfileFragment.getCurrentlyLikedPosts().clear(); // important to clear list after
+            MyGroupsProfileFragment.getTemp().clear();
 
         }
 
@@ -115,11 +116,8 @@ public class MyGroupsListFragment extends Fragment {
     private void insertGroupLikedPosts(ArrayList<String> userCurrentlyLikedPosts, User user, ResearchGroup researchGroup) {
 
         StringBuilder likedPostsIDs = new StringBuilder();
-
         for(int i = 0; i < userCurrentlyLikedPosts.size(); i++) {
-
             likedPostsIDs.append(userCurrentlyLikedPosts.get(i));
-
             if (i != userCurrentlyLikedPosts.size()-1) {
                 likedPostsIDs.append(",");
             }
@@ -158,7 +156,6 @@ public class MyGroupsListFragment extends Fragment {
 
             String statusCode = response.getString("success");
             String message = response.getString("message");
-
             // liked posts inserted
             if(statusCode.equals("1")) {
                 Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
@@ -330,6 +327,5 @@ public class MyGroupsListFragment extends Fragment {
     public interface OnMyGroupsListFragmentInteractionListener {
         void onMyGroupsListFragmentInteraction(ResearchGroup item);
     }
-
 
 }

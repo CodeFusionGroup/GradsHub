@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +37,7 @@ import com.codefusiongroup.gradshub.common.models.Post;
 import com.codefusiongroup.gradshub.common.models.ResearchGroup;
 import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.NetworkRequestQueue;
+import com.codefusiongroup.gradshub.feed.FeedViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -65,6 +67,8 @@ public class MyGroupsProfileFragment extends Fragment {
     private static ArrayList<String> userAlreadyLikedPosts = new ArrayList<>(); // values are post IDs
     private static ArrayList<String> userCurrentlyLikedPosts = new ArrayList<>(); // values are post IDs
     private List<Post> groupPosts = new ArrayList<>();
+
+    private static List<Post> temp = new ArrayList<>();
 
     // listener that keeps track of which post is liked in the particular group
     private GroupPostsListRecyclerViewAdapter.OnPostItemLikedListener onPostItemLikedListener;
@@ -118,9 +122,21 @@ public class MyGroupsProfileFragment extends Fragment {
         getGroupPosts();
         progressBar.setVisibility(View.VISIBLE);
 
-        onPostItemLikedListener = item -> userCurrentlyLikedPosts.add(item.getPostID());
+        onPostItemLikedListener = item -> {
+            userCurrentlyLikedPosts.add(item.getPostID());
+            temp.add(item);
+        };
 
         onPostItemCommentListener = item -> {
+            if (temp.size() > 0) {
+                FeedViewModel viewModel = new FeedViewModel();
+                for (Post post: temp) {
+                    viewModel.insertFeedLikedPosts(user.getUserID(), researchGroup.getGroupID(), post.getPostID());
+                }
+                getUserLikedPosts();
+                temp.clear();
+                userCurrentlyLikedPosts.clear();
+            }
 
             Bundle bundle = new Bundle();
             bundle.putParcelable("post_item", item);
@@ -350,22 +366,22 @@ public class MyGroupsProfileFragment extends Fragment {
 
 
     public static ArrayList<String> getCurrentlyLikedPosts() {
-
         if (userCurrentlyLikedPosts.size() == 0) {
             return null;
         }
-
         return userCurrentlyLikedPosts;
     }
 
 
     public static ArrayList<String> getPreviouslyLikedPosts() {
-
         if (userAlreadyLikedPosts.size() == 0) {
             return null;
         }
-
         return userAlreadyLikedPosts;
+    }
+
+    public static List<Post> getTemp() {
+        return temp;
     }
 
 

@@ -56,18 +56,6 @@ public class FriendsRepositoryImpl implements IFriendsRepository {
     }
 
 
-        @Override
-    public void addToFriends(String userID, String addID) {
-
-    }
-
-
-    @Override
-    public void removeFromFriends(String userID, String removeID) {
-
-    }
-
-
     @Override
     public void getUserFriends(String userID) {
 

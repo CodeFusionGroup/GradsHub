@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.codefusiongroup.gradshub.common.models.Post;
+import com.codefusiongroup.gradshub.common.models.User;
 import com.codefusiongroup.gradshub.common.network.ApiProvider;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.utils.api.Resource;
@@ -43,7 +44,6 @@ public class FeedRepositoryImpl implements IFeedRepository {
 
 
     private MutableLiveData<Resource<List<Post>>> latestPostsResponse;
-    //private MutableLiveData<Resource<String>> insertLikesResponse;
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
 
@@ -58,24 +58,6 @@ public class FeedRepositoryImpl implements IFeedRepository {
         }
         return latestPostsResponse;
     }
-
-
-//    @Override
-//    public MutableLiveData<Resource<String>> getInsertLikesResponse() {
-//        if (insertLikesResponse == null) {
-//            insertLikesResponse = new MutableLiveData<>();
-//        }
-//        return insertLikesResponse;
-//    }
-
-
-//    @Override
-//    public MutableLiveData<Resource<List<String>>> getUserLikedPostsResponse() {
-//        if (likedPostsResponse == null) {
-//            likedPostsResponse = new MutableLiveData<>();
-//        }
-//        return likedPostsResponse;
-//    }
 
 
     @Override
@@ -104,39 +86,27 @@ public class FeedRepositoryImpl implements IFeedRepository {
 
                             JsonObject latestPostJO = jsonElement.getAsJsonObject();
                             Post post = new Gson().fromJson(latestPostJO, Post.class);
+                            String postDescription = null;
 
-                            String firstName = latestPostJO.get("USER_FNAME").getAsString();
-                            String lastName = latestPostJO.get("USER_LNAME").getAsString();
-                            post.setPostCreator(firstName+" "+lastName);
-
-                            String postDescription;
                             JsonElement postFileJE = latestPostJO.get("POST_FILE");
-                            // check if post is for a pdf file
-                            if (postFileJE != null && !postFileJE.isJsonNull()) {
+                            JsonElement postURLJE = latestPostJO.get("POST_URL");
+                            if( postFileJE != null && !postFileJE.isJsonNull() ) {
                                 postDescription = latestPostJO.get("POST_FILE").getAsString();
                                 String postFileName = latestPostJO.get("POST_FILE_NAME").getAsString();
                                 post.setPostFileName(postFileName);
+
                             }
-                            // post description is for a normal link
-                            else {
+                            else if( postURLJE != null && !postURLJE.isJsonNull() ) {
                                 postDescription = latestPostJO.get("POST_URL").getAsString();
                             }
 
-                            int noLikes = 0;
-                            JsonElement postLikesCountJE = latestPostJO.get("NO_OF_LIKES");
-                            if (postLikesCountJE != null && !postLikesCountJE.isJsonNull()) {
-                                noLikes = Integer.parseInt(latestPostJO.get("NO_OF_LIKES").getAsString());
-                            }
+                            String firstName = latestPostJO.get("USER_FNAME").getAsString();
+                            String lastName = latestPostJO.get("USER_LNAME").getAsString();
+                            String postCreator = firstName + " "+ lastName;
 
-                            int noComments = 0;
-                            JsonElement postCommentsCountJE = latestPostJO.get("NO_OF_COMMENTS");
-                            if (postCommentsCountJE != null && !postCommentsCountJE.isJsonNull()) {
-                                noComments = Integer.parseInt(latestPostJO.get("NO_OF_COMMENTS").getAsString());
-                            }
-
-                            post.setPostLikesCount(noLikes);
-                            post.setPostCommentsCount(noComments);
+                            post.setPostCreator(postCreator);
                             post.setPostDescription(postDescription);
+
                             latestPosts.add(post);
                         }
 
@@ -170,69 +140,8 @@ public class FeedRepositoryImpl implements IFeedRepository {
     }
 
 
-//    @Override
-//    public void getUserLikedPosts(String userID) {
-//
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("user_id", userID);
-//        //params.put("group_id", groupID);//TODO: needs group id from feed???
-//
-//        feedAPI.getUserLikedPosts(params).enqueue(new Callback<JsonObject>() {
-//            @Override
-//            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-//
-//                if ( response.isSuccessful() ) {
-//                    Log.i(TAG, "getUserLikedPosts() --> response.isSuccessful() = true");
-//
-//                    JsonObject jsonObject = response.body();
-//
-//                    if ( jsonObject.get("success").getAsString().equals(ApiResponseConstants.API_SUCCESS_CODE) ) {
-//                        List<String> userLikedPosts = new ArrayList<>();
-//                        JsonArray likedPostsJA = jsonObject.getAsJsonArray("message");
-//                        for (int i = 0; i < likedPostsJA.size(); i++) {
-//                            userLikedPosts.add(likedPostsJA.get(i).getAsString());
-//                        }
-//
-//                        likedPostsResponse.setValue( Resource.apiDataRequestSuccess(userLikedPosts, null) );
-//                    }
-//                    else {
-//                        Log.i(TAG, "api response: "+ jsonObject.get("message").getAsString());
-//                    }
-//
-//                }
-//
-//                else {
-//                    likedPostsResponse.setValue( Resource.error("Could not update feed correctly please refresh page.") );
-//                    Log.i(TAG, "getUserLikedPosts() --> response.isSuccessful() = false");
-//                    Log.i(TAG, "error code: " +response.code() );
-//                    Log.i(TAG, "error message: " +response.message() );
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<JsonObject> call, Throwable t) {
-//                likedPostsResponse.setValue( Resource.error("Could not update feed correctly please refresh page.") );
-//                Log.i(TAG, "getUserLikedPosts() --> onFailure executed, error: ", t);
-//            }
-//        });
-//
-//    }
-
-
     @Override
-    public void insertUserLikedPosts(String userID, String groupID, String postID) {//String userID, String groupID, String postID
-
-//        StringBuilder likedPostsIDs = new StringBuilder();
-//
-//        for(int i = 0; i < feedLikedPosts.size(); i++) {
-//
-//            likedPostsIDs.append(feedLikedPosts.get(i));
-//
-//            if (i != feedLikedPosts.size()-1) {
-//                likedPostsIDs.append(",");
-//            }
-//        }
+    public void insertUserLikedPosts(String userID, String groupID, String postID) {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", userID);
@@ -247,7 +156,6 @@ public class FeedRepositoryImpl implements IFeedRepository {
                     Log.d(TAG, "insertUserLikedPosts() --> response.isSuccessful() = true");
                     JsonObject jsonObject = response.body();
                     Log.d(TAG, "api response: "+ jsonObject.get("message").getAsString() );
-                    //insertLikesResponse.setValue(Resource.apiNonDataRequestSuccess(jsonObject.get("message").getAsString()));
                 }
                 else {
                     Log.d(TAG, "insertUserLikedPosts() --> response.isSuccessful() = false");

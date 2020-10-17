@@ -8,9 +8,6 @@ import com.codefusiongroup.gradshub.common.models.ChatMessage;
 import com.codefusiongroup.gradshub.common.network.ApiResponseConstants;
 import com.codefusiongroup.gradshub.messaging.MessagingService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContract.IChatMessagesView>,
     ChatMessagesContract.IChatMessagesPresenter {
@@ -18,13 +15,8 @@ public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContrac
 
     private static final String TAG = "ChatMessagesPresenter";
 
-//    private String mFetchMessagesResponseCode = "1";
-//    private String mFetchMessagesResponseMsg = null;
-
     private String mInsertMessageResponseCode;
     private String mInsertMessageResponseMsg;
-
-    //private List<ChatMessage> mChatsMessages = new ArrayList<>();
 
     private ChatMessagesContract.IChatMessagesView mView;
 
@@ -51,51 +43,6 @@ public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContrac
         }
         return true;
     }
-
-
-//    @Override
-//    public void initChatMessages(String currentUserID, String correspondentID) {
-//        Log.i(TAG, "initChatMessages() called, ids: "+currentUserID+", "+correspondentID);
-//        messagingService.fetchChatMessages(currentUserID, correspondentID);
-//    }
-//
-//
-//    @Override
-//    public void setFetchMessagesResponseCode(String responseCode) {
-//        mFetchMessagesResponseCode = responseCode;
-//    }
-//
-//
-//    @Override
-//    public void setFetchMessagesResponseMsg(String responseMsg) {
-//        mFetchMessagesResponseMsg = responseMsg;
-//    }
-//
-//
-//    @Override
-//    public void setChatMessagesList(List<ChatMessage> chatMessageList) {
-//        mChatsMessages = chatMessageList;
-//    }
-//
-//
-//    @Override
-//    public void onRequestFetchMessagesFinished() {
-//        if (mView != null) {
-//            if (mFetchMessagesResponseCode.equals(ApiResponseConstants.SERVER_FAILURE_CODE)){
-//                mView.showServerFailureMsg(mFetchMessagesResponseMsg);
-//            }
-//
-//            else if (mFetchMessagesResponseCode.equals(ApiResponseConstants.API_SUCCESS_CODE)){
-//                Log.i(TAG, "loading chat messages");
-//                mView.loadChatMessages(mChatsMessages);
-//            }
-//
-//            // no chat messages exist for this chat yet
-//            else {
-//                mView.showFetchMessagesResponse(mFetchMessagesResponseMsg);
-//            }
-//        }
-//    }
 
 
     @Override
@@ -130,24 +77,5 @@ public class ChatMessagesPresenter implements BasePresenter2<ChatMessagesContrac
 
     }
 
-    //=======================================================================
-//    @Override
-//    public void setChatMessage(ChatMessage message) {
-//        if (mView != null) {
-//            Log.i(TAG, "mView is not null");
-//            mView.updateChatMessagesList(message);
-//        }
-//    }
-//
-//
-//    @Override
-//    public void setMessageSentState(boolean value) {
-//        if (mView != null) {
-//            Log.i(TAG, "mView is not null");
-//            mView.setChatMessageSentStatus(value);
-//        }
-//    }
-
-    //=======================================================================
 
 }

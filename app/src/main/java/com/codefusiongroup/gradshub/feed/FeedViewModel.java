@@ -21,15 +21,14 @@ public class FeedViewModel extends ObservableViewModel {
 
     private MutableLiveData<Boolean> isLoading;
     private MutableLiveData<Resource<List<Post>>> latestPostsResponse;
-    //private MutableLiveData<Resource<String>> insertLikesResponse;
 
     public void getLatestPosts(String userID) {
         repository.getLatestPosts(userID);
     }
 
-//    public void insertFeedLikedPosts(String userID, String groupID, String postID) {
-//        repository.insertUserLikedPosts(userID, groupID, postID);
-//    }
+    public void insertFeedLikedPosts(String userID, String groupID, String postID) {
+        repository.insertUserLikedPosts(userID, groupID, postID);
+    }
 
 
     public LiveData<Boolean> getIsLoading() {
@@ -46,16 +45,8 @@ public class FeedViewModel extends ObservableViewModel {
         return latestPostsResponse;
     }
 
-//    public LiveData<Resource<String>> getInsertLikesResponse() {
-//        if (insertLikesResponse == null) {
-//            insertLikesResponse = repository.getInsertLikesResponse();
-//        }
-//        return insertLikesResponse;
-//    }
-
     public void deregisterObserverObjects() {
         latestPostsResponse.setValue(null);
-        //insertLikesResponse.setValue(null);
     }
 
 }

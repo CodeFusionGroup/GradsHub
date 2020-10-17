@@ -101,9 +101,9 @@ public class FeedListRecyclerViewAdapter extends RecyclerView.Adapter<FeedListRe
             else {
                 onPostItemLikedListener.onPostItemLiked(holder.mItem);
                 holder.mItem.setLikedByUser(true);
-                //likesCounter++;
-                //holder.mItem.setPostLikesCount(likesCounter);
-                //holder.mPostNoOfLikesView.setText( String.valueOf( mValues.get(position).getPostLikesCount() ) );
+                likesCounter++;
+                holder.mItem.setPostLikesCount(likesCounter);
+                holder.mPostNoOfLikesView.setText( String.valueOf( mValues.get(position).getPostLikesCount() ) );
                 holder.mPostLikeBtn.setColorFilter(Color.BLUE);
             }
 

@@ -13,8 +13,6 @@ public interface FeedAPI {
     @POST("GroupPost/retrieveFeed.php")
     Call<JsonObject> getLatestPosts(@Body HashMap<String, String> params);
 
-    @POST("GroupPost/retrievelikes.php")
-    Call<JsonObject> getUserLikedPosts(@Body HashMap<String, String> params);
 
     @POST("GroupPost/insertlikes.php")
     Call<JsonObject> insertFeedLikedPosts(@Body HashMap<String, String> params);

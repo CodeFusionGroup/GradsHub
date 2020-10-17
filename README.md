@@ -9,7 +9,7 @@
 
 [![Build Status][travis-image]][travis]
 [![codecov.io][codecov-image]][codecov]
-[![GitHub Release](https://img.shields.io/badge/release-v0.2.0&ndash;beta-orange.svg)](https://github.com/CodeFusionGroup/GradsHub/releases)
+[![GitHub Release](https://img.shields.io/badge/release-v0.4.0&ndash;beta-orange.svg)](https://github.com/CodeFusionGroup/GradsHub/releases)
 
 GradsHub is a Social Research Application. It essentially allows people who are currently doing their postgraduate studies to interact with like minded researchers.
 

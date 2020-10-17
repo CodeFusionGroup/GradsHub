@@ -134,7 +134,6 @@ public class ChatMessagesFragment extends Fragment implements BaseView<ChatMessa
         Button sendMessageBtn = view.findViewById(R.id.sendMessageBtn);
 
         mPresenter.attachView(this);
-        //Log.i(TAG, "chat messages presenter has subscribed to view");
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         String currentUserID = mainActivity.user.getUserID();
@@ -165,29 +164,12 @@ public class ChatMessagesFragment extends Fragment implements BaseView<ChatMessa
 
                 String messageTimeStamp = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.getDefault()).format(new Date());
 
-                //=================================================================================
-                // send upstream messages back to the app server using the XMPP-based Cloud connection server
-                // address of the receiving app server in the format: SENDER_ID + "@fcm.googleapis.com"
-
-//                AtomicInteger msgId = new AtomicInteger();
-//                FirebaseMessaging fm = FirebaseMessaging.getInstance();
-//                fm.send(new RemoteMessage.Builder(SENDER_ID + "@fcm.googleapis.com")
-//                        .setMessageId( Integer.toString( msgId.incrementAndGet() ) )
-//                        .addData( "sender_user_id", currentUserID )
-//                        .addData( "message", userMessage )
-//                        .addData( "message_timestamp", messageTimeStamp )
-//                        .addData( "correspondent_user_id", mCorrespondentID )
-//                        .build());
-                //=================================================================================
-
                 ChatMessage message = new ChatMessage(userMessage, messageTimeStamp, currentUserID );
 
                 if (mOpenChatsUserID != null ) {
-                    //mPresenter.initChatMessages(currentUserID, mOpenChatsUserID);
                     mPresenter.insertMessage( message, mOpenChatsUserID );
                 }
                 else if (mSelectedUser != null) {
-                    //mPresenter.initChatMessages(currentUserID, mSelectedUser.getUserID());
                     mPresenter.insertMessage( message, mSelectedUser.getUserID() );
                 }
 
@@ -205,11 +187,9 @@ public class ChatMessagesFragment extends Fragment implements BaseView<ChatMessa
 
             // make initial call to get chat messages depending on the current application flow the user is engaged in.
             if (mOpenChatsUserID != null ) {
-                //mPresenter.initChatMessages(currentUserID, mOpenChatsUserID);
                 fetchChatMessages(currentUserID, mOpenChatsUserID );
             }
             else if (mSelectedUser != null) {
-                //mPresenter.initChatMessages(currentUserID, mSelectedUser.getUserID());
                 fetchChatMessages(currentUserID, mSelectedUser.getUserID() );
             }
 
@@ -292,7 +272,6 @@ public class ChatMessagesFragment extends Fragment implements BaseView<ChatMessa
     }
 
 
-    //=====================================================================================
     @Override
     public void setPresenter(ChatMessagesPresenter presenter){
         mPresenter = presenter;
@@ -320,46 +299,19 @@ public class ChatMessagesFragment extends Fragment implements BaseView<ChatMessa
 
     @Override
     public void showServerFailureMsg(String message) {
-        //hideProgressBar();
         GradsHubApplication.showToast(message);
     }
-
-
-//    @Override
-//    public void showFetchMessagesResponse(String message) {
-//        GradsHubApplication.showToast(message);
-//    }
 
 
     @Override
     public void showInsertMessageResponse(String message) {
-        //hideProgressBar();
         GradsHubApplication.showToast(message);
     }
-
-
-//    @Override
-//    public void loadChatMessages(List<ChatMessage> chatMessages) {
-//        Log.i(TAG, "loadChatMessages() called");
-//        //hideProgressBar();
-//        if ( mSwipeRefreshLayout.isRefreshing() ) {
-//            mSwipeRefreshLayout.setRefreshing(false);
-//        }
-//
-//
-//        mChatMessagesList.clear();
-//        mChatMessagesList.addAll(chatMessages);
-//        messagesRecycler.setAdapter(new ChatMessagesAdapter(requireContext(), mChatMessagesList));
-//        mAdapter.notifyDataSetChanged();
-//        Log.i(TAG, "mChatMessagesList size: "+mChatMessagesList.size());
-//        Log.i(TAG, "mChatMessagesList: "+mChatMessagesList);
-//    }
 
 
     @Override
     public void updateChatMessagesList(ChatMessage message) {
         Log.i(TAG, "updateChatMessagesList() called");
-        //hideProgressBar();
 
         if ( mSwipeRefreshLayout.isRefreshing() ) {
             mSwipeRefreshLayout.setRefreshing(false);
@@ -370,21 +322,10 @@ public class ChatMessagesFragment extends Fragment implements BaseView<ChatMessa
         mAdapter.notifyItemRangeInserted(sizeBeforeUpdate, mChatMessagesList.size());
     }
 
-//
-//    @Override
-//    public void setChatMessageSentStatus(boolean value) {
-//        if (value) {
-//        }
-//        else {
-//        }
-//    }
-//=================================================================================
 
     @Override
     public void onDetach() {
         super.onDetach();
-        //mPresenter.detachView(this);
-        //Log.i(TAG, "chat messages presenter has unsubscribed from view");
     }
 
 }
